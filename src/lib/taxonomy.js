@@ -2,7 +2,10 @@
 // layout and the client scripts all import from here, so a typo in a page's
 // frontmatter fails the build instead of silently skewing the simulation.
 
-/** Values allowed in a page's `section`. `search` is the search page; `system` is the 404 page. */
+/**
+ * Values allowed in a page's `section`. `search` is the search page and
+ * `system` the 404; the simulation does not track either (docs/decisions.md).
+ */
 export const SECTIONS = [
   'home',
   'about',

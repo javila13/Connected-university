@@ -58,7 +58,7 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-06: Matching: every query word must appear on the page, with prefix matching ("sustain" finds "sustainability"). Title hits outrank description hits, which outrank body text. Common words are ignored. This is enough for a 60–75-page site *(hypothesis — revisit if Phase 1 copy makes results noisy; Pagefind is the fallback)*.
 - 2026-11-06: The same index is meant for the Phase 2 Agentforce mock's content grounding (PLAN.md §5.8), so there is one index, not two.
 - 2026-11-06: Search doesn't work under `astro dev`, because the index is only written by `npm run build`. The search page says so in dev.
-- 2026-11-06: Phase 2 follow-up: decide whether a search should log a simulated engagement row. PLAN.md §5.2 lists only `PAGE_VIEW`, `CLICK` and `FORM_SUBMIT`, so no new channel action without Jesse's call.
+- 2026-11-06: Searches are **not** a tracked visitor action (Jesse). Phase 2's simulation logs no engagement row and no affinity for a search; the `/search/` page view itself is ignored like the 404's (`section: search`). Clicking a result lands on a normal page, which is tracked as usual.
 
 ### Environment
 - 2026-11-06: Created a personal cloud environment, "Connected-university", that allows `connecteduniversity-mc.org` so the build could read the live site's layout, colors and copy. No assets were downloaded (CLAUDE.md).
@@ -68,4 +68,4 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - **Follow-up round (same day, Jesse's answers):** both widgets on Continuing Ed and Athletics, site search added, Salesforce copyright and legal links removed.
 - **Exit criteria:** "`/demo` toggles work" is **met** *(verified — 66 Playwright checks and 127 smoke checks, locally, 2026-11-06)*. "Site deploys from `main`" is **not met**: the repo has no `main` branch yet and no Heroku app is connected. Both are Jesse's steps; see the README.
 - **Not started:** Phase 1 pages, the simulation, the agent mock, the inspector.
-- **Open questions:** none left from Phase 0. The Phase 2 follow-up on search events is noted above.
+- **Open questions:** none left from Phase 0.
