@@ -28,6 +28,38 @@
     { "id": "nursing-health", "name": "School of Nursing & Health Sciences" },
     { "id": "education-human-development", "name": "School of Education & Human Development" }
   ],
+  "costs": {
+    "undergraduate": { "tuition": 47850, "fees": 1350, "housing": 11200, "meals": 6300, "books": 1200 },
+    "onlineUndergraduatePerCredit": 550,
+    "graduatePerCredit": 1150
+  },
+  "admissions": {
+    "deadlines": {
+      "earlyAction": "November 15",
+      "earlyActionNotification": "December 20",
+      "regularDecision": "January 15",
+      "regularNotification": "April 1",
+      "aidPriority": "March 1",
+      "enrollmentDeposit": "May 1",
+      "housingApplication": "May 15",
+      "finalTranscript": "July 1",
+      "transferFall": "March 1",
+      "transferSpring": "October 15",
+      "graduateFallPriority": "June 1",
+      "graduateSpringPriority": "November 1"
+    },
+    "deposits": { "enrollment": 400, "housing": 250 },
+    "english": { "toefl": 80, "ielts": 6.5, "duolingo": 110 },
+    "transfer": { "maxCredits": 90, "minGpa": 2.5 }
+  },
+  "scholarships": {
+    "presidential": 25000,
+    "dean": 15000,
+    "connectedScholars": 8000,
+    "transferAchievement": 10000,
+    "globalScholars": 12000,
+    "sustainabilityLeaders": 5000
+  },
   "research": {
     "budgetBillionsUsd": 5,
     "libraries": 21,

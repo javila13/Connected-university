@@ -2,7 +2,8 @@
 // "{{facts.programs.undergraduate}} majors", so numbers live only in
 // content/facts.json (CLAUDE.md). Tokens are filled when a page renders, so a
 // change to facts.json shows up on the next build with no cache to clear.
-// An unknown path or a malformed token fails the build.
+// An unknown path or a malformed token fails the build. Numbers print with
+// thousands separators (47850 -> 47,850); keep years as strings.
 import facts from '../../content/facts.json';
 
 const TOKEN = /\{\{\s*facts\.([\w.]+)\s*\}\}/g;
@@ -20,7 +21,8 @@ export function fillFacts(text, where, { html = false } = {}) {
     if (value == null || typeof value === 'object') {
       throw new Error(`[facts] ${where}: ${token} is not in content/facts.json. Add it there first.`);
     }
-    return html ? escapeHtml(String(value)) : String(value);
+    const text = typeof value === 'number' ? value.toLocaleString('en-US') : String(value);
+    return html ? escapeHtml(text) : text;
   });
   const stray = out.match(/\{\{[^}]*\}\}/);
   if (stray) throw new Error(`[facts] ${where}: malformed token ${stray[0]}. Use {{facts.path.to.value}}.`);

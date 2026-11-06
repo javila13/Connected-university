@@ -1,0 +1,121 @@
+---
+// Demo forms: Request Information and Start Your Application. Nothing is
+// sent anywhere; there's no action URL. On submit the page shows a
+// confirmation and fires browser events that the Phase 2 simulation listens
+// to (src/scripts/forms.js):
+//   cu:form-start   first edit,  detail { form, page }
+//   cu:form-submit  valid submit, detail { form, page, fields }
+// Request Information is an identity moment in PLAN.md §5.5.
+import { getCollection } from 'astro:content';
+import { pickLive } from '../lib/routes.js';
+
+interface Props {
+  kind: 'request-info' | 'apply';
+}
+const { kind } = Astro.props;
+
+const programs = (await getCollection('programs')).sort((a, b) => a.data.title.localeCompare(b.data.title));
+const isApply = kind === 'apply';
+
+const types = isApply
+  ? ['First-year student', 'Transfer student', 'Graduate student', 'International student']
+  : ['First-year student', 'Transfer student', 'Graduate student', 'International student', 'Parent or counselor'];
+
+const links = {
+  programs: await pickLive('/academics/programs/', '/academics/'),
+  visit: await pickLive('/visit/'),
+  affordability: await pickLive('/admissions/affordability/', '/admissions/'),
+  undergraduate: await pickLive('/admissions/undergraduate/', '/admissions/'),
+};
+const id = (name: string) => `${kind}-${name}`;
+---
+<section class="demo-form" aria-labelledby={id('heading')}>
+  <h2 id={id('heading')}>{isApply ? 'Start your application' : 'Tell us about yourself'}</h2>
+  <form data-cu-form={kind} novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for={id('first')}>First name</label>
+        <input id={id('first')} name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for={id('last')}>Last name</label>
+        <input id={id('last')} name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for={id('email')}>Email</label>
+        <input id={id('email')} name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for={id('phone')}>Mobile phone <span class="optional">(optional)</span></label>
+        <input id={id('phone')} name="phone" type="tel" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label for={id('type')}>{isApply ? 'I am applying as a' : 'I am a'}</label>
+        <select id={id('type')} name="studentType" required>
+          <option value="">Choose one</option>
+          {types.map((t) => <option value={t.toLowerCase().replace(/[^a-z]+/g, '-').replace(/-$/, '')}>{t}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={id('program')}>Program of interest</label>
+        <select id={id('program')} name="program" required={isApply}>
+          <option value="">{isApply ? 'Choose one' : 'Not sure yet'}</option>
+          {programs.map((p) => <option value={p.id}>{p.data.title}</option>)}
+          {isApply && <option value="exploratory">Undecided (Exploratory Studies)</option>}
+        </select>
+      </div>
+      <div class="field">
+        <label for={id('term')}>Planned start</label>
+        <select id={id('term')} name="startTerm" required={isApply}>
+          <option value="">{isApply ? 'Choose one' : 'Not sure yet'}</option>
+          <option value="fall">Fall</option>
+          <option value="spring">Spring</option>
+          <option value="summer">Summer (online and graduate programs)</option>
+        </select>
+      </div>
+      {!isApply && (
+        <div class="field field--wide">
+          <label for={id('message')}>Questions for us <span class="optional">(optional)</span></label>
+          <textarea id={id('message')} name="message" rows="4"></textarea>
+        </div>
+      )}
+      <div class="field field--wide field--check">
+        <input id={id('sms')} name="smsOptIn" type="checkbox" value="yes" />
+        <label for={id('sms')}>Text me reminders about deadlines and events.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">{isApply ? 'Start My Application' : 'Request Information'}</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm={kind} tabindex="-1" hidden>
+    {isApply ? (
+      <>
+        <h3>Your application is started, <span data-first-name></span>.</h3>
+        <p>Here's what comes next:</p>
+        <ul class="check-list">
+          <li>Complete your profile and activities</li>
+          <li>Send your transcripts</li>
+          <li>Write your personal statement</li>
+          <li>Submit when you're ready</li>
+        </ul>
+        <p>Check the <a href={links.undergraduate}>deadlines</a> for your application type.</p>
+      </>
+    ) : (
+      <>
+        <h3>Thanks, <span data-first-name></span>. Your request is in.</h3>
+        <p>While you wait, you can:</p>
+        <ul class="check-list">
+          <li><a href={links.programs}>Explore our programs</a></li>
+          <li><a href={links.visit}>Plan a campus visit</a></li>
+          <li><a href={links.affordability}>See what Connected U really costs</a></li>
+        </ul>
+      </>
+    )}
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>

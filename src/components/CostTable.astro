@@ -1,0 +1,28 @@
+---
+// Undergraduate cost of attendance for one academic year. Every figure comes
+// from content/facts.json; the total is added up here so it can't drift.
+import facts from '../../content/facts.json';
+
+const c = facts.costs.undergraduate;
+const rows = [
+  { label: 'Tuition', value: c.tuition },
+  { label: 'Mandatory fees', value: c.fees },
+  { label: 'Housing (double room)', value: c.housing },
+  { label: 'Meal plan', value: c.meals },
+  { label: 'Books and supplies (estimate)', value: c.books },
+];
+const total = rows.reduce((sum, r) => sum + r.value, 0);
+const usd = (n: number) => '$' + n.toLocaleString('en-US');
+---
+<section class="cost-table" aria-labelledby="cost-heading">
+  <h2 id="cost-heading">Estimated cost of attendance</h2>
+  <p>Full-time undergraduate, living on campus, for one academic year (fall and spring).</p>
+  <table>
+    <tbody>
+      {rows.map((r) => <tr><th scope="row">{r.label}</th><td>{usd(r.value)}</td></tr>)}
+    </tbody>
+    <tfoot>
+      <tr><th scope="row">Total before financial aid</th><td>{usd(total)}</td></tr>
+    </tfoot>
+  </table>
+</section>
