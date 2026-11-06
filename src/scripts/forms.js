@@ -10,7 +10,7 @@
 // Links can preselect fields: ?program=<program id>, ?type=<student type>,
 // ?amount=<whole dollars>, ?frequency=one-time|monthly, ?designation=<fund id>,
 // ?interest=<certificate id or ce-inquiry option>, ?game=<game id>,
-// ?sport=<team id>.
+// ?sport=<team id>, ?visit=<visit type>.
 //
 // In a confirmation, [data-first-name] shows the first name and
 // [data-field="<name>"] shows a field (a select shows its option's label;
@@ -26,6 +26,7 @@ const PARAMS = {
   interest: 'interest',
   game: 'game',
   sport: 'sport',
+  visit: 'visitType',
 };
 
 function setField(form, name, value) {
@@ -60,6 +61,9 @@ function displayValue(form, name, fields, format) {
   const el = form.elements.namedItem(name);
   if (el instanceof HTMLSelectElement) return el.selectedOptions[0]?.textContent ?? value;
   if (format === 'usd' && value) return `$${Number(value).toLocaleString('en-US')}`;
+  if (format === 'date' && value) {
+    return new Date(`${value}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
+  }
   return value;
 }
 

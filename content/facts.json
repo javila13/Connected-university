@@ -2,6 +2,7 @@
   "_about": "Single source of truth for institutional facts (CLAUDE.md, PLAN.md §11). Copy that needs a number not listed here: add it here first and log it in docs/decisions.md. Markdown and frontmatter quote these with {{facts.path}} tokens, e.g. {{facts.programs.undergraduate}}. Seed values are from connecteduniversity-mc.org, fetched 2026-11-06.",
   "name": "Connected University",
   "shortName": "Connected U",
+  "founded": "1923",
   "taglines": {
     "primary": "Connect to Your Future",
     "secondary": "More than just an education.",
@@ -82,6 +83,10 @@
       { "id": "nursing", "name": "Nursing Scholarship Fund" },
       { "id": "athletics", "name": "Athletics Fund" }
     ]
+  },
+  "visits": {
+    "weekdayTours": "10 a.m. and 2 p.m.",
+    "saturdayTour": "10 a.m."
   },
   "athletics": {
     "mascot": "Condors",

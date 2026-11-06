@@ -203,3 +203,52 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-06: Prospective Student-Athletes is a recruiting questionnaire demo form (`form: recruit`; sport, graduation year, school, optional position and highlight-video link). It's `audience: prospect`, so it gets Piper in `auto` mode. `?sport=<team id>` preselects the sport, and team pages link that way.
 - 2026-11-06: Renamed a volleyball game note from "Dig Pink" (a real, trademarked charity program) to "Awareness Night".
 - 2026-11-06: The Homecoming game is Men's Soccer in October, matching Homecoming & Reunion Weekend on the Alumni pages.
+
+### Process after PR 7
+- 2026-11-06: Merged PR #7 at Jesse's request (`3313c03`) and restarted the branch from `main`. Athletics went live about 20 seconds after the merge *(verified — `npm run smoke` 945/945 against the live site, 2026-11-06)*.
+
+### Global pages (PR 8)
+- 2026-11-06: Pages:
+  - **About:** hub (rewritten, with an at-a-glance facts table), Mission & Values, Leadership, History.
+  - **Visit:** hub (rewritten), Campus Tour, Virtual Tour, Directions & Parking.
+  - **News:** six more articles; the News page now lists all nine.
+  - **Events:** six event pages; the Events page now lists them.
+  - **Careers:** expanded.
+
+  The site now has 106 indexable pages.
+- 2026-11-06: Founded in **1923** (Jesse), as a teachers college; in `facts.json` as `founded` (a string, so it prints without a thousands separator). History names no other years; it uses "after World War II" and "a century after its founding".
+- 2026-11-06: Leadership is invented and pronoun-free: President Dr. Catherine Alvarado-Shaw, Provost Dr. Neil Barrington, and Vice Presidents Dr. Monique Fairbanks (Student Success), Marisa Delgado (Enrollment) and Thomas Reilly-Chen (Advancement). Dr. Andrea Lindqvist is Dean of Continuing Education.
+- 2026-11-06: New `events` collection (`content/events/<id>.md` → `/events/<id>/`). Like news, each event carries its own section and audience, so the Homecoming page builds alumni affinity and the certificate info session builds learner affinity. Pages show month and day only. Events: Sustainability Lecture, Fall Open House, Sustainability certificate info session, Giving Day, Admitted Students Day (`sofia-prospect`), Homecoming & Reunion Weekend (`sofia-alumna`).
+- 2026-11-06: Every event page has an RSVP demo form (`form: 'rsvp'`, with the event id in the submitted fields). Campus Tour has a visit-request demo form (`form: 'visit'`): visit type, preferred date, guests and program, preselected with `?visit=` and `?program=`. Visit scheduling is a Student Recruitment Agent topic (§5.8), so Phase 2's agent can link straight to it. Tour times are in `facts.json` (`visits`). Both send nothing *(verified — Playwright, 2026-11-06)*.
+- 2026-11-06: News adds six stories: Dr. Martinez's water-test research (tagged `environmental-science`), the Sustainability House garden, the award winners returning to teach, tutoring evening hours, the Computer Science energy model and a record year for first-time gifts. That last story is `section: advancement`, `audience: donor`, and sets up Sofia's first-gift story without naming her.
+- 2026-11-06: Directions mentions the I-5 and I-605 freeways and the LAX, Long Beach and John Wayne airports *(hypothesis — needs validation; real geography near the campus address)*. It names no transit lines, and the page has no map embed.
+- 2026-11-06: About's FAQ answers "Is Connected University a real school?" plainly (no), so Piper's crawl and site search give an honest answer.
+- 2026-11-06: The home page now has the `pz-recommended-programs` zone (§5.4), with Environmental Science, Nursing and Business Administration as its default. All four §5.4 zones now exist with default variants: `pz-home-hero`, `pz-recommended-programs`, `pz-giving-cta` and `pz-next-credential`.
+
+### Phase 1 summary (for the retrospective)
+- **Delivered:** 8 pull requests (#1–#8), one per section, each merged by Jesse's say-so and auto-deployed from `main`. The site grew from 17 to **106 indexable pages**: every §4 section plus the global pages.
+  - **Content model:** pages, programs (8), faculty (4), certificates (6), teams (6), news (9) and events (6).
+  - **Forms:** nine demo forms that send nothing. Two of them, Give Now and Tickets, have no payment fields.
+  - **Student Portal:** a demo sign-in that shows Sofia's dashboard, built from `content/sofia.json`.
+  - **Personalization zones:** all four §5.4 zones exist with default variants.
+- **Exit criteria:** all three **met**.
+  - "Sitemap generated": 106 pages *(verified — `npm run smoke`, 2026-11-06)*.
+  - "Nav mirrors §4": all 60 menu and footer links point to built pages *(verified — script against `dist/`, 2026-11-06)*.
+  - "Metadata validated at build": collection schemas, `assertPageMeta`, `reference()` ids, `{{facts}}` tokens and the `sofia.json` catalog checks all fail the build on a bad value *(verified — broken on purpose during the phase)*.
+- **Rules added during the phase:**
+  - Institution-wide numbers live in `facts.json`, quoted with tokens.
+  - A program's own numbers live in its own file (CLAUDE.md updated, Jesse).
+  - Dates are evergreen: month and day, with no year.
+  - Sofia stays off public pages.
+  - No payment fields on any page.
+- **Still open for Jesse:**
+  - Should CLAUDE.md's numbers rule cover certificate files too?
+  - Does May 1 match the deposit deadline in the org?
+  - Do the drafted `sofia.json` student values match the org?
+  - Keep the Jordan Reyes story that echoes Sofia's?
+  - Keep the invented current roles for Wilma Grace and Courtney Tran-Kim?
+  - Do any opponent school names match a real school?
+- **Tests at the end of the phase:**
+  - Smoke: 1,135 checks.
+  - Browser suites: global 48, Athletics 62, Continuing Ed 47, Giving 46, Alumni 31, Portal 37, Forms 43, regression 66, all passing locally.
+- **Next:** Phase 2 (simulation): event store, affinity engine, inspector drawer, `/data360`, personalization rules for the four zones, identity stitch on the forms and portal sign-in, persona presets, and the Agentforce mock with scripts.

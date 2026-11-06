@@ -1,0 +1,86 @@
+---
+// Campus visit request (demo). Sends nothing; fires cu:form-start /
+// cu:form-submit (form: 'visit'). Visit scheduling is one of the Student
+// Recruitment Agent's topics (PLAN.md §5.8), which can link here with
+// ?visit=<type> and ?program=<program id> preselected.
+import { getCollection } from 'astro:content';
+import facts from '../../content/facts.json';
+import { pickLive } from '../lib/routes.js';
+
+const programs = (await getCollection('programs')).sort((a, b) => a.data.title.localeCompare(b.data.title));
+const { weekdayTours, saturdayTour } = facts.visits;
+const links = {
+  directions: await pickLive('/visit/directions/', '/visit/'),
+  virtual: await pickLive('/visit/virtual-tour/', '/visit/'),
+};
+---
+<section class="demo-form" aria-labelledby="visit-heading">
+  <h2 id="visit-heading">Schedule your visit</h2>
+  <form data-cu-form="visit" novalidate>
+    <div class="form-grid">
+      <div class="field field--wide">
+        <label for="visit-type">Visit type</label>
+        <select id="visit-type" name="visitType" required>
+          <option value="">Choose one</option>
+          <option value="campus-tour">Campus tour (weekdays {weekdayTours}; Saturdays {saturdayTour})</option>
+          <option value="info-session-tour">Information session and campus tour</option>
+          <option value="personal-visit">Personal visit with an admissions counselor</option>
+          <option value="class-visit">Sit in on a class</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="visit-date">Preferred date</label>
+        <input id="visit-date" name="date" type="date" required />
+      </div>
+      <div class="field">
+        <label for="visit-guests">Guests besides you</label>
+        <select id="visit-guests" name="guests">
+          <option value="0">None</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="visit-first">First name</label>
+        <input id="visit-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="visit-last">Last name</label>
+        <input id="visit-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for="visit-email">Email</label>
+        <input id="visit-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="visit-program">Program of interest</label>
+        <select id="visit-program" name="program">
+          <option value="">Not sure yet</option>
+          {programs.map((p) => <option value={p.id}>{p.data.title}</option>)}
+        </select>
+      </div>
+      <div class="field field--wide field--check">
+        <input id="visit-sms" name="smsOptIn" type="checkbox" value="yes" />
+        <label for="visit-sms">Text me a reminder the day before.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Request My Visit</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="visit" tabindex="-1" hidden>
+    <h3>Thanks, <span data-first-name></span>. Your visit request is in.</h3>
+    <p><strong data-field="visitType"></strong> on <strong data-field="date" data-format="date"></strong></p>
+    <ul class="check-list">
+      <li><a href={links.directions}>Get directions and parking</a></li>
+      <li><a href={links.virtual}>Take the virtual tour first</a></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>

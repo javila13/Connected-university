@@ -6,7 +6,7 @@
 //   certificates content/certificates/* -> /continuing-ed/certificates/<id>/
 //   teams    content/teams/*     -> /athletics/teams/<id>/
 //   news     content/news/*      -> /news/<id>/
-// The events collection arrives with the global pages.
+//   events   content/events/*    -> /events/<id>/
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
@@ -60,8 +60,10 @@ const pages = defineCollection({
     listSchedule: z.boolean().optional(),
     /** Renders news cards: every article, or one category. */
     listNews: z.enum(['all', 'athletics', 'campus', 'research', 'alumni']).optional(),
+    /** Renders event cards, soonest first. */
+    listEvents: z.boolean().optional(),
     /** Renders a demo form after the copy. */
-    form: z.enum(['request-info', 'apply', 'update-info', 'give', 'ce-inquiry', 'tickets', 'recruit']).optional(),
+    form: z.enum(['request-info', 'apply', 'update-info', 'give', 'ce-inquiry', 'tickets', 'recruit', 'visit']).optional(),
     /** Renders the pz-giving-cta personalization zone at the foot of the page. */
     givingCta: z.boolean().optional(),
   }),
@@ -181,4 +183,23 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { pages, programs, faculty, certificates, teams, news };
+// Events. Each event carries its own section and audience, so an alumni
+// event builds alumni affinity in Phase 2. Dates are full ISO dates for
+// sorting; pages show month and day only.
+const events = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/events', generateId: idFromPath }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    ...meta,
+    program: z.string().optional(),
+    date: z.coerce.date(),
+    /** Display text, e.g. "Friday through Sunday" or "6:00–7:30 p.m." */
+    time: z.string(),
+    location: z.string(),
+    category: z.enum(['Admissions', 'Alumni', 'Academic', 'Continuing Ed', 'Giving']),
+    faqs,
+  }),
+});
+
+export const collections = { pages, programs, faculty, certificates, teams, news, events };

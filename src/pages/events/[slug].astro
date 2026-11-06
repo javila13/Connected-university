@@ -1,0 +1,54 @@
+---
+// Event page. Content from content/events/<id>.md. Section and audience come
+// from the event, so an alumni event builds alumni affinity in Phase 2.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Faq from '../../components/Faq.astro';
+import RsvpForm from '../../components/RsvpForm.astro';
+import { shortDate } from '../../lib/athletics.js';
+import { fillFacts } from '../../lib/fill-facts.js';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/events/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const description = fillFacts(d.description, where);
+---
+<BaseLayout
+  title={d.title}
+  description={description}
+  section={d.section}
+  audience={d.audience}
+  program={d.program}
+  topic={d.topic ?? entry.id}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.title} lede={description} eyebrow={`${d.category} event`} />
+  <div class="wrap detail">
+    <div class="detail__main">
+      <article class="prose" set:html={html} />
+      <RsvpForm eventId={entry.id} eventTitle={d.title} />
+      <Faq faqs={d.faqs} where={where} />
+    </div>
+    <aside class="detail__side" aria-label="Event details">
+      <div class="glance">
+        <h2>Details</h2>
+        <dl class="glance__facts">
+          <dt>Date</dt><dd>{shortDate(d.date)}</dd>
+          <dt>Time</dt><dd>{d.time}</dd>
+          <dt>Where</dt><dd>{d.location}</dd>
+        </dl>
+        <div class="glance__actions">
+          <a class="btn btn--gold" href="#rsvp-heading" data-cta="rsvp">Register</a>
+          <a class="btn btn--ghost" href="/events/">All events</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
