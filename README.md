@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is complete: 106 pages covering every §4 section and the global pages. Phase 2 (simulation) is next.
+**Status:** live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phases 0 (scaffold) and 1 (content, 106 pages) are complete. Phase 2 (simulation) is in progress: the event store, affinity engine and Data 360 inspector drawer are in. **Demo click-paths for the team are in [`docs/demo-guide.md`](docs/demo-guide.md).**
 
 ## Run it locally
 
@@ -47,6 +47,14 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | "Simulated" badge | Show or hide the badge on simulated UI |
 
 URL params override the saved settings for one browser tab: `?mode=both`, `?piper=0`, `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`.
+
+## Simulation (`sim/`)
+
+Data 360 tracking is simulated in the browser (PLAN.md §5). With cookie consent and the Simulation switched on in `/demo`, every page view, call-to-action click and demo-form start and submit is recorded against an anonymous device and scored into affinities. Nothing leaves the browser.
+
+- **Inspector:** the blue **Data 360** tab on the right edge of any page, or **Ctrl+Alt+I**. Tabs: Profile, Engagement, Affinities.
+- **Reset:** `/demo` → **Reset visitor**.
+- **Weights:** `sim/config.js` (page view 1, click 3, form start 2, form submit 5, 30 seconds on a page +1).
 
 ## Site search
 
@@ -121,7 +129,8 @@ Every demo form (Request Information, Apply, Update Your Info, Give Now, CE Inqu
 content/          pages, programs, faculty, certificates, teams, news, events (Markdown); facts.json, nav.json, sofia.json
 src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
-src/scripts/      consent, demo settings, chat widget slots, search
+src/scripts/      consent, demo settings, chat widget slots, search, demo forms, portal
+sim/              the simulation: profile store, affinity engine, tracker, inspector
 integrations/     build step that writes the search index
 src/lib/          metadata vocabulary, nav and route helpers
 public/           demo-config.js, assets/
