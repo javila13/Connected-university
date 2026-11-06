@@ -1,0 +1,22 @@
+---
+// News article cards, newest first.
+import { newsUrl } from '../lib/routes.js';
+import { shortDate } from '../lib/athletics.js';
+
+interface Props {
+  items: any[];
+}
+const { items } = Astro.props;
+const LABELS: Record<string, string> = { athletics: 'Athletics', campus: 'Campus', research: 'Research', alumni: 'Alumni' };
+---
+<ul class="cards">
+  {items.map((n) => (
+    <li>
+      <a class="card" href={newsUrl(n.id)} data-news={n.id}>
+        <span class="card__eyebrow">{LABELS[n.data.category]} · {shortDate(n.data.date)}</span>
+        <span class="card__title">{n.data.title}</span>
+        <span class="card__text">{n.data.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>

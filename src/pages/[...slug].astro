@@ -1,7 +1,8 @@
 ---
 // Renders every Markdown page in content/pages. Optional frontmatter adds
 // program cards (listPrograms), the faculty directory (listFaculty),
-// certificate cards (listCertificates), the pz-next-credential zone
+// certificate cards (listCertificates), team cards (listTeams), the full
+// schedule (listSchedule), news cards (listNews), the pz-next-credential zone
 // (nextCredential), a demo form (form), an FAQ block and the pz-giving-cta
 // zone (givingCta). A block marker on its own line in the Markdown places a
 // component at that spot: `<!-- cost-table -->`, `<!-- society-join -->` or
@@ -22,6 +23,12 @@ import CertificatePathways from '../components/CertificatePathways.astro';
 import CertificateCards from '../components/CertificateCards.astro';
 import NextCredential from '../components/NextCredential.astro';
 import CeInquiryForm from '../components/CeInquiryForm.astro';
+import TeamCards from '../components/TeamCards.astro';
+import ScheduleTable from '../components/ScheduleTable.astro';
+import NewsCards from '../components/NewsCards.astro';
+import TicketsForm from '../components/TicketsForm.astro';
+import RecruitForm from '../components/RecruitForm.astro';
+import { allGames } from '../lib/athletics.js';
 import { hubChildren } from '../lib/routes.js';
 import { programsFor, groupBySchool } from '../lib/academics.js';
 import { fillFacts } from '../lib/fill-facts.js';
@@ -51,7 +58,16 @@ const people = d.listFaculty
 const certificates = d.listCertificates
   ? (await getCollection('certificates')).sort((a, b) => a.data.shortTitle.localeCompare(b.data.shortTitle))
   : [];
-const FORMS = { give: GiftForm, 'ce-inquiry': CeInquiryForm };
+const teams = d.listTeams
+  ? (await getCollection('teams')).sort((a, b) => a.data.name.localeCompare(b.data.name))
+  : [];
+const games = d.listSchedule ? await allGames() : [];
+const news = d.listNews
+  ? (await getCollection('news'))
+      .filter((n) => d.listNews === 'all' || n.data.category === d.listNews)
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  : [];
+const FORMS = { give: GiftForm, 'ce-inquiry': CeInquiryForm, tickets: TicketsForm, recruit: RecruitForm };
 const FormComponent = d.form ? FORMS[d.form as keyof typeof FORMS] : undefined;
 ---
 <BaseLayout
@@ -84,6 +100,24 @@ const FormComponent = d.form ? FORMS[d.form as keyof typeof FORMS] : undefined;
       <section class="listing" aria-labelledby="certificates-heading">
         <h2 id="certificates-heading">{d.listHeading ?? 'Certificates'}</h2>
         <CertificateCards items={certificates} />
+      </section>
+    )}
+    {teams.length > 0 && (
+      <section class="listing" aria-labelledby="teams-heading">
+        <h2 id="teams-heading">{d.listHeading ?? 'Teams'}</h2>
+        <TeamCards items={teams} />
+      </section>
+    )}
+    {games.length > 0 && (
+      <section class="listing" aria-labelledby="schedule-heading">
+        <h2 id="schedule-heading">{d.listHeading ?? 'Schedule'}</h2>
+        <ScheduleTable games={games} showTeam />
+      </section>
+    )}
+    {news.length > 0 && (
+      <section class="listing" aria-labelledby="news-heading">
+        <h2 id="news-heading">{d.listHeading ?? 'Latest news'}</h2>
+        <NewsCards items={news} />
       </section>
     )}
     {FormComponent && <FormComponent />}

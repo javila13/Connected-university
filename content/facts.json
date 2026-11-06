@@ -83,6 +83,13 @@
       { "id": "athletics", "name": "Athletics Fund" }
     ]
   },
+  "athletics": {
+    "mascot": "Condors",
+    "conference": "Coastal Mesa Athletic Conference",
+    "tickets": { "adult": 10, "youthSenior": 5, "student": 0 },
+    "allSportsPass": 75,
+    "boosterLevels": { "fan": 100, "flightCrew": 250, "captain": 500, "champion": 1000 }
+  },
   "scholarships": {
     "presidential": 25000,
     "dean": 15000,

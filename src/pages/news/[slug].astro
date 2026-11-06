@@ -1,0 +1,55 @@
+---
+// News article. Content from content/news/<id>.md. Its section and audience
+// come from the article (an athletics story is section "athletics", audience
+// "fan"), so Phase 2 tracks it with the right affinity.
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import NewsCards from '../../components/NewsCards.astro';
+import { teamUrl, pickLive } from '../../lib/routes.js';
+import { shortDate } from '../../lib/athletics.js';
+import { fillFacts } from '../../lib/fill-facts.js';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/news/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const team = d.team ? await getEntry(d.team) : null;
+const LABELS: Record<string, string> = { athletics: 'Athletics', campus: 'Campus', research: 'Research', alumni: 'Alumni' };
+const more = (await getCollection('news'))
+  .filter((n) => n.id !== entry.id && n.data.category === d.category)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const backTo = d.category === 'athletics' ? await pickLive('/athletics/news/', '/news/') : '/news/';
+---
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  section={d.section}
+  audience={d.audience}
+  program={d.program}
+  topic={d.topic ?? (team ? team.id : d.category)}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.title} lede={d.description} eyebrow={`${LABELS[d.category]} news`} />
+  <div class="wrap">
+    <article class="prose">
+      <p class="article-meta">
+        {shortDate(d.date)}{team && <> · <a href={teamUrl(team.id)}>{team.data.name}</a></>}
+      </p>
+      <Fragment set:html={html} />
+      <p><a href={backTo}>More {LABELS[d.category].toLowerCase()} news</a></p>
+    </article>
+    {more.length > 0 && (
+      <section class="listing" aria-labelledby="more-heading">
+        <h2 id="more-heading">More stories</h2>
+        <NewsCards items={more} />
+      </section>
+    )}
+  </div>
+</BaseLayout>

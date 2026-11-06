@@ -1,0 +1,82 @@
+---
+// Prospective student-athlete questionnaire (demo). Sends nothing; fires
+// cu:form-start / cu:form-submit (form: 'recruit'). ?sport=<team id> preselects.
+import { getCollection } from 'astro:content';
+import { pickLive } from '../lib/routes.js';
+
+const teams = (await getCollection('teams')).sort((a, b) => a.data.name.localeCompare(b.data.name));
+const links = {
+  admissions: await pickLive('/admissions/undergraduate/', '/admissions/'),
+  visit: await pickLive('/visit/'),
+};
+---
+<section class="demo-form" aria-labelledby="recruit-heading">
+  <h2 id="recruit-heading">Recruiting questionnaire</h2>
+  <form data-cu-form="recruit" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for="recruit-first">First name</label>
+        <input id="recruit-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="recruit-last">Last name</label>
+        <input id="recruit-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for="recruit-email">Email</label>
+        <input id="recruit-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="recruit-phone">Mobile phone <span class="optional">(optional)</span></label>
+        <input id="recruit-phone" name="phone" type="tel" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label for="recruit-sport">Sport</label>
+        <select id="recruit-sport" name="sport" required>
+          <option value="">Choose one</option>
+          {teams.map((t) => <option value={t.id}>{t.data.name}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="recruit-year">High school graduation year</label>
+        <input id="recruit-year" name="gradYear" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="YYYY" required />
+      </div>
+      <div class="field">
+        <label for="recruit-school">High school or club team</label>
+        <input id="recruit-school" name="school" type="text" required />
+      </div>
+      <div class="field">
+        <label for="recruit-position">Position or events <span class="optional">(optional)</span></label>
+        <input id="recruit-position" name="position" type="text" />
+      </div>
+      <div class="field field--wide">
+        <label for="recruit-video">Link to highlight video <span class="optional">(optional)</span></label>
+        <input id="recruit-video" name="videoUrl" type="url" placeholder="https://" />
+      </div>
+      <div class="field field--wide">
+        <label for="recruit-message">Anything else coaches should know? <span class="optional">(optional)</span></label>
+        <textarea id="recruit-message" name="message" rows="3"></textarea>
+      </div>
+      <div class="field field--wide field--check">
+        <input id="recruit-sms" name="smsOptIn" type="checkbox" value="yes" />
+        <label for="recruit-sms">Text me about camps and visit days.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Send to Coaches</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="recruit" tabindex="-1" hidden>
+    <h3>Thanks, <span data-first-name></span>. Your questionnaire is in for <span data-field="sport"></span>.</h3>
+    <p>While you wait, you can:</p>
+    <ul class="check-list">
+      <li><a href={links.admissions}>Learn how to apply</a></li>
+      <li><a href={links.visit}>Plan a campus visit</a></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>

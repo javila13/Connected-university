@@ -1,0 +1,38 @@
+---
+// Game schedule table. Home games link to the tickets form with the game
+// preselected.
+import { pickLive, teamUrl } from '../lib/routes.js';
+import { shortDate } from '../lib/athletics.js';
+
+interface Props {
+  games: any[];
+  showTeam?: boolean;
+}
+const { games, showTeam = false } = Astro.props;
+const tickets = await pickLive('/athletics/tickets/', '/athletics/');
+---
+<table class="schedule">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      {showTeam && <th scope="col">Team</th>}
+      <th scope="col">Opponent</th>
+      <th scope="col">Time</th>
+      <th scope="col"><span class="visually-hidden">Tickets</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {games.map((g) => (
+      <tr>
+        <td class="schedule__date">{shortDate(g.date)}</td>
+        {showTeam && <td><a href={teamUrl(g.team.id)}>{g.team.data.name}</a></td>}
+        <td>
+          {g.home ? 'vs. ' : 'at '}{g.opponent}
+          {g.note && <span class="schedule__note"> · {g.note}</span>}
+        </td>
+        <td>{g.time}</td>
+        <td>{g.home ? <a href={`${tickets}?game=${g.id}`} data-cta="tickets">Tickets</a> : <span class="schedule__away">Away</span>}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

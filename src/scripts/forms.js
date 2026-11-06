@@ -9,7 +9,8 @@
 //
 // Links can preselect fields: ?program=<program id>, ?type=<student type>,
 // ?amount=<whole dollars>, ?frequency=one-time|monthly, ?designation=<fund id>,
-// ?interest=<certificate id or ce-inquiry option>.
+// ?interest=<certificate id or ce-inquiry option>, ?game=<game id>,
+// ?sport=<team id>.
 //
 // In a confirmation, [data-first-name] shows the first name and
 // [data-field="<name>"] shows a field (a select shows its option's label;
@@ -23,6 +24,8 @@ const PARAMS = {
   frequency: 'frequency',
   designation: 'designation',
   interest: 'interest',
+  game: 'game',
+  sport: 'sport',
 };
 
 function setField(form, name, value) {
