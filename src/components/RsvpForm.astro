@@ -1,0 +1,55 @@
+---
+// Event RSVP demo form, shown on each event page. Sends nothing; fires
+// cu:form-start / cu:form-submit (form: 'rsvp', fields.event = the event id).
+interface Props {
+  eventId: string;
+  eventTitle: string;
+}
+const { eventId, eventTitle } = Astro.props;
+---
+<section class="demo-form" aria-labelledby="rsvp-heading">
+  <h2 id="rsvp-heading">Register</h2>
+  <form data-cu-form="rsvp" novalidate>
+    <input type="hidden" name="event" value={eventId} />
+    <div class="form-grid">
+      <div class="field">
+        <label for="rsvp-first">First name</label>
+        <input id="rsvp-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="rsvp-last">Last name</label>
+        <input id="rsvp-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for="rsvp-email">Email</label>
+        <input id="rsvp-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="rsvp-guests">Guests besides you</label>
+        <select id="rsvp-guests" name="guests">
+          <option value="0">None</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <div class="field field--wide field--check">
+        <input id="rsvp-sms" name="smsOptIn" type="checkbox" value="yes" />
+        <label for="rsvp-sms">Text me a reminder the day before.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Register</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="rsvp" tabindex="-1" hidden>
+    <h3>You're registered, <span data-first-name></span>.</h3>
+    <p>See you at <strong>{eventTitle}</strong>.</p>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>

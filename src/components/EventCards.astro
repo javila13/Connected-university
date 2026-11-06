@@ -1,0 +1,22 @@
+---
+// Event cards, soonest first.
+import { eventUrl } from '../lib/routes.js';
+import { shortDate } from '../lib/athletics.js';
+
+interface Props {
+  items: any[];
+}
+const { items } = Astro.props;
+---
+<ul class="cards">
+  {items.map((e) => (
+    <li>
+      <a class="card" href={eventUrl(e.id)} data-event={e.id}>
+        <span class="card__eyebrow">{e.data.category} · {shortDate(e.data.date)}</span>
+        <span class="card__title">{e.data.title}</span>
+        <span class="card__meta">{e.data.time} <span class="card__formats">— {e.data.location}</span></span>
+        <span class="card__text">{e.data.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>

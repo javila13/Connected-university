@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; every §4 section is done (Academics, Admissions, Student Success, Alumni, Giving, Continuing Ed, Athletics). The global pages (About, News, Events, Visit) are next.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is complete: 106 pages covering every §4 section and the global pages. Phase 2 (simulation) is next.
 
 ## Run it locally
 
@@ -81,7 +81,8 @@ listPrograms: undergraduate # all | undergraduate | graduate | online: adds prog
 listHeading: Featured programs
 listGroupBySchool: true     # group the cards by school
 listFaculty: true           # adds the faculty directory
-form: request-info          # request-info | apply | update-info | give | ce-inquiry | tickets | recruit: adds a demo form (sends nothing)
+form: request-info          # request-info | apply | update-info | give | ce-inquiry | tickets | recruit | visit: adds a demo form (sends nothing)
+listEvents: true            # adds event cards, soonest first
 listTeams: true             # adds the Athletics team cards
 listSchedule: true          # adds every team's games as one schedule
 listNews: all               # all | athletics | campus | research | alumni: adds news cards
@@ -102,7 +103,7 @@ A block marker on its own line places a component there: `<!-- cost-table -->` (
 
 ### Demo forms
 
-Every demo form (Request Information, Apply, Update Your Info, Give Now, CE Inquiry, Tickets and the recruiting questionnaire) sends nothing, and Give Now and Tickets have no payment fields. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>`, `?type=transfer-student`, `?amount=1000`, `?frequency=monthly`, `?designation=<fund id>`, `?interest=<certificate id>`, `?game=<game id>` or `?sport=<team id>` to preselect fields.
+Every demo form (Request Information, Apply, Update Your Info, Give Now, CE Inquiry, Tickets, the recruiting questionnaire, Campus Tour and event RSVPs) sends nothing, and Give Now and Tickets have no payment fields. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>`, `?type=transfer-student`, `?amount=1000`, `?frequency=monthly`, `?designation=<fund id>`, `?interest=<certificate id>`, `?game=<game id>`, `?sport=<team id>` or `?visit=<visit type>` to preselect fields.
 
 ### Programs and faculty
 
@@ -110,13 +111,14 @@ Every demo form (Request Information, Apply, Update Your Info, Give Now, CE Inqu
 - **Faculty:** add `content/faculty/<id>.md`; it's served at `/academics/faculty/<id>/`. See `content/faculty/olga-martinez.md`.
 - **Team:** add `content/teams/<id>.md`; it's served at `/athletics/teams/<id>/`. Frontmatter holds season, venue, head coach, highlights and a schedule of games (`date` as YYYY-MM-DD; pages show month and day only). See `content/teams/womens-soccer.md`.
 - **News article:** add `content/news/<id>.md`; it's served at `/news/<id>/`. Frontmatter holds date, category, section, audience and optional `team` or `program`.
+- **Event:** add `content/events/<id>.md`; it's served at `/events/<id>/` with an RSVP form. Frontmatter holds date, time, location, category, section and audience.
 - **Certificate:** add `content/certificates/<id>.md`; it's served at `/continuing-ed/certificates/<id>/`. Frontmatter holds formats, credits, length, price, start terms, courses, outcomes, and optional `director`, `pathway` and `featured` (exactly one certificate is featured). See `content/certificates/sustainability.md`.
 - `faculty`, `related` and `programs` lists take ids. A typo fails the build.
 
 ## Layout
 
 ```
-content/          pages, programs, faculty, certificates, teams, news (Markdown); facts.json, nav.json, sofia.json
+content/          pages, programs, faculty, certificates, teams, news, events (Markdown); facts.json, nav.json, sofia.json
 src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
 src/scripts/      consent, demo settings, chat widget slots, search

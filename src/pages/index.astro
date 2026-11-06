@@ -3,11 +3,23 @@
 // Numbers come from content/facts.json only.
 import fs from 'node:fs';
 import path from 'node:path';
+import { getEntries } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProgramCards from '../components/ProgramCards.astro';
 import { pickLive } from '../lib/routes.js';
 import facts from '../../content/facts.json';
 
 const { programs, research, taglines } = facts;
+
+// pz-recommended-programs default variant (PLAN.md §5.4): three programs
+// from different schools. Phase 2 re-ranks them by the visitor's affinities.
+const featured = (
+  await getEntries([
+    { collection: 'programs', id: 'environmental-science' },
+    { collection: 'programs', id: 'nursing' },
+    { collection: 'programs', id: 'business-administration' },
+  ])
+).map((entry) => ({ entry, credentials: entry.data.credentials }));
 
 // Links point at Phase 1 pages when they exist, else at the section hub.
 const links = {
@@ -22,6 +34,7 @@ const links = {
   about: await pickLive('/about/mission/', '/about/'),
   campusLife: await pickLive('/student-success/campus-life/', '/student-success/'),
   alumni: await pickLive('/alumni/network/', '/alumni/'),
+  programs: await pickLive('/academics/programs/', '/academics/'),
 };
 
 const heroFile = ['home-hero.jpg', 'home-hero.webp', 'home-hero.png'].find((f) =>
@@ -79,6 +92,22 @@ const pillars = [
           </li>
         ))}
       </ul>
+    </div>
+  </section>
+
+  <!-- Personalization zone (PLAN.md §5.4): this is the default variant. -->
+  <section
+    id="pz-recommended-programs"
+    class="band band--soft"
+    data-pz-zone="pz-recommended-programs"
+    data-pz-variant="default"
+    aria-labelledby="home-programs-heading"
+  >
+    <div class="wrap">
+      <p class="eyebrow center">Find your fit</p>
+      <h2 class="center" id="home-programs-heading">Programs to explore</h2>
+      <ProgramCards items={featured} />
+      <p class="center home-programs__all"><a href={links.programs}>See all degree programs</a></p>
     </div>
   </section>
 
@@ -186,6 +215,9 @@ const pillars = [
   }
   .center {
     text-align: center;
+  }
+  .home-programs__all {
+    margin: 1.75rem 0 0;
   }
   .eyebrow {
     font: 600 0.8rem/1.3 var(--font-body);
