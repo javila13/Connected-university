@@ -27,8 +27,10 @@ const children = await hubChildren(`/${entry.id}/`);
 
 const programs = d.listPrograms ? await programsFor(d.listPrograms) : [];
 const groups = d.listGroupBySchool ? groupBySchool(programs) : [];
+// Faculty directory is A to Z by last name.
+const lastName = (p) => p.data.name.split(' ').at(-1);
 const people = d.listFaculty
-  ? (await getCollection('faculty')).sort((a, b) => a.data.name.localeCompare(b.data.name))
+  ? (await getCollection('faculty')).sort((a, b) => lastName(a).localeCompare(lastName(b)))
   : [];
 ---
 <BaseLayout

@@ -90,7 +90,7 @@ Institutional numbers live only in `content/facts.json`. Quote them with tokens,
 ### Programs and faculty
 
 - **Program:** add `content/programs/<id>.md`; it's served at `/academics/programs/<id>/`. Frontmatter holds `school` (an id from `facts.json`), `credentials` (name, short, level, formats, credits, duration), `startTerms`, `courses`, `careers`, and optional `faculty`, `related`, `certificate` and `faqs`. See `content/programs/environmental-science.md`.
-- **Faculty:** add `content/faculty/<id>.md`; it's served at `/academics/faculty/<id>/`. See `content/faculty/martinez.md`.
+- **Faculty:** add `content/faculty/<id>.md`; it's served at `/academics/faculty/<id>/`. See `content/faculty/olga-martinez.md`.
 - `faculty`, `related` and `programs` lists take ids. A typo fails the build.
 
 ## Layout

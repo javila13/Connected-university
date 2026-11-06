@@ -1,5 +1,5 @@
 ---
-name: Dr. Martinez
+name: Dr. Olga Martinez
 role: Associate Professor of Chemistry
 description: Teaches Organic Chemistry and advises Environmental Science majors from their first semester to graduation.
 section: academics
@@ -21,7 +21,7 @@ office: Science & Sustainability Hall, Room 214
 officeHours: Tuesdays and Thursdays, 1–3 p.m., and by appointment
 ---
 
-Dr. Martinez teaches Organic Chemistry, the course many science majors call the hardest of their college career, and believes that's exactly why it deserves the most support.
+Dr. Olga Martinez teaches Organic Chemistry, the course many science majors call the hardest of their college career, and believes that's exactly why it deserves the most support.
 
 Dr. Martinez watches for early signs that a student is struggling, like a missed lab or a rough first exam, and reaches out in the first weeks of the term rather than at midterm. When a student needs more help, Dr. Martinez raises an early alert that connects them with tutoring and advising right away. Students who drop the course and retake it often finish stronger the second time, and Dr. Martinez makes sure they know that's a normal path, not a failure.
 

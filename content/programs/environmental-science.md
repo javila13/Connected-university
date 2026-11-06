@@ -29,7 +29,7 @@ careers:
   - Restoration ecologist
   - Environmental health and safety specialist
   - Graduate study in science, public health or law
-faculty: [martinez, helena-ostrowski]
+faculty: [olga-martinez, helena-ostrowski]
 related: [sustainability-studies, engineering, computer-science]
 certificate:
   label: Professional Certificate in Sustainability
@@ -63,4 +63,4 @@ Every Environmental Science major completes a senior capstone: a real project fo
 
 ## An advisor from day one
 
-Every major is matched with a faculty advisor in their first semester and keeps that advisor through graduation. Advisors help you plan your courses, find research and internships, and get support quickly if a class gets hard. [Dr. Martinez](/academics/faculty/martinez/), who teaches Organic Chemistry, advises many of our Environmental Science majors.
+Every major is matched with a faculty advisor in their first semester and keeps that advisor through graduation. Advisors help you plan your courses, find research and internships, and get support quickly if a class gets hard. [Dr. Olga Martinez](/academics/faculty/olga-martinez/), who teaches Organic Chemistry, advises many of our Environmental Science majors.
