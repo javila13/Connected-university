@@ -227,6 +227,9 @@ code {
   top: 0;
   z-index: 50;
   box-shadow: 0 1px 0 var(--cu-line);
+  /* The menu collapses by the header's own width (below), so it also fits
+     when the Data 360 drawer narrows the page. */
+  container: site-header / inline-size;
 }
 .site-header__inner {
   display: flex;
@@ -363,7 +366,7 @@ code {
   color: var(--cu-navy);
 }
 
-@media (max-width: 1200px) {
+@container site-header (max-width: 1200px) {
   .menu-toggle {
     display: block;
   }
@@ -404,6 +407,8 @@ code {
   .site-header__inner {
     min-height: 84px;
   }
+}
+@media (max-width: 1200px) {
   .utility-bar .wrap {
     flex-direction: column;
     align-items: flex-start;

@@ -252,3 +252,52 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
   - Smoke: 1,135 checks.
   - Browser suites: global 48, Athletics 62, Continuing Ed 47, Giving 46, Alumni 31, Portal 37, Forms 43, regression 66, all passing locally.
 - **Next:** Phase 2 (simulation): event store, affinity engine, inspector drawer, `/data360`, personalization rules for the four zones, identity stitch on the forms and portal sign-in, persona presets, and the Agentforce mock with scripts.
+
+### Process after PR 8
+- 2026-11-06: Merged PR #8 at Jesse's request (`55c1386`). The global pages went live about 20 seconds after the merge *(verified — `npm run smoke` 1,135/1,135 against the live site, 2026-11-06)*. **Phase 1 is complete.** Jesse skipped the retrospective.
+
+## Phase 2: Simulation
+
+### How Phase 2 runs
+- 2026-11-06: Smaller pull requests (Jesse):
+  1. Collection (event store, affinity engine, inspector drawer)
+  2. Companion window and presets
+  3. Identity stitch
+  4. Personalization
+  5. Agentforce mock
+  6. Wrap-up (tuner, polish, summary)
+- 2026-11-06: Review is by demo click-through (Jesse). Each PR's click-through is written the way the team would run the demo, in `docs/demo-guide.md`. Each step gives the click, what the audience sees and a line to say (Jesse's pick). The guide lives in the repo so it changes with the site. It's published as a shareable page once all six story paths exist (Jesse).
+
+### Collection (Phase 2 PR 1)
+- 2026-11-06: The simulation lives in `sim/` at the repo root (CLAUDE.md), as plain browser JavaScript: `config.js` (weights and object names), `store.js` (profile), `affinity.js`, `tracker.js`, `views.js` (tab rendering, shared with `/data360` next) and `inspector.js` (drawer). `BaseLayout` loads it after `src/scripts/site.js`; `/demo` and `/data360` don't.
+- 2026-11-06: The profile is one object in `localStorage` (`cu_sim_state`): device ID, engagement rows (capped at 300) and affinities. It syncs across tabs with `BroadcastChannel('cu-sim')` (D11), plus the `storage` event, which also catches `/demo` "Reset visitor" *(verified — Playwright: a page view in one tab appears live in another tab's drawer; reset clears an open drawer, 2026-11-06)*. Nothing is saved before the first recorded event, and nothing is recorded without consent `all` and the Simulation switched on *(verified — 2026-11-06)*.
+- 2026-11-06: Engagement rows are modeled on `UMA_WebsiteEngagement` (§5.2): page URL, channel action, timestamp, device ID, section, program and topic. Recorded actions:
+  - `PAGE_VIEW` on load
+  - `CLICK` on calls to action (`[data-cta]`, `.btn` links and buttons)
+  - `FORM_START` and `FORM_SUBMIT` from the demo forms' events
+
+  Submit buttons aren't double-counted as clicks. The 30-second dwell bonus updates the page-view row ("engaged 30s") rather than adding a row. Search and the 404 aren't tracked (Phase 0 decision).
+- 2026-11-06: Affinities are modeled on `PersonAffinity_std__dlm` (§5.3). Each page maps to up to four categories:
+  - **Academic interest:** its program
+  - **Interest:** its section. Only for Academics, Admissions, Student Success, Student Portal, Alumni, Giving, Continuing Ed, Athletics and Visit, not Home, News or legal pages.
+  - **Topic:** its topic, skipped when it repeats the section or program
+  - **Life stage:** its audience
+
+  Weights follow §5.2: page view 1, click 3, form start 2, form submit 5, dwell +1. There's no decay. Labels come from a small build-time catalog in each page (`#cu-sim-catalog`: program titles, certificate and team names).
+- 2026-11-06: The Affinities tab groups by type, with academic interest first. Ranked together, the life-stage signal (every page has one) would always come out on top and bury the academic interest the stories key on.
+- 2026-11-06: The inspector drawer opens from a blue "Data 360" tab on the right edge or with **Ctrl+Alt+I**. It remembers whether it's open, and which tab, across page loads (per browser tab, `sessionStorage`). Tabs in this PR: Profile (anonymous visitor and device), Engagement and Affinities. Identity and Decisions arrive with their PRs. New rows flash for 2 seconds. Under `.d360` the styles are Lightning-like, not a copy (CLAUDE.md), and the "Simulated" badge follows `/demo`.
+- 2026-11-06: On screens 1024px and wider, the open drawer narrows the page instead of covering it, so the presenter can keep clicking sidebar buttons while watching. To keep the header fitting, the menu now collapses by the header's own width (a CSS container query) rather than the window's. A browser test caught the drawer hiding the "At a glance" Request Information button *(verified — Playwright, 2026-11-06)*.
+- 2026-11-06: `/demo`: the disabled "Open inspector drawer" button is replaced by instructions (tab or Ctrl+Alt+I), since the drawer lives on site pages, not in `/demo`.
+- 2026-11-06: **Identity moments widened (Jesse):** every demo form that collects an email stitches the anonymous visitor to Sofia, not only PLAN.md §5.5's list. The recruiting questionnaire is the exception, since it's for high-school athletes. Each form loads the Sofia life stage that fits:
+
+  | Form | Sofia stage |
+  | --- | --- |
+  | Request Information, Apply, Campus Tour | prospect |
+  | Student Portal sign-in | student |
+  | Update Your Info, Give Now, Tickets | alumna/donor |
+  | CE Inquiry | learner |
+  | Event RSVP | the event's audience: Open House, Admitted Students Day and the lecture → prospect; Homecoming → alumna; Giving Day → donor; certificate info session → learner |
+
+  Tickets mapping to alumna/donor is my call, because Athletics has no Sofia stage *(uncertain — flag for review)*.
+- 2026-11-06: In real life a gift is an identity moment too. It becomes a Gift Transaction on a Contact, and Data 360 resolves that Contact to the Unified Individual. The demo org needs the Contact ID on the Gift Transaction for that to work *(verified — edu-cloud-dc-demo skill)*. Whether a live website stitches at the moment of the gift depends on the giving platform sending an identity event with the email; many process the gift first and sync it to CRM later *(hypothesis — needs validation against the giving platform used in a demo)*. If the visitor is already Sofia, a gift is logged as a conversion and changes nothing else. This ships in the identity-stitch release (Phase 2 PR 3). PLAN.md is unchanged; this log records the extension.
+- 2026-11-06: The inspector's Profile tab now says the stitch is coming in the identity-stitch release, and that any form with an email or a portal sign-in triggers it.

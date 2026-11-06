@@ -1,14 +1,17 @@
 ---
 // Every public page renders through this layout. It enforces the page
 // metadata contract (PLAN.md §5.1) and writes the metadata to <body data-*>,
-// which is the only place the simulation reads it from.
+// which is the only place the simulation reads it from. It also loads the
+// simulation (sim/) and the labels it needs (#cu-sim-catalog).
 import '@fontsource/newsreader/latin-400.css';
 import '@fontsource/newsreader/latin-600.css';
 import '../styles/global.css';
+import '../../sim/inspector.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import { assertPageMeta } from '../lib/taxonomy.js';
+import { getSimCatalog } from '../lib/sim-catalog.js';
 import facts from '../../content/facts.json';
 
 interface Props {
@@ -24,6 +27,7 @@ interface Props {
 const { title, description, section, audience, program, topic, personaHook } = Astro.props;
 assertPageMeta({ section, audience }, Astro.url.pathname);
 const fullTitle = section === 'home' ? `${facts.name} | Home` : `${title} | ${facts.name}`;
+const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang="en">
@@ -54,8 +58,10 @@ const fullTitle = section === 'home' ? `${facts.name} | Home` : `${title} | ${fa
     </main>
     <Footer />
     <ConsentBanner />
+    <script type="application/json" id="cu-sim-catalog" set:html={simCatalog} />
     <script>
       import '../scripts/site.js';
+      import '../../sim/index.js';
     </script>
   </body>
 </html>
