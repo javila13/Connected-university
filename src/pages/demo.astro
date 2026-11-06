@@ -1,0 +1,320 @@
+---
+// Demo control panel (PLAN.md §7). Presenter-only: noindex, no site chrome.
+// Settings persist to localStorage and reach open site tabs via BroadcastChannel.
+import ToolLayout from '../layouts/ToolLayout.astro';
+import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
+---
+<ToolLayout title="Demo control panel">
+  <header class="tool-header">
+    <h1>Connected University · Demo control panel</h1>
+    <span class="spacer"></span>
+    <a class="slds-btn" href="/" id="back-link">← Back to site</a>
+    <a class="slds-btn" href="/data360/" target="cu-data360" data-open-companion>Open /data360</a>
+  </header>
+
+  <main class="tool-main">
+    <div class="status" role="status" aria-live="polite" id="status"></div>
+
+    <section class="card">
+      <h2>Experience</h2>
+      <p class="help">Saved in this browser and applied live to every open site tab.</p>
+      <div class="controls">
+        <label class="switch">
+          <input type="checkbox" data-setting="simulation" />
+          <span><strong>Simulation</strong> · Data 360 tracking, personalization and the Agentforce mock</span>
+          <span class="pill pill--warn" data-override-for="simulation" hidden>URL override</span>
+        </label>
+
+        <fieldset class="radio-group">
+          <legend><strong>Chat widgets</strong> <span class="pill pill--warn" data-override-for="widgetMode,forcePiper,forceAgentforce" hidden>URL override</span></legend>
+          <label><input type="radio" name="widgetMode" value="auto" /> <span><b>auto</b> · Piper on public pages, Agentforce on student, alumni and giving pages</span></label>
+          <label><input type="radio" name="widgetMode" value="piper" /> <span><b>piper</b> · Piper everywhere</span></label>
+          <label><input type="radio" name="widgetMode" value="agentforce" /> <span><b>agentforce</b> · Agentforce mock everywhere</span></label>
+          <label><input type="radio" name="widgetMode" value="both" /> <span><b>both</b> · both everywhere, mock bottom-left</span></label>
+        </fieldset>
+
+        <label class="select">
+          <span><strong>Agent persona</strong> <span class="pill pill--warn" data-override-for="agentPersona" hidden>URL override</span></span>
+          <select data-setting="agentPersona">
+            <option value="auto">Auto (by page audience)</option>
+            {Object.entries(AGENT_PERSONAS).map(([id, name]) => <option value={id}>{name}</option>)}
+          </select>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" data-setting="consentAutoAccept" />
+          <span><strong>Consent auto-accept</strong> · skip the cookie banner</span>
+          <span class="pill pill--warn" data-override-for="consentAutoAccept" hidden>URL override</span>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" data-setting="simulatedBadge" />
+          <span><strong>"Simulated" badge</strong> · on the Agentforce mock (and the inspector in Phase 2)</span>
+          <span class="pill pill--warn" data-override-for="simulatedBadge" hidden>URL override</span>
+        </label>
+      </div>
+      <p><button type="button" class="slds-btn" data-action="reset-settings">Restore defaults</button></p>
+    </section>
+
+    <section class="card">
+      <h2>Widget routing preview</h2>
+      <p class="help">What each page audience shows with the current settings (once consent is given).</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Audience</th><th>Piper</th><th>Agentforce mock</th><th>Agent persona</th></tr></thead>
+          <tbody id="routing">
+            {AUDIENCES.map((a) => <tr data-audience={a}><td>{a}</td><td></td><td></td><td></td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Visitor</h2>
+      <p class="help">Consent: <span class="pill" id="consent-state">–</span></p>
+      <div class="buttons">
+        <button type="button" class="slds-btn slds-btn--brand" data-action="reset-visitor">Reset visitor</button>
+        <button type="button" class="slds-btn" data-action="clear-consent">Clear consent only</button>
+        <button type="button" class="slds-btn" disabled title="Phase 2">Become Sofia</button>
+      </div>
+      <p class="help">Reset clears the simulated profile and the consent cookie. Settings are kept.</p>
+      <h3 class="sub">Persona presets <span class="pill">Phase 2</span></h3>
+      <div class="buttons">
+        <button type="button" class="slds-btn" disabled>Anonymous</button>
+        <button type="button" class="slds-btn" disabled>Sofia · Prospect</button>
+        <button type="button" class="slds-btn" disabled>Sofia · Student</button>
+        <button type="button" class="slds-btn" disabled>Sofia · Alumna/Donor</button>
+        <button type="button" class="slds-btn" disabled>Sofia · Learner</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Data 360 inspector</h2>
+      <div class="buttons">
+        <button type="button" class="slds-btn" disabled title="Phase 2">Open inspector drawer</button>
+        <a class="slds-btn" href="/data360/" target="cu-data360" data-open-companion>Open /data360 companion window</a>
+      </div>
+      <h3 class="sub">Affinity tuner <span class="pill">Phase 2</span></h3>
+      <p class="help">Action weights and thresholds arrive with the affinity engine.</p>
+    </section>
+
+    <section class="card">
+      <h2>Config readout</h2>
+      <div class="table-scroll">
+        <table>
+          <tbody>
+            <tr><th scope="row">Qualified (Piper)</th><td id="cfg-qualified"></td></tr>
+            <tr><th scope="row">Agentforce</th><td><span class="pill pill--ok">Simulated</span> client-side mock, no embed ID needed</td></tr>
+            <tr><th scope="row">Data 360 / Personalization</th><td><span class="pill pill--ok">Simulated</span> client-side, no SDK</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 class="sub">URL overrides in this tab</h3>
+      <p class="help">
+        Add <code>?piper=0</code>, <code>?agentforce=1</code>, <code>?mode=both</code>, <code>?agent=student-success</code>,
+        <code>?sim=0</code>, <code>?badge=0</code> or <code>?autoconsent=1</code> to any page URL. Overrides last for that
+        browser tab and beat the saved settings above.
+      </p>
+      <pre id="overrides">none</pre>
+      <p><button type="button" class="slds-btn" data-action="clear-overrides">Clear URL overrides</button></p>
+      <h3 class="sub">Effective settings</h3>
+      <pre id="effective"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Shortcuts</h2>
+      <p class="help"><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>D</kbd> on any site page opens this panel.</p>
+    </section>
+  </main>
+</ToolLayout>
+
+<style>
+  .status:empty {
+    display: none;
+  }
+  .status {
+    background: #e3f3e6;
+    border: 1px solid #91db8b;
+    color: #194e31;
+    border-radius: 0.25rem;
+    padding: 0.6rem 1rem;
+  }
+  .controls {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .switch,
+  .radio-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .switch input,
+  .radio-group input {
+    margin-top: 0.25rem;
+  }
+  .radio-group {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .radio-group legend {
+    padding: 0;
+    margin-bottom: 0.4rem;
+  }
+  .select {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 360px;
+  }
+  .select select {
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--slds-border);
+    border-radius: 0.25rem;
+    background: #fff;
+  }
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  h3.sub {
+    font-size: 0.9rem;
+    margin: 1.1rem 0 0.5rem;
+  }
+  kbd {
+    border: 1px solid var(--slds-border);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0 0.35rem;
+    background: #fff;
+    font-size: 0.85em;
+  }
+</style>
+
+<script>
+  import {
+    captureUrlOverrides,
+    getSettings,
+    getOverrides,
+    saveSettings,
+    resetSettings,
+    clearOverrides,
+    onSettingsChange,
+  } from '../scripts/settings.js';
+  import { getConsent, clearConsent } from '../scripts/consent.js';
+  import { resolveWidgets, getConfig } from '../scripts/widgets.js';
+  import { AGENT_PERSONAS } from '../lib/taxonomy.js';
+
+  captureUrlOverrides();
+
+  const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
+  const status = $('#status');
+  let statusTimer: number | undefined;
+  function say(msg: string) {
+    status.textContent = msg;
+    clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(() => (status.textContent = ''), 3000);
+  }
+
+  // "Back to site" returns to the page the presenter came from.
+  try {
+    const ref = document.referrer && new URL(document.referrer);
+    if (ref && ref.origin === location.origin && !ref.pathname.startsWith('/demo')) {
+      ($('#back-link') as HTMLAnchorElement).href = ref.pathname + ref.search;
+    }
+  } catch {}
+
+  const yes = '<span class="pill pill--ok">shown</span>';
+  const no = '<span class="pill">hidden</span>';
+
+  function render() {
+    const s = getSettings();
+    const overrides = getOverrides();
+
+    document.querySelectorAll<HTMLInputElement>('input[type=checkbox][data-setting]').forEach((input) => {
+      input.checked = Boolean(s[input.dataset.setting as keyof typeof s]);
+    });
+    document.querySelectorAll<HTMLInputElement>('input[name=widgetMode]').forEach((r) => {
+      r.checked = r.value === s.widgetMode;
+    });
+    ($('select[data-setting=agentPersona]') as HTMLSelectElement).value = s.agentPersona;
+    document.querySelectorAll<HTMLElement>('[data-override-for]').forEach((pill) => {
+      pill.hidden = !pill.dataset.overrideFor!.split(',').some((key) => key in overrides);
+    });
+
+    document.querySelectorAll<HTMLTableRowElement>('#routing tr').forEach((row) => {
+      const plan = resolveWidgets(row.dataset.audience, s);
+      row.cells[1].innerHTML = plan.piper ? yes : no;
+      row.cells[2].innerHTML = plan.agentforce ? `${yes} bottom-${plan.agentCorner}` : no;
+      row.cells[3].textContent = plan.agentforce ? AGENT_PERSONAS[plan.agentPersona as keyof typeof AGENT_PERSONAS] : '–';
+    });
+
+    const consent = getConsent();
+    const consentEl = $('#consent-state');
+    consentEl.textContent = consent ?? 'not answered';
+    consentEl.className = `pill ${consent === 'all' ? 'pill--ok' : 'pill--warn'}`;
+
+    const { qualifiedToken } = getConfig();
+    $('#cfg-qualified').innerHTML = qualifiedToken
+      ? `<span class="pill pill--ok">Live</span> token <code>${qualifiedToken.slice(0, 4)}…</code> from <code>demo-config.js</code>`
+      : '<span class="pill pill--warn">Stub</span> no token in <code>public/demo-config.js</code>; a placeholder bubble shows instead';
+
+    $('#overrides').textContent = Object.keys(overrides).length ? JSON.stringify(overrides, null, 2) : 'none';
+    $('#effective').textContent = JSON.stringify(s, null, 2);
+  }
+
+  document.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement | HTMLSelectElement;
+    if (t instanceof HTMLInputElement && t.type === 'checkbox' && t.dataset.setting) {
+      saveSettings({ [t.dataset.setting]: t.checked });
+    } else if (t instanceof HTMLInputElement && t.name === 'widgetMode') {
+      saveSettings({ widgetMode: t.value });
+    } else if (t instanceof HTMLSelectElement && t.dataset.setting === 'agentPersona') {
+      saveSettings({ agentPersona: t.value });
+    } else return;
+    say('Saved. Open site tabs update automatically.');
+  });
+
+  document.addEventListener('click', (e) => {
+    const action = (e.target as HTMLElement).closest<HTMLElement>('[data-action]')?.dataset.action;
+    if (action === 'reset-settings') {
+      resetSettings();
+      say('Settings restored to defaults.');
+    } else if (action === 'clear-overrides') {
+      clearOverrides();
+      history.replaceState(null, '', location.pathname);
+      say('URL overrides cleared for this tab.');
+    } else if (action === 'clear-consent') {
+      clearConsent();
+      render();
+      say('Consent cleared. The banner shows on the next page load.');
+    } else if (action === 'reset-visitor') {
+      try {
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith('cu_sim'))
+          .forEach((k) => localStorage.removeItem(k));
+      } catch {}
+      clearConsent();
+      render();
+      say('Visitor reset: simulated profile and consent cleared.');
+    }
+  });
+
+  // Reuse one named companion window so repeated clicks don't stack windows.
+  document.querySelectorAll<HTMLAnchorElement>('[data-open-companion]').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open(a.href, 'cu-data360', 'popup,width=1100,height=800')?.focus();
+    }),
+  );
+
+  onSettingsChange(render);
+  window.addEventListener('focus', render);
+  render();
+</script>

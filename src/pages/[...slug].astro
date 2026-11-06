@@ -1,0 +1,46 @@
+---
+// Renders every Markdown page in content/pages. A section hub (a page whose
+// route is a top-level nav item) also lists the section's live child pages.
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { hubChildren } from '../lib/routes.js';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const children = await hubChildren(`/${entry.id}/`);
+---
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  section={d.section}
+  audience={d.audience}
+  program={d.program}
+  topic={d.topic}
+  personaHook={d.personaHook}
+>
+  <section class="page-hero">
+    <div class="wrap">
+      {d.eyebrow && <p class="eyebrow">{d.eyebrow}</p>}
+      <h1>{d.title}</h1>
+      <p class="lede">{d.description}</p>
+    </div>
+  </section>
+  <div class="wrap">
+    <article class="prose">
+      <Content />
+    </article>
+    {children.length > 0 && (
+      <nav aria-label={`${d.title} pages`}>
+        <ul class="link-grid">
+          {children.map((c) => <li><a href={c.href}>{c.label}</a></li>)}
+        </ul>
+      </nav>
+    )}
+  </div>
+</BaseLayout>

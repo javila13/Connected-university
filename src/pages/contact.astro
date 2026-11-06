@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pickLive } from '../lib/routes.js';
+import facts from '../../content/facts.json';
+
+const { campus } = facts;
+const mapQuery = encodeURIComponent(`${campus.street}, ${campus.city}, ${campus.region} ${campus.postalCode}`);
+const requestInfo = await pickLive('/admissions/request-information/', '/admissions/');
+const visit = await pickLive('/visit/');
+---
+<BaseLayout
+  title="Contact"
+  description="Questions about programs, admissions or campus life? Here is how to reach Connected University."
+  section="contact"
+  audience="prospect"
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">We'd love to hear from you</p>
+      <h1>Contact Us</h1>
+      <p class="lede">Questions about programs, admissions or campus life? Here is how to reach Connected University.</p>
+    </div>
+  </section>
+  <div class="wrap contact">
+    <div>
+      <h2>Campus</h2>
+      <address>
+        {facts.name}<br />
+        {campus.street}<br />
+        {campus.city}, {campus.region} {campus.postalCode}<br />
+        {campus.phone}
+      </address>
+      <p><a href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`} rel="noopener">Get Directions</a></p>
+    </div>
+    <div>
+      <h2>Thinking about applying?</h2>
+      <p>Tell us what you are interested in and an admissions counselor will follow up with next steps.</p>
+      <p><a class="btn btn--gold" href={requestInfo}>Request Information</a></p>
+      <p>Prefer to see us in person? <a href={visit}>Plan a campus visit</a>.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    padding: clamp(2rem, 5vw, 4rem) var(--gutter);
+  }
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+  address {
+    font-style: normal;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .eyebrow {
+    font: 600 0.8rem/1 var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cu-gold-600);
+    margin-bottom: 1rem;
+  }
+</style>

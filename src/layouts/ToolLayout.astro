@@ -1,0 +1,182 @@
+---
+// Presenter-only tools (/demo, /data360). Not part of the public site:
+// `noindex` (PLAN.md §4, §7), no site chrome, no chat widgets, no consent
+// banner, and no page metadata, so they never feed the simulation.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} | Connected University demo tools</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline src="/demo-config.js"></script>
+  </head>
+  <body class="tool">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Lightning-styled, not pixel-identical (CLAUDE.md). */
+  :root {
+    --slds-brand: #0176d3;
+    --slds-brand-dark: #014486;
+    --slds-text: #181818;
+    --slds-weak: #5c5c5c;
+    --slds-border: #dddbda;
+    --slds-bg: #f3f3f3;
+    --slds-card: #ffffff;
+    --slds-success: #2e844a;
+    --slds-warning: #a96404;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  body.tool {
+    margin: 0;
+    background: var(--slds-bg);
+    color: var(--slds-text);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  .tool-header {
+    background: #fff;
+    border-bottom: 1px solid var(--slds-border);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .tool-header h1 {
+    font-size: 1.15rem;
+    margin: 0;
+    font-weight: 700;
+  }
+  .tool-header .spacer {
+    flex: 1;
+  }
+  .tool-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 3rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .tool-main > * {
+    min-width: 0; /* let wide <pre> blocks scroll inside their card instead of widening the page */
+  }
+  .card {
+    background: var(--slds-card);
+    border: 1px solid var(--slds-border);
+    border-radius: 0.25rem;
+    padding: 1rem 1.25rem;
+  }
+  .card h2 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+  }
+  .card p.help {
+    color: var(--slds-weak);
+    margin: 0 0 0.75rem;
+  }
+  .tool a {
+    color: var(--slds-brand);
+  }
+  .tool button,
+  .tool select {
+    font: inherit;
+  }
+  .slds-btn {
+    background: #fff;
+    color: var(--slds-brand);
+    border: 1px solid var(--slds-border);
+    border-radius: 0.25rem;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .slds-btn:hover:not(:disabled) {
+    background: #f3f3f3;
+  }
+  .slds-btn--brand {
+    background: var(--slds-brand);
+    border-color: var(--slds-brand);
+    color: #fff;
+  }
+  .slds-btn--brand:hover:not(:disabled) {
+    background: var(--slds-brand-dark);
+  }
+  .slds-btn:disabled {
+    color: #c9c9c9;
+    cursor: not-allowed;
+  }
+  .pill {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.05rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid var(--slds-border);
+    background: #f3f3f3;
+    color: var(--slds-weak);
+    white-space: nowrap;
+  }
+  .pill--ok {
+    background: #e3f3e6;
+    border-color: #91db8b;
+    color: var(--slds-success);
+  }
+  .pill--warn {
+    background: #fef1e1;
+    border-color: #fcc003;
+    color: var(--slds-warning);
+  }
+  .tool :focus-visible {
+    outline: 2px solid var(--slds-brand);
+    outline-offset: 2px;
+  }
+  .tool code,
+  .tool pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+  }
+  .tool pre {
+    background: #f8f8f8;
+    border: 1px solid var(--slds-border);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .tool table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .tool th,
+  .tool td {
+    text-align: left;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--slds-border);
+    vertical-align: top;
+  }
+  .tool th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slds-weak);
+    font-weight: 600;
+  }
+  .table-scroll {
+    overflow-x: auto;
+  }
+</style>

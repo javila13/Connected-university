@@ -1,0 +1,34 @@
+{
+  "_about": "Single source of truth for institutional facts (CLAUDE.md, PLAN.md §11). Copy that needs a number not listed here: add it here first and log it in docs/decisions.md. Seed values are from connecteduniversity-mc.org, fetched 2026-11-06.",
+  "name": "Connected University",
+  "shortName": "Connected U",
+  "taglines": {
+    "primary": "Connect to Your Future",
+    "secondary": "More than just an education.",
+    "pillars": ["Connect to Opportunity", "Connect to Passion", "Connect to Community"]
+  },
+  "campus": {
+    "street": "11721 Telegraph Rd",
+    "city": "Santa Fe Springs",
+    "region": "CA",
+    "postalCode": "90670",
+    "phone": "(100) 123-4567"
+  },
+  "programs": {
+    "undergraduate": 36,
+    "graduate": 12,
+    "onlineCourses": 50,
+    "onlineCoursesLabel": "50+",
+    "certificates": 20
+  },
+  "research": {
+    "budgetBillionsUsd": 5,
+    "libraries": 21,
+    "libraryVolumesMillions": 18,
+    "scholarshipRecipientsPercent": 55
+  },
+  "legal": {
+    "disclaimer": "Connected University is not a real school. This is a demo site for Salesforce demo purposes only.",
+    "copyrightHolder": "Salesforce"
+  }
+}

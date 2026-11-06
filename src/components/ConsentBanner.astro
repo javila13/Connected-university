@@ -1,0 +1,17 @@
+---
+// PLAN.md §6. Shown by src/scripts/site.js when no `cu_consent` cookie exists,
+// and reopened from "Cookie Preferences" in the footer.
+---
+<section id="cu-consent" class="consent" aria-label="Cookie preferences" hidden>
+  <div class="consent__text">
+    <strong>Your privacy, your call</strong>
+    <p>
+      We use cookies and your browser's storage to tailor this site to your interests and to run our chat
+      assistants. <a href="/privacy/">Privacy &amp; cookies</a>
+    </p>
+  </div>
+  <div class="consent__actions">
+    <button type="button" class="btn btn--navy" data-consent="all">Accept all</button>
+    <button type="button" class="btn btn--ghost" data-consent="necessary">Necessary only</button>
+  </div>
+</section>

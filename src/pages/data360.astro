@@ -1,0 +1,45 @@
+---
+// Companion inspector window for dual-screen demos (PLAN.md §5.6, D11).
+// Phase 2 fills in the Profile, Engagement, Affinities, Identity and
+// Decisions tabs. Phase 0 proves the cross-window plumbing: it follows the
+// /demo settings live over BroadcastChannel.
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+<ToolLayout title="Data 360 companion">
+  <header class="tool-header">
+    <h1>Data 360 · Companion view</h1>
+    <span class="pill pill--warn sim-pill">Simulated</span>
+    <span class="spacer"></span>
+    <span class="pill" id="sync">waiting for updates</span>
+  </header>
+  <main class="tool-main">
+    <section class="card">
+      <h2>Coming in Phase 2</h2>
+      <p class="help">
+        Profile · Engagement · Affinities · Identity · Decisions, updating live as the visitor clicks around the site in
+        another window.
+      </p>
+    </section>
+    <section class="card">
+      <h2>Current demo settings</h2>
+      <pre id="settings"></pre>
+    </section>
+  </main>
+</ToolLayout>
+
+<script>
+  import { getSettings, onSettingsChange } from '../scripts/settings.js';
+
+  const pre = document.getElementById('settings')!;
+  const sync = document.getElementById('sync')!;
+  const badge = document.querySelector<HTMLElement>('.sim-pill')!;
+
+  function render(fromOtherWindow = false) {
+    const s = getSettings();
+    pre.textContent = JSON.stringify(s, null, 2);
+    badge.hidden = !s.simulatedBadge;
+    if (fromOtherWindow) sync.textContent = `updated ${new Date().toLocaleTimeString()}`;
+  }
+  onSettingsChange(() => render(true));
+  render();
+</script>

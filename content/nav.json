@@ -1,0 +1,152 @@
+{
+  "_about": "Site navigation (PLAN.md §4). Links to pages that do not exist yet are hidden at build time, so Phase 1 fills the menus in by adding pages; nothing here needs to change. External links and \"#\" always render.",
+  "utility": [
+    { "label": "Visit", "href": "/visit/" },
+    { "label": "News", "href": "/news/" },
+    { "label": "Events", "href": "/events/" },
+    { "label": "Careers", "href": "/careers/" },
+    { "label": "Contact", "href": "/contact/" }
+  ],
+  "main": [
+    {
+      "label": "Academics",
+      "href": "/academics/",
+      "children": [
+        { "label": "Undergraduate", "href": "/academics/undergraduate/" },
+        { "label": "Graduate", "href": "/academics/graduate/" },
+        { "label": "Online", "href": "/academics/online/" },
+        { "label": "Professional Certificates", "href": "/continuing-ed/certificates/" },
+        { "label": "Faculty", "href": "/academics/faculty/" }
+      ]
+    },
+    {
+      "label": "Admissions",
+      "href": "/admissions/",
+      "children": [
+        { "label": "Undergraduate", "href": "/admissions/undergraduate/" },
+        { "label": "Graduate", "href": "/admissions/graduate/" },
+        { "label": "Transfer & Transfer Credits", "href": "/admissions/transfer/" },
+        { "label": "International", "href": "/admissions/international/" },
+        { "label": "Affordability", "href": "/admissions/affordability/" },
+        { "label": "Request Information", "href": "/admissions/request-information/" },
+        { "label": "Apply", "href": "/admissions/apply/" },
+        { "label": "Admitted Students", "href": "/admissions/admitted/" },
+        { "label": "Visit", "href": "/visit/" }
+      ]
+    },
+    {
+      "label": "Student Success",
+      "href": "/student-success/",
+      "children": [
+        { "label": "Academic Advising", "href": "/student-success/advising/" },
+        { "label": "Tutoring & Learning Center", "href": "/student-success/tutoring/" },
+        { "label": "Registrar & Deadlines", "href": "/student-success/registrar/" },
+        { "label": "Health & Wellness", "href": "/student-success/wellness/" },
+        { "label": "Career Services", "href": "/student-success/career-services/" },
+        { "label": "Campus Life", "href": "/student-success/campus-life/" },
+        { "label": "Student Portal", "href": "/portal/" }
+      ]
+    },
+    {
+      "label": "Continuing Ed",
+      "href": "/continuing-ed/",
+      "children": [
+        { "label": "Certificate Catalog", "href": "/continuing-ed/certificates/" },
+        { "label": "Corporate Training", "href": "/continuing-ed/corporate-training/" },
+        { "label": "Return to CU", "href": "/continuing-ed/return/" },
+        { "label": "CE Inquiry", "href": "/continuing-ed/inquiry/" }
+      ]
+    },
+    {
+      "label": "Athletics",
+      "href": "/athletics/",
+      "children": [
+        { "label": "Teams", "href": "/athletics/teams/" },
+        { "label": "Schedule", "href": "/athletics/schedule/" },
+        { "label": "Tickets", "href": "/athletics/tickets/" },
+        { "label": "Boosters / Athletics Fund", "href": "/athletics/boosters/" },
+        { "label": "Athletics News", "href": "/athletics/news/" },
+        { "label": "Facilities", "href": "/athletics/facilities/" },
+        { "label": "Prospective Student-Athletes", "href": "/athletics/recruits/" }
+      ]
+    },
+    {
+      "label": "Alumni",
+      "href": "/alumni/",
+      "children": [
+        { "label": "Events & Reunions", "href": "/alumni/events/" },
+        { "label": "Alumni Network & Careers", "href": "/alumni/network/" },
+        { "label": "Spotlights", "href": "/alumni/spotlights/" },
+        { "label": "Benefits", "href": "/alumni/benefits/" },
+        { "label": "Update Your Info", "href": "/alumni/update-info/" }
+      ]
+    },
+    {
+      "label": "Giving",
+      "href": "/giving/",
+      "children": [
+        { "label": "Give Now", "href": "/giving/give/" },
+        { "label": "Ways to Give", "href": "/giving/ways-to-give/" },
+        { "label": "Giving Societies", "href": "/giving/societies/" },
+        { "label": "Giving Day", "href": "/giving/giving-day/" },
+        { "label": "Impact Stories", "href": "/giving/impact/" },
+        { "label": "Planned Giving", "href": "/giving/planned-giving/" },
+        { "label": "Scholarship Funds", "href": "/giving/scholarships/" },
+        { "label": "Athletics Fund", "href": "/athletics/boosters/" }
+      ]
+    },
+    {
+      "label": "About",
+      "href": "/about/",
+      "children": [
+        { "label": "Mission", "href": "/about/mission/" },
+        { "label": "Leadership", "href": "/about/leadership/" },
+        { "label": "History", "href": "/about/history/" },
+        { "label": "News", "href": "/news/" },
+        { "label": "Events", "href": "/events/" },
+        { "label": "Careers", "href": "/careers/" },
+        { "label": "Contact", "href": "/contact/" }
+      ]
+    }
+  ],
+  "footer": [
+    {
+      "heading": "Stay Connected",
+      "links": [
+        { "label": "About", "href": "/about/" },
+        { "label": "Overview", "href": "/about/mission/" },
+        { "label": "Teachers", "href": "/academics/faculty/" },
+        { "label": "Join Us", "href": "/careers/" },
+        { "label": "Our News", "href": "/news/" }
+      ]
+    },
+    {
+      "heading": "Quick Links",
+      "links": [
+        { "label": "Admissions & Aid", "href": "/admissions/affordability/" },
+        { "label": "Request Information", "href": "/admissions/request-information/" },
+        { "label": "Application Process", "href": "/admissions/apply/" },
+        { "label": "Student Portal", "href": "/portal/" },
+        { "label": "Alumni", "href": "/alumni/" }
+      ]
+    },
+    {
+      "heading": "Learn More",
+      "links": [
+        { "label": "Courses", "href": "/academics/" },
+        { "label": "Events", "href": "/events/" },
+        { "label": "Campus Life", "href": "/student-success/campus-life/" },
+        { "label": "Giving", "href": "/giving/" },
+        { "label": "Athletics", "href": "/athletics/" }
+      ]
+    }
+  ],
+  "legal": [
+    { "label": "Legal", "href": "https://www.salesforce.com/company/legal/" },
+    { "label": "Terms of Service", "href": "https://www.salesforce.com/company/legal/sfdc-website-terms-of-service/" },
+    { "label": "Privacy Information", "href": "https://www.salesforce.com/company/privacy/" },
+    { "label": "Responsible Disclosure", "href": "https://www.salesforce.com/company/disclosure/" },
+    { "label": "Trust", "href": "https://trust.salesforce.com/en/" },
+    { "label": "Privacy & Cookies", "href": "/privacy/" }
+  ]
+}

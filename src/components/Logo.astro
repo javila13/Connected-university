@@ -1,0 +1,24 @@
+---
+// Uses Jesse's logo files when they are dropped into public/assets/
+// (logo.svg for the header, logo-reversed.svg for the navy footer);
+// otherwise renders a text typemark in the same navy/gold treatment.
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+  reversed?: boolean;
+}
+const { reversed = false } = Astro.props;
+const file = reversed ? 'logo-reversed.svg' : 'logo.svg';
+const hasImage = fs.existsSync(path.join(process.cwd(), 'public', 'assets', file));
+---
+<a href="/" class:list={['logo', { 'logo--reversed': reversed }]} aria-label="Connected University home">
+  {hasImage ? (
+    <img src={`/assets/${file}`} alt="Connected University" />
+  ) : (
+    <>
+      <span class="logo__top">CONNECTED</span>
+      <span class="logo__bottom">UNIVERSITY</span>
+    </>
+  )}
+</a>

@@ -1,0 +1,22 @@
+{
+  "name": "connected-university",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Connected University: a fictitious university website for Salesforce Higher Ed demos.",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "node server.js",
+    "preview": "npm run build && npm start",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@fontsource/newsreader": "^5.3.0",
+    "astro": "^7.4.7",
+    "express": "^5.3.0"
+  }
+}

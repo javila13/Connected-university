@@ -1,0 +1,50 @@
+---
+// Student Portal. Phase 2 turns this into the mock login (an identity moment,
+// PLAN.md §5.5) and Sofia's dashboard. Phase 0 is the page shell only.
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Student Portal"
+  description="Sign in to see your courses, advisor, deadlines and account."
+  section="portal"
+  audience="student"
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <h1>Student Portal</h1>
+      <p class="lede">Sign in to see your courses, advisor, deadlines and account.</p>
+    </div>
+  </section>
+  <div class="wrap">
+    <form class="portal-login" aria-describedby="portal-note" onsubmit="return false">
+      <label>Username <input type="text" name="username" autocomplete="off" disabled /></label>
+      <label>Password <input type="password" name="password" autocomplete="off" disabled /></label>
+      <button class="btn btn--navy" type="submit" disabled>Sign in</button>
+      <p id="portal-note" class="note">Sign-in is not available yet on this demo site.</p>
+    </form>
+  </div>
+</BaseLayout>
+
+<style>
+  .portal-login {
+    max-width: 420px;
+    display: grid;
+    gap: 1rem;
+    padding: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+  label {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+  }
+  input {
+    font: inherit;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--cu-line);
+    border-radius: 6px;
+  }
+  .note {
+    color: var(--cu-muted);
+    font-size: 0.95rem;
+  }
+</style>

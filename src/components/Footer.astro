@@ -1,0 +1,38 @@
+---
+import Logo from './Logo.astro';
+import { getNav } from '../lib/routes.js';
+import facts from '../../content/facts.json';
+
+const nav = await getNav();
+const { campus, legal } = facts;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap footer-main">
+    <div class="footer-brand">
+      <Logo reversed />
+      <address class="footer-address">
+        {campus.street}<br />
+        {campus.city}, {campus.region} {campus.postalCode}<br />
+        {campus.phone}
+      </address>
+    </div>
+    {nav.footer.map((col) => (
+      <nav aria-label={col.heading}>
+        <h2>{col.heading}</h2>
+        <ul>
+          {col.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+    ))}
+  </div>
+  <div class="footer-legal">
+    <div class="wrap">
+      <ul>
+        {nav.legal.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        <li><button type="button" data-consent-open>Cookie Preferences</button></li>
+      </ul>
+      <p>© {year} {legal.copyrightHolder} | {legal.disclaimer}</p>
+    </div>
+  </div>
+</footer>

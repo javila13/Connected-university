@@ -1,0 +1,308 @@
+---
+// Home. Section order and copy mirror connecteduniversity-mc.org (2026-11-06).
+// Numbers come from content/facts.json only.
+import fs from 'node:fs';
+import path from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pickLive } from '../lib/routes.js';
+import facts from '../../content/facts.json';
+
+const { programs, research, taglines } = facts;
+
+// Links point at Phase 1 pages when they exist, else at the section hub.
+const links = {
+  requestInfo: await pickLive('/admissions/request-information/', '/admissions/'),
+  apply: await pickLive('/admissions/apply/', '/admissions/'),
+  visit: await pickLive('/visit/'),
+  undergraduate: await pickLive('/academics/undergraduate/', '/academics/'),
+  graduate: await pickLive('/academics/graduate/', '/academics/'),
+  online: await pickLive('/academics/online/', '/academics/'),
+  certificates: await pickLive('/continuing-ed/certificates/', '/continuing-ed/'),
+  sustainability: await pickLive('/academics/programs/sustainability-studies/', '/academics/'),
+  about: await pickLive('/about/mission/', '/about/'),
+  campusLife: await pickLive('/student-success/campus-life/', '/student-success/'),
+  alumni: await pickLive('/alumni/network/', '/alumni/'),
+};
+
+const heroFile = ['home-hero.jpg', 'home-hero.webp', 'home-hero.png'].find((f) =>
+  fs.existsSync(path.join(process.cwd(), 'public', 'assets', f)),
+);
+const heroStyle = heroFile ? `--hero-image: url('/assets/${heroFile}')` : undefined;
+
+const tiles = [
+  { label: 'Undergraduate', value: programs.undergraduate, unit: 'Programs', href: links.undergraduate },
+  { label: 'Graduate', value: programs.graduate, unit: 'Programs', href: links.graduate },
+  { label: 'Online', value: programs.onlineCoursesLabel, unit: 'Courses', href: links.online },
+  { label: 'Certificates', value: programs.certificates, unit: 'Programs', href: links.certificates },
+];
+
+const pillars = [
+  { title: taglines.pillars[0], body: 'Network with alumni and professionals in your field to build your future foundation.', href: links.alumni },
+  { title: taglines.pillars[1], body: 'Forge your path for the future with the interests near and dear to your heart.', href: links.campusLife },
+  { title: taglines.pillars[2], body: 'Meet friends and colleagues and create connections for a lifetime.', href: links.visit },
+];
+---
+<BaseLayout
+  title="Home"
+  description="Get the education you've been looking for at a university that knows how to unlock your potential for becoming a leader of tomorrow."
+  section="home"
+  audience="prospect"
+>
+  <!-- Personalization zone (PLAN.md §5.4): this is the default variant. -->
+  <section id="pz-home-hero" class="hero" data-pz-zone="pz-home-hero" data-pz-variant="default" style={heroStyle}>
+    <div class="wrap">
+      <div class="hero__card">
+        <h1>{taglines.primary}</h1>
+        <p>
+          Get the education you’ve been looking for at a university that knows how to unlock your potential for
+          becoming a leader of tomorrow. Find where Connected University can take you!
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--gold" href={links.requestInfo}>Request Information</a>
+          <a class="btn btn--ghost" href={links.visit}>Visit Campus</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 class="center">Courses for the Future You Want</h2>
+      <ul class="tiles">
+        {tiles.map((t) => (
+          <li>
+            <a href={t.href}>
+              <span class="tiles__label">{t.label}</span>
+              <span class="tiles__value">{t.value}</span>
+              <span class="tiles__unit">{t.unit}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band--navy">
+    <div class="wrap award">
+      <p class="eyebrow">Gracelines International Sustainability Award</p>
+      <p class="award__text">
+        Wilma Grace (YSS ’18) and Courtney Tran-Kim (YSS ’22), winners of the award for their work in sustainability.
+      </p>
+      <a class="btn btn--gold" href={links.sustainability}>Learn More</a>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow center">Moving Forward with Connected U</p>
+      <h2 class="center">A Glimpse into Life at Connected University</h2>
+      <ul class="pillars">
+        {pillars.map((p) => (
+          <li>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            <a href={p.href}>Learn more <span aria-hidden="true">→</span></a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band--soft">
+    <div class="wrap mission">
+      <div>
+        <p class="eyebrow">Not Your Average University</p>
+        <h2>The Connected University Mission</h2>
+        <p class="mission__text">
+          Our mission is to provide our students with the best connections, education, and experience to be the
+          leaders of tomorrow.
+        </p>
+        <a class="btn btn--navy" href={links.about}>About Connected U</a>
+      </div>
+      <div>
+        <p class="eyebrow">Leading the Way Together</p>
+        <h3 class="stats__title">Research and Scholarships</h3>
+        <ul class="stats">
+          <li><span class="stats__value">${research.budgetBillionsUsd}B</span><span>in research budget</span></li>
+          <li><span class="stats__value">{research.libraries}</span><span>libraries hold over {research.libraryVolumesMillions} million volumes</span></li>
+          <li><span class="stats__value">{research.scholarshipRecipientsPercent}%</span><span>of students receive scholarships</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--gold">
+    <div class="wrap cta">
+      <div>
+        <p class="eyebrow">Your Future Awaits</p>
+        <h2>Begin Your Application Today!</h2>
+      </div>
+      <a class="btn btn--navy" href={links.apply}>Apply Now</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background:
+      var(--hero-image, linear-gradient(120deg, #dfe8f1 0%, #f6efe0 55%, #e7d3a8 100%)) center / cover no-repeat;
+    padding: clamp(3rem, 12vw, 12rem) 0;
+  }
+  .hero__card {
+    max-width: 740px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(2px);
+    border-radius: var(--radius);
+    padding: clamp(1.75rem, 5vw, 4rem);
+  }
+  .hero__card h1 {
+    margin-bottom: 0.35em;
+  }
+  .hero__card p {
+    font-size: 1.15rem;
+    line-height: 1.75;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .hero__actions .btn--ghost {
+    color: var(--cu-navy);
+  }
+  .band {
+    padding: clamp(3rem, 8vw, 6rem) 0;
+  }
+  .band--soft {
+    background: var(--cu-bg-soft);
+  }
+  .band--navy {
+    background: var(--cu-navy);
+    color: #fff;
+  }
+  .band--gold {
+    background: var(--cu-gold);
+  }
+  .center {
+    text-align: center;
+  }
+  .eyebrow {
+    font: 600 0.8rem/1.3 var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cu-gold-600);
+    margin-bottom: 0.9rem;
+  }
+  .band--navy .eyebrow {
+    color: var(--cu-gold);
+  }
+  .band--gold .eyebrow {
+    color: var(--cu-navy);
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+  }
+  .tiles a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    border: 1px solid var(--cu-line);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tiles a:hover {
+    border-color: var(--cu-gold);
+    box-shadow: 0 10px 26px rgba(30, 59, 86, 0.1);
+  }
+  .tiles__label {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+  }
+  .tiles__value {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    line-height: 1.1;
+    color: var(--cu-gold-600);
+  }
+  .tiles__unit {
+    color: var(--cu-muted);
+  }
+  .award {
+    text-align: center;
+    max-width: 820px;
+  }
+  .award__text {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.3;
+    margin-bottom: 1.75rem;
+  }
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+  }
+  .pillars li {
+    border-top: 3px solid var(--cu-gold);
+    padding-top: 1.25rem;
+  }
+  .mission {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+  .mission__text {
+    font-size: 1.15rem;
+  }
+  .stats__title {
+    font-size: 1.8rem;
+    font-weight: 400;
+  }
+  .stats {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .stats li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid var(--cu-line);
+    padding-bottom: 1rem;
+  }
+  .stats__value {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--cu-navy);
+    min-width: 5.5rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .cta h2 {
+    margin: 0;
+  }
+  @media (max-width: 760px) {
+    .mission {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
