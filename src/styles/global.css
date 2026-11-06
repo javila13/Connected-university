@@ -932,6 +932,70 @@ code {
   display: flex;
 }
 
+/* ---- Gift form -------------------------------------------------------- */
+.society-join {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+}
+.society-join .btn {
+  text-decoration: none;
+}
+.amount-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+.amount-chip {
+  font: 600 1rem/1 var(--font-body);
+  padding: 0.75rem 1.1rem;
+  min-width: 5.5rem;
+  border: 1px solid #c3cad4;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--cu-navy);
+  cursor: pointer;
+}
+.amount-chip:hover {
+  border-color: var(--cu-gold);
+}
+.amount-chip[aria-pressed='true'] {
+  background: var(--cu-navy);
+  border-color: var(--cu-navy);
+  color: #fff;
+}
+.amount-input {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 16rem;
+}
+.amount-input span {
+  font-weight: 600;
+  color: var(--cu-navy);
+}
+.amount-input input {
+  font: inherit;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #c3cad4;
+  border-radius: 6px;
+}
+.amount-input input[aria-invalid] {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 1px #b3261e;
+}
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
+}
+.radio-row .field--check {
+  display: flex;
+}
+
 /* ---- Student Portal --------------------------------------------------- */
 .portal-signin {
   max-width: 28rem;
