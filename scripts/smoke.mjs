@@ -3,6 +3,7 @@
 //   BASE_URL=https://your-app.herokuapp.com npm run smoke
 // Uses only Node's built-in fetch; no dependencies.
 import facts from '../content/facts.json' with { type: 'json' };
+import sofia from '../content/sofia.json' with { type: 'json' };
 
 const BASE = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/, '');
 const failures = [];
@@ -98,6 +99,14 @@ for (const [href, from] of internalLinks) {
     'every sitemap page except /search/ is indexed',
     locs.filter((u) => u !== '/search/').every((u) => urls.includes(u)),
   );
+}
+
+// Sofia's record stays out of the portal's HTML; the dashboard is built in the browser.
+{
+  const { body } = await get('/portal/');
+  const s = sofia.stages.student;
+  check('/portal/ HTML has no student record', ![sofia.person.email, s.cumulativeGpa.toFixed(2), s.earlyAlert.timeline[0].detail].some((v) => body.includes(v)));
+  check('/portal/ has the demo sign-in', body.includes('data-portal-demo') && body.includes('id="portal-catalog"'));
 }
 
 // Presenter tools are noindex (meta + header)

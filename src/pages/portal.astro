@@ -1,50 +1,100 @@
 ---
-// Student Portal. Phase 2 turns this into the mock login (an identity moment,
-// PLAN.md §5.5) and Sofia's dashboard. Phase 0 is the page shell only.
+// Student Portal (PLAN.md §4 Student Success). A demo sign-in shows Sofia's
+// dashboard. The dashboard is built in the browser from content/sofia.json
+// (src/scripts/portal.js), so her record is never in the HTML that crawlers
+// and Piper read. This page only carries public catalog data (course titles,
+// faculty offices) for the dashboard to look up. Phase 2 adds the identity
+// stitch to the sign-in (§5.5).
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { fillFacts } from '../lib/fill-facts.js';
+import { programUrl, facultyUrl, pickLive } from '../lib/routes.js';
+import sofia from '../../content/sofia.json';
+
+const programs = await getCollection('programs');
+const faculty = await getCollection('faculty');
+
+// Every course listed on a program or faculty page.
+const courses: Record<string, string> = {};
+for (const p of programs) for (const c of p.data.courses) courses[c.code] = c.title;
+for (const f of faculty) for (const c of f.data.courses) courses[c.code] = c.title;
+
+// Validate sofia.json against the catalog, so the dashboard can't show a
+// course, advisor or date that the rest of the site doesn't have.
+const fail = (msg: string): never => {
+  throw new Error(`[sofia] content/sofia.json: ${msg}`);
+};
+const student = sofia.stages.student;
+const facultyIds = new Set(faculty.map((f) => f.id));
+const needFaculty = (id: string) => facultyIds.has(id) || fail(`unknown faculty id "${id}"`);
+const needCourse = (code: string) => code in courses || fail(`course "${code}" isn't on any program or faculty page`);
+if (!programs.some((p) => p.id === sofia.person.program)) fail(`unknown program "${sofia.person.program}"`);
+needFaculty(student.advisor);
+needFaculty(student.earlyAlert.raisedBy);
+needCourse(student.earlyAlert.course);
+for (const c of student.currentCourses) {
+  needCourse(c.code);
+  if ('instructor' in c && c.instructor) needFaculty(c.instructor);
+}
+for (const d of student.deadlines) fillFacts(d.date, 'content/sofia.json');
+
+const catalog = {
+  courses,
+  faculty: Object.fromEntries(
+    faculty.map((f) => [
+      f.id,
+      { name: f.data.name, role: f.data.role, office: f.data.office, officeHours: f.data.officeHours, url: facultyUrl(f.id) },
+    ]),
+  ),
+  programs: Object.fromEntries(
+    programs.map((p) => {
+      const degree = p.data.credentials.find((c) => c.level === 'undergraduate') ?? p.data.credentials[0];
+      return [p.id, { title: p.data.title, degree: degree.name, short: degree.short, credits: degree.credits, url: programUrl(p.id) }];
+    }),
+  ),
+  links: {
+    advising: await pickLive('/student-success/advising/', '/student-success/'),
+    tutoring: await pickLive('/student-success/tutoring/', '/student-success/'),
+    registrar: await pickLive('/student-success/registrar/', '/student-success/'),
+    wellness: await pickLive('/student-success/wellness/', '/student-success/'),
+    careers: await pickLive('/student-success/career-services/', '/student-success/'),
+  },
+};
+const catalogJson = JSON.stringify(catalog).replace(/</g, '\\u003c');
 ---
 <BaseLayout
   title="Student Portal"
-  description="Sign in to see your courses, advisor, deadlines and account."
+  description="Sign in to see your courses, advisor, alerts and deadlines."
   section="portal"
   audience="student"
 >
-  <section class="page-hero">
-    <div class="wrap">
-      <h1>Student Portal</h1>
-      <p class="lede">Sign in to see your courses, advisor, deadlines and account.</p>
-    </div>
-  </section>
+  <PageHero title="Student Portal" lede="Sign in to see your courses, advisor, alerts and deadlines." />
   <div class="wrap">
-    <form class="portal-login" aria-describedby="portal-note" onsubmit="return false">
-      <label>Username <input type="text" name="username" autocomplete="off" disabled /></label>
-      <label>Password <input type="password" name="password" autocomplete="off" disabled /></label>
-      <button class="btn btn--navy" type="submit" disabled>Sign in</button>
-      <p id="portal-note" class="note">Sign-in is not available yet on this demo site.</p>
-    </form>
+    <section class="portal-signin" data-portal-signin aria-labelledby="signin-heading">
+      <h2 id="signin-heading">Sign in</h2>
+      <form class="portal-login" data-portal-form>
+        <div class="field">
+          <label for="portal-username">Username</label>
+          <input id="portal-username" name="username" type="text" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="portal-password">Password</label>
+          <input id="portal-password" name="password" type="password" autocomplete="off" />
+        </div>
+        <button class="btn btn--navy" type="submit">Sign in</button>
+      </form>
+      <p class="form-note">
+        Demo sign-in: any username and password signs you in as Sofia Sanders, a fictional student. Nothing you
+        enter leaves your browser.
+      </p>
+      <button class="btn btn--gold" type="button" data-portal-demo>Sign in as Sofia (demo)</button>
+    </section>
+    <section class="dash" data-portal-dashboard aria-labelledby="dash-heading" hidden></section>
   </div>
+  <script type="application/json" id="portal-catalog" set:html={catalogJson} />
 </BaseLayout>
 
-<style>
-  .portal-login {
-    max-width: 420px;
-    display: grid;
-    gap: 1rem;
-    padding: clamp(2rem, 5vw, 3.5rem) 0;
-  }
-  label {
-    display: grid;
-    gap: 0.35rem;
-    font-weight: 600;
-  }
-  input {
-    font: inherit;
-    padding: 0.7rem 0.8rem;
-    border: 1px solid var(--cu-line);
-    border-radius: 6px;
-  }
-  .note {
-    color: var(--cu-muted);
-    font-size: 0.95rem;
-  }
-</style>
+<script>
+  import '../scripts/portal.js';
+</script>

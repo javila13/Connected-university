@@ -1,0 +1,44 @@
+{
+  "_about": "Sofia Sanders, the demo persona (PLAN.md §3, §5.5). Her known-profile attributes live only here, keyed by life stage (CLAUDE.md). Phase 1 fills the student stage for the Student Portal dashboard; Phase 2 adds the prospect, alumni and learner stages and the identity stitch. Name, email, program, advisor and the Organic Chemistry storyline come from the demo-org narrative; every other value is a draft for Jesse to check against the org (PLAN.md §8.3). Course codes and the advisor id must exist in content/programs or content/faculty, or the build fails. Dates use {{facts.path}} tokens.",
+  "person": {
+    "firstName": "Sofia",
+    "lastName": "Sanders",
+    "email": "sofia.sanders@demo.com",
+    "program": "environmental-science"
+  },
+  "stages": {
+    "student": {
+      "classYear": "Junior",
+      "standing": "Good academic standing",
+      "cumulativeGpa": 3.05,
+      "creditsEarned": 74,
+      "advisor": "olga-martinez",
+      "nextAdvising": "Tuesday, 2:00 p.m.",
+      "smsOptIn": true,
+      "currentCourses": [
+        { "code": "CHEM 2320", "instructor": "olga-martinez" },
+        { "code": "ENVS 3150" },
+        { "code": "ENVS 3400" },
+        { "code": "SUST 2150" }
+      ],
+      "earlyAlert": {
+        "status": "Resolved",
+        "course": "CHEM 2310",
+        "raisedBy": "olga-martinez",
+        "term": "Sophomore fall",
+        "timeline": [
+          { "when": "Sophomore fall", "step": "Withdrew from Organic Chemistry I", "detail": "Dropped CHEM 2310 mid-semester after missed labs and a low first exam. A W doesn't count toward GPA." },
+          { "when": "Sophomore fall", "step": "Early alert raised by Dr. Martinez", "detail": "Term GPA fell to 1.90, below good standing." },
+          { "when": "Sophomore fall", "step": "Advising plan", "detail": "Met with Dr. Martinez: weekly chemistry study sessions at the Tutoring & Learning Center and a lighter spring course load." },
+          { "when": "Sophomore spring", "step": "Retook Organic Chemistry I", "detail": "Earned a B with weekly tutoring. Term GPA 3.30." },
+          { "when": "Junior fall", "step": "Alert resolved", "detail": "Back in good standing and on track to graduate with her class." }
+        ]
+      },
+      "deadlines": [
+        { "label": "Spring registration opens", "date": "{{facts.registrar.springRegistration}}" },
+        { "label": "Spring balance due", "date": "{{facts.registrar.springBalanceDue}}" },
+        { "label": "Renew your FAFSA", "date": "{{facts.admissions.deadlines.aidPriority}}" }
+      ]
+    }
+  }
+}
