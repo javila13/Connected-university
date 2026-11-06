@@ -48,7 +48,9 @@ const pages = defineCollection({
     /** Renders the faculty directory after the copy. */
     listFaculty: z.boolean().optional(),
     /** Renders a demo form after the copy (components/DemoForm.astro). */
-    form: z.enum(['request-info', 'apply']).optional(),
+    form: z.enum(['request-info', 'apply', 'update-info']).optional(),
+    /** Renders the pz-giving-cta personalization zone at the foot of the page. */
+    givingCta: z.boolean().optional(),
   }),
 });
 

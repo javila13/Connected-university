@@ -1,0 +1,29 @@
+---
+// Personalization zone pz-giving-cta (PLAN.md §5.4): the donor-stage call to
+// action on Alumni and Giving pages. This is the default variant; Phase 2's
+// rules swap it by donor stage (e.g. a giving-society upgrade ask for a
+// first-time donor).
+import { pickLive } from '../lib/routes.js';
+
+const give = await pickLive('/giving/give/', '/giving/');
+const ways = await pickLive('/giving/ways-to-give/', '/giving/');
+---
+<section
+  id="pz-giving-cta"
+  class="giving-cta"
+  data-pz-zone="pz-giving-cta"
+  data-pz-variant="default"
+  aria-labelledby="giving-cta-heading"
+>
+  <div class="wrap giving-cta__inner">
+    <div>
+      <p class="eyebrow">Pay it forward</p>
+      <h2 id="giving-cta-heading">Help the next Connected U student</h2>
+      <p>Gifts to the Connected Fund support scholarships, tutoring and the moments that keep students on track. Every gift counts, whatever its size.</p>
+    </div>
+    <div class="giving-cta__actions">
+      <a class="btn btn--navy" href={give} data-cta="give">Give Now</a>
+      <a class="btn btn--ghost" href={ways} data-cta="ways-to-give">Ways to Give</a>
+    </div>
+  </div>
+</section>

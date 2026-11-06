@@ -12,6 +12,7 @@ import FacultyCards from '../components/FacultyCards.astro';
 import Faq from '../components/Faq.astro';
 import CostTable from '../components/CostTable.astro';
 import DemoForm from '../components/DemoForm.astro';
+import GivingCta from '../components/GivingCta.astro';
 import { hubChildren } from '../lib/routes.js';
 import { programsFor, groupBySchool } from '../lib/academics.js';
 import { fillFacts } from '../lib/fill-facts.js';
@@ -82,4 +83,5 @@ const people = d.listFaculty
     )}
     <Faq faqs={d.faqs} where={where} />
   </div>
+  {d.givingCta && <GivingCta />}
 </BaseLayout>

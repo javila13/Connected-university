@@ -60,6 +60,12 @@
     "fallRegistration": "April 6",
     "fallBalanceDue": "August 15"
   },
+  "alumni": {
+    "countLabel": "120,000+",
+    "ceDiscountPercent": 15,
+    "reunionEveryYears": 5,
+    "youngAlumniYears": 10
+  },
   "scholarships": {
     "presidential": 25000,
     "dean": 15000,

@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions and Student Success are done.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions, Student Success and Alumni are done.
 
 ## Run it locally
 
@@ -81,7 +81,8 @@ listPrograms: undergraduate # all | undergraduate | graduate | online: adds prog
 listHeading: Featured programs
 listGroupBySchool: true     # group the cards by school
 listFaculty: true           # adds the faculty directory
-form: request-info          # request-info | apply: adds a demo form (sends nothing)
+form: request-info          # request-info | apply | update-info: adds a demo form (sends nothing)
+givingCta: true             # adds the pz-giving-cta personalization zone (default variant)
 ```
 
 ### Numbers in copy
@@ -96,7 +97,7 @@ A line reading `<!-- cost-table -->` in a page places the cost-of-attendance tab
 
 ### Demo forms
 
-Request Information and Apply send nothing. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>` or `?type=transfer-student` to preselect fields.
+Request Information, Apply and the alumni Update Your Info form send nothing. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>` or `?type=transfer-student` to preselect fields.
 
 ### Programs and faculty
 
