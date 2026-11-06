@@ -1,0 +1,21 @@
+---
+// Athletics team cards.
+import { teamUrl } from '../lib/routes.js';
+
+interface Props {
+  items: any[];
+}
+const { items } = Astro.props;
+---
+<ul class="cards">
+  {items.map((t) => (
+    <li>
+      <a class="card" href={teamUrl(t.id)} data-team={t.id}>
+        <span class="card__eyebrow">{t.data.season} season</span>
+        <span class="card__title">{t.data.name}</span>
+        <span class="card__meta">{t.data.venue}</span>
+        <span class="card__text">{t.data.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>

@@ -4,7 +4,9 @@
 //   programs content/programs/*  -> /academics/programs/<id>/
 //   faculty  content/faculty/*   -> /academics/faculty/<id>/
 //   certificates content/certificates/* -> /continuing-ed/certificates/<id>/
-// News, events and teams collections arrive with their sections.
+//   teams    content/teams/*     -> /athletics/teams/<id>/
+//   news     content/news/*      -> /news/<id>/
+// The events collection arrives with the global pages.
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
@@ -52,8 +54,14 @@ const pages = defineCollection({
     listCertificates: z.boolean().optional(),
     /** Renders the pz-next-credential personalization zone after the copy. */
     nextCredential: z.boolean().optional(),
-    /** Renders a demo form after the copy (DemoForm, GiftForm or CeInquiryForm). */
-    form: z.enum(['request-info', 'apply', 'update-info', 'give', 'ce-inquiry']).optional(),
+    /** Renders team cards (athletics). */
+    listTeams: z.boolean().optional(),
+    /** Renders every team's schedule as one table, by date. */
+    listSchedule: z.boolean().optional(),
+    /** Renders news cards: every article, or one category. */
+    listNews: z.enum(['all', 'athletics', 'campus', 'research', 'alumni']).optional(),
+    /** Renders a demo form after the copy. */
+    form: z.enum(['request-info', 'apply', 'update-info', 'give', 'ce-inquiry', 'tickets', 'recruit']).optional(),
     /** Renders the pz-giving-cta personalization zone at the foot of the page. */
     givingCta: z.boolean().optional(),
   }),
@@ -139,4 +147,38 @@ const certificates = defineCollection({
   }),
 });
 
-export const collections = { pages, programs, faculty, certificates };
+// Athletics teams. body[data-topic] is the team's id (PLAN.md §3 Athletics:
+// "athletics affinity"). Game dates are full ISO dates for sorting; pages
+// show month and day only, so the site doesn't look stale between seasons.
+const teams = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/teams', generateId: idFromPath }),
+  schema: z.object({
+    name: z.string(),
+    description: z.string(),
+    ...meta,
+    season: z.enum(['Fall', 'Winter', 'Spring']),
+    venue: z.string(),
+    headCoach: z.string(),
+    highlights: z.array(z.string()).default([]),
+    schedule: z
+      .array(z.object({ date: z.coerce.date(), opponent: z.string(), home: z.boolean(), time: z.string(), note: z.string().optional() }))
+      .min(1),
+    faqs,
+  }),
+});
+
+// News articles. Dates are full ISO dates for sorting; pages show month and day.
+const news = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/news', generateId: idFromPath }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    ...meta,
+    program: z.string().optional(),
+    date: z.coerce.date(),
+    category: z.enum(['athletics', 'campus', 'research', 'alumni']),
+    team: reference('teams').optional(),
+  }),
+});
+
+export const collections = { pages, programs, faculty, certificates, teams, news };

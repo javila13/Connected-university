@@ -1,0 +1,90 @@
+---
+// Tickets demo form. No payment fields: nothing is sent, stored or charged.
+// A valid submit fires cu:form-submit (form: 'tickets'), which Phase 2 logs as
+// the ticket conversion (PLAN.md §3 Athletics). Home games come from the team
+// files; prices from facts.json. ?game=<game id> preselects a game.
+import facts from '../../content/facts.json';
+import { homeGames } from '../lib/athletics.js';
+import { pickLive } from '../lib/routes.js';
+
+const games = await homeGames();
+const { adult, youthSenior, student } = facts.athletics.tickets;
+const usd = (n: number) => (n === 0 ? 'Free' : '$' + n.toLocaleString('en-US'));
+const types = [
+  { name: 'adultQty', label: 'Adult', price: adult },
+  { name: 'youthSeniorQty', label: 'Youth (under 18) or senior (65+)', price: youthSenior },
+  { name: 'studentQty', label: 'Connected U student, with ID', price: student },
+];
+const boosters = await pickLive('/athletics/boosters/', '/athletics/');
+---
+<section class="demo-form" aria-labelledby="tickets-heading">
+  <h2 id="tickets-heading">Buy tickets</h2>
+  <form data-cu-form="tickets" novalidate>
+    <div class="form-grid">
+      <div class="field field--wide">
+        <label for="tickets-game">Game</label>
+        <select id="tickets-game" name="game" required>
+          <option value="">Choose a home game</option>
+          {games.map((g) => <option value={g.id}>{g.label}</option>)}
+        </select>
+      </div>
+      <fieldset class="field field--wide field-set">
+        <legend>Tickets</legend>
+        <div class="ticket-rows">
+          {types.map((t, i) => (
+            <div class="ticket-row">
+              <label for={`tickets-${t.name}`}>{t.label} <span class="optional">({usd(t.price)})</span></label>
+              <input id={`tickets-${t.name}`} name={t.name} type="number" inputmode="numeric" min="0" max="10" step="1" value="0" data-price={t.price} data-first-qty={i === 0 ? '' : undefined} />
+            </div>
+          ))}
+        </div>
+        <p class="ticket-total">Total: <strong data-ticket-total>$0</strong></p>
+        <input type="hidden" name="total" value="0" />
+      </fieldset>
+      <div class="field">
+        <label for="tickets-first">First name</label>
+        <input id="tickets-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="tickets-last">Last name</label>
+        <input id="tickets-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field field--wide">
+        <label for="tickets-email">Email</label>
+        <input id="tickets-email" name="email" type="email" autocomplete="email" required />
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please choose a game and at least one ticket, and fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Get Tickets</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser, and no payment is taken.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="tickets" tabindex="-1" hidden>
+    <h3>You're all set, <span data-first-name></span>.</h3>
+    <p><strong data-field="game"></strong></p>
+    <p>Order total: <strong data-field="total" data-format="usd"></strong>. Show your tickets at the gate on game day.</p>
+    <p>Want to do more for the Condors? <a href={boosters}>Join the Condor Club</a>.</p>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+
+  // Running total, and at least one ticket required.
+  const form = document.querySelector<HTMLFormElement>('form[data-cu-form="tickets"]');
+  if (form) {
+    const qtys = [...form.querySelectorAll<HTMLInputElement>('input[data-price]')];
+    const first = form.querySelector<HTMLInputElement>('input[data-first-qty]');
+    const totalOut = form.querySelector('[data-ticket-total]');
+    const totalField = form.querySelector<HTMLInputElement>('input[name="total"]');
+    const update = () => {
+      const count = qtys.reduce((n, q) => n + (Number(q.value) || 0), 0);
+      const total = qtys.reduce((sum, q) => sum + (Number(q.value) || 0) * Number(q.dataset.price), 0);
+      if (totalOut) totalOut.textContent = `$${total.toLocaleString('en-US')}`;
+      if (totalField) totalField.value = String(total);
+      first?.setCustomValidity(count > 0 ? '' : 'Choose at least one ticket.');
+    };
+    form.addEventListener('input', update);
+    update();
+  }
+</script>

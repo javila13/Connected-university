@@ -9,6 +9,8 @@ export const pageUrl = (id) => `/${id}/`;
 export const programUrl = (id) => `/academics/programs/${id}/`;
 export const facultyUrl = (id) => `/academics/faculty/${id}/`;
 export const certificateUrl = (id) => `/continuing-ed/certificates/${id}/`;
+export const teamUrl = (id) => `/athletics/teams/${id}/`;
+export const newsUrl = (id) => `/news/${id}/`;
 
 let cached;
 
@@ -20,6 +22,8 @@ export async function getRouteSet() {
   for (const entry of await getCollection('programs')) set.add(programUrl(entry.id));
   for (const entry of await getCollection('faculty')) set.add(facultyUrl(entry.id));
   for (const entry of await getCollection('certificates')) set.add(certificateUrl(entry.id));
+  for (const entry of await getCollection('teams')) set.add(teamUrl(entry.id));
+  for (const entry of await getCollection('news')) set.add(newsUrl(entry.id));
   for (const file of Object.keys(astroPages)) {
     if (file.includes('[')) continue; // dynamic routes are covered by collections
     let route = file.slice('/src/pages'.length, -'.astro'.length).replace(/(^|\/)index$/, '$1');
@@ -79,6 +83,8 @@ async function getTitles() {
   for (const e of await getCollection('programs')) titles.set(programUrl(e.id), e.data.title);
   for (const e of await getCollection('faculty')) titles.set(facultyUrl(e.id), e.data.name);
   for (const e of await getCollection('certificates')) titles.set(certificateUrl(e.id), e.data.title);
+  for (const e of await getCollection('teams')) titles.set(teamUrl(e.id), e.data.name);
+  for (const e of await getCollection('news')) titles.set(newsUrl(e.id), e.data.title);
   return titles;
 }
 

@@ -1,0 +1,70 @@
+---
+// Team page (PLAN.md §4 Athletics). Content from content/teams/<id>.md.
+// body[data-topic] is the team's id, so Phase 2 can track interest per team.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ScheduleTable from '../../../components/ScheduleTable.astro';
+import Faq from '../../../components/Faq.astro';
+import { pickLive } from '../../../lib/routes.js';
+import { teamGames } from '../../../lib/athletics.js';
+import { fillFacts } from '../../../lib/fill-facts.js';
+import facts from '../../../../content/facts.json';
+
+export async function getStaticPaths() {
+  const teams = await getCollection('teams');
+  return teams.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/teams/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const games = teamGames(entry);
+const nextHome = games.find((g) => g.home);
+const tickets = await pickLive('/athletics/tickets/', '/athletics/');
+const boosters = await pickLive('/athletics/boosters/', '/athletics/');
+const recruits = await pickLive('/athletics/recruits/', '/athletics/');
+---
+<BaseLayout
+  title={d.name}
+  description={d.description}
+  section={d.section}
+  audience={d.audience}
+  topic={d.topic ?? entry.id}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.name} lede={d.description} eyebrow={`${facts.athletics.mascot} · ${d.season} season`} />
+  <div class="wrap detail">
+    <div class="detail__main">
+      <article class="prose" set:html={html} />
+      {d.highlights.length > 0 && (
+        <section aria-labelledby="highlights-heading">
+          <h2 id="highlights-heading">Recent highlights</h2>
+          <ul class="check-list">{d.highlights.map((h) => <li>{h}</li>)}</ul>
+        </section>
+      )}
+      <section aria-labelledby="schedule-heading">
+        <h2 id="schedule-heading">Schedule</h2>
+        <ScheduleTable games={games} />
+      </section>
+      <Faq faqs={d.faqs} where={where} />
+    </div>
+    <aside class="detail__side" aria-label="Team at a glance">
+      <div class="glance">
+        <h2>At a glance</h2>
+        <dl class="glance__facts">
+          <dt>Season</dt><dd>{d.season}</dd>
+          <dt>Home</dt><dd>{d.venue}</dd>
+          <dt>Head coach</dt><dd>{d.headCoach}</dd>
+          <dt>Conference</dt><dd>{facts.athletics.conference}</dd>
+        </dl>
+        <div class="glance__actions">
+          {nextHome && <a class="btn btn--gold" href={`${tickets}?game=${nextHome.id}`} data-cta="tickets">Get Tickets</a>}
+          <a class="btn btn--navy" href={boosters} data-cta="boosters">Support the Team</a>
+          <a class="btn btn--ghost" href={`${recruits}?sport=${entry.id}`} data-cta="recruit">Future Condors</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>
