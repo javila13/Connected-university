@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import searchIndex from './integrations/search-index.mjs';
 
 // Static output only (PLAN.md D3). Express serves dist/ on Heroku (server.js).
 // SITE_URL is optional; the final domain is still TBD (PLAN.md D9) and nothing
@@ -9,4 +10,5 @@ export default defineConfig({
   build: { format: 'directory' },
   trailingSlash: 'ignore',
   devToolbar: { enabled: false },
+  integrations: [searchIndex()],
 });

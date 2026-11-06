@@ -43,6 +43,32 @@ for (const path of locs) {
   check(`${path} declares data-audience`, /data-audience="[a-z]+"/.test(tag));
   check(`${path} has the footer disclaimer`, body.includes(facts.legal.disclaimer));
   check(`${path} is indexable`, !/name="robots"[^>]*noindex/i.test(body));
+  check(`${path} has no copyright line`, !/©|&copy;|Copyright/i.test(body));
+}
+
+// Site search index
+{
+  const { res, body } = await get('/search-index.json');
+  check('search-index.json is 200', res.status === 200, `got ${res.status}`);
+  check('search-index.json revalidates', /no-cache/.test(res.headers.get('cache-control') || ''));
+  let index = [];
+  try {
+    index = JSON.parse(body);
+  } catch {
+    check('search-index.json is valid JSON', false);
+  }
+  const urls = index.map((e) => e.url);
+  check('search index has entries', index.length > 0);
+  check(
+    'search index entries are complete',
+    index.every((e) => e.url && e.title && e.section && e.audience && typeof e.text === 'string'),
+  );
+  check('search index leaves out presenter tools and /search/', !urls.some((u) => /^\/(demo|data360|search)\//.test(u)));
+  check('every indexed page is in the sitemap', urls.every((u) => locs.includes(u)));
+  check(
+    'every sitemap page except /search/ is indexed',
+    locs.filter((u) => u !== '/search/').every((u) => urls.includes(u)),
+  );
 }
 
 // Presenter tools are noindex (meta + header)

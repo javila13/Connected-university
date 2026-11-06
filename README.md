@@ -14,7 +14,7 @@ npm run build && npm start      # http://localhost:3000
 npm run smoke      # in a second shell, against the running server
 ```
 
-`npm run smoke` checks robots.txt and the sitemap, and that every sitemap page returns 200 and carries its metadata and the footer disclaimer. It also checks `noindex` on `/demo` and `/data360`, 404 handling and cache headers. To test a deployed app, set `BASE_URL=https://your-app.herokuapp.com`.
+`npm run smoke` checks robots.txt and the sitemap, and that every sitemap page returns 200 and carries its metadata and the footer disclaimer. It also checks the search index, `noindex` on `/demo` and `/data360`, 404 handling and cache headers. To test a deployed app, set `BASE_URL=https://your-app.herokuapp.com`.
 
 ## Deploy to Heroku (Jesse)
 
@@ -41,12 +41,16 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | Control | What it does |
 |---|---|
 | Simulation | Turns the simulated Data 360, Personalization and Agentforce mock on or off |
-| Chat widgets | `auto` (Piper on public pages, Agentforce on student/alumni/giving pages), `piper`, `agentforce`, `both` |
+| Chat widgets | `auto` (Piper on public pages, Agentforce on student/alumni/giving pages, both on Continuing Ed and Athletics), `piper`, `agentforce`, `both` |
 | Agent persona | Force one Agentforce persona on every page |
 | Consent auto-accept | Skip the cookie banner |
 | "Simulated" badge | Show or hide the badge on simulated UI |
 
 URL params override the saved settings for one browser tab: `?mode=both`, `?piper=0`, `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`.
+
+## Site search
+
+The header's search button opens a search bar; results show on `/search/?q=…`. `npm run build` writes `dist/search-index.json` from the rendered pages (`integrations/search-index.mjs`), so new pages are searchable with no extra step. Search doesn't work under `npm run dev`; use `npm run build && npm start`.
 
 ## Adding a page
 
@@ -71,9 +75,10 @@ A missing or unknown `section` or `audience` fails the build.
 
 ```
 content/          pages (Markdown), facts.json, nav.json
-src/pages/        home, contact, portal, 404, /demo, /data360, and the Markdown page route
+src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
-src/scripts/      consent, demo settings, chat widget slots
+src/scripts/      consent, demo settings, chat widget slots, search
+integrations/     build step that writes the search index
 src/lib/          metadata vocabulary, nav and route helpers
 public/           demo-config.js, assets/
 server.js         Express: dist/, robots.txt, sitemap.xml

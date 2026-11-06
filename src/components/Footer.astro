@@ -5,7 +5,6 @@ import facts from '../../content/facts.json';
 
 const nav = await getNav();
 const { campus, legal } = facts;
-const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="wrap footer-main">
@@ -32,7 +31,7 @@ const year = new Date().getFullYear();
         {nav.legal.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
         <li><button type="button" data-consent-open>Cookie Preferences</button></li>
       </ul>
-      <p>© {year} {legal.copyrightHolder} | {legal.disclaimer}</p>
+      <p>{legal.disclaimer}</p>
     </div>
   </div>
 </footer>

@@ -73,8 +73,8 @@ app.use(
   express.static(DIST, {
     extensions: ['html'],
     setHeaders(res, file) {
-      // Pages and the demo config must always revalidate so deploys and config edits show up.
-      if (file.endsWith('.html') || file.endsWith('demo-config.js')) res.set('Cache-Control', 'no-cache');
+      // Pages, the demo config and the search index must always revalidate so deploys show up.
+      if (/(\.html|demo-config\.js|search-index\.json)$/.test(file)) res.set('Cache-Control', 'no-cache');
     },
   }),
 );

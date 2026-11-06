@@ -28,7 +28,6 @@
     "scholarshipRecipientsPercent": 55
   },
   "legal": {
-    "disclaimer": "Connected University is not a real school. This is a demo site for Salesforce demo purposes only.",
-    "copyrightHolder": "Salesforce"
+    "disclaimer": "Connected University is not a real school. This is a demo site for Salesforce demo purposes only."
   }
 }

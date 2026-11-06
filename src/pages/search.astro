@@ -1,0 +1,148 @@
+---
+// Site search. Results render in the browser from /search-index.json, which
+// integrations/search-index.mjs writes at build time. This page is left out
+// of the index itself.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pickLive } from '../lib/routes.js';
+
+const suggestions = [
+  { label: 'Academics', href: await pickLive('/academics/') },
+  { label: 'Admissions', href: await pickLive('/admissions/') },
+  { label: 'Visit Campus', href: await pickLive('/visit/') },
+  { label: 'Continuing Education', href: await pickLive('/continuing-ed/') },
+  { label: 'Alumni', href: await pickLive('/alumni/') },
+  { label: 'Giving', href: await pickLive('/giving/') },
+];
+---
+<BaseLayout title="Search" description="Search programs, admissions, student services, alumni and more." section="search" audience="prospect">
+  <section class="page-hero">
+    <div class="wrap">
+      <h1>Search</h1>
+      <form class="search-form" action="/search/" method="get" role="search">
+        <label for="search-q" class="visually-hidden">Search Connected University</label>
+        <input id="search-q" name="q" type="search" placeholder="What are you looking for?" autocomplete="off" enterkeyhint="search" />
+        <button class="btn btn--navy" type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+  <div class="wrap results-wrap">
+    <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+    <ol id="search-results" class="results"></ol>
+    <nav id="search-suggestions" class="suggestions" aria-label="Popular pages" hidden>
+      <h2>Popular pages</h2>
+      <ul class="link-grid">
+        {suggestions.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-form {
+    max-width: 760px;
+  }
+  .results-wrap {
+    padding-top: clamp(1.5rem, 4vw, 2.5rem);
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .search-status {
+    color: var(--cu-muted);
+    margin-bottom: 1.5rem;
+  }
+  .results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 50rem;
+    display: grid;
+    gap: 1.75rem;
+  }
+  .results :global(.result__section) {
+    display: block;
+    font: 600 0.75rem/1.2 var(--font-body);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cu-gold-600);
+    margin-bottom: 0.3rem;
+  }
+  .results :global(.result__title) {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: var(--cu-navy);
+  }
+  .results :global(a) {
+    text-decoration: none;
+  }
+  .results :global(a:hover .result__title) {
+    text-decoration: underline;
+  }
+  .results :global(p) {
+    margin: 0.35rem 0 0;
+  }
+  .results :global(mark) {
+    background: #f6e7c4;
+    color: inherit;
+    padding: 0 0.1em;
+    border-radius: 2px;
+  }
+  .suggestions h2 {
+    font-size: 1.6rem;
+  }
+</style>
+
+<script>
+  import { loadIndex, search, terms, highlight, snippet } from '../scripts/search.js';
+  import { SECTION_LABELS } from '../lib/taxonomy.js';
+
+  const query = (new URLSearchParams(location.search).get('q') || '').trim();
+  const input = document.getElementById('search-q') as HTMLInputElement;
+  const status = document.getElementById('search-status')!;
+  const list = document.getElementById('search-results')!;
+  const suggestions = document.getElementById('search-suggestions')!;
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  input.value = query;
+
+  async function run() {
+    if (!query) {
+      status.textContent = 'Type a word or two, like a program, a service or an event.';
+      suggestions.hidden = false;
+      input.focus();
+      return;
+    }
+    document.title = `Search: ${query} | Connected University`;
+    status.textContent = 'Searching…';
+    let index;
+    try {
+      index = await loadIndex();
+    } catch {
+      status.textContent = import.meta.env.DEV
+        ? 'No search index in dev mode: it is written by `npm run build`. Use `npm run build && npm start`.'
+        : 'Search is not available right now. Please try again later.';
+      return;
+    }
+    const qs = terms(query);
+    const results = search(index, query);
+    if (!results.length) {
+      status.innerHTML = `No results for <strong>${esc(query)}</strong>. Try a different word, or start from one of these pages.`;
+      suggestions.hidden = false;
+      return;
+    }
+    status.innerHTML = `${results.length} result${results.length === 1 ? '' : 's'} for <strong>${esc(query)}</strong>`;
+    list.innerHTML = results
+      .map(({ entry }) => {
+        const label = SECTION_LABELS[entry.section as keyof typeof SECTION_LABELS] || '';
+        return `<li>
+          <a href="${esc(entry.url)}">
+            ${label ? `<span class="result__section">${esc(label)}</span>` : ''}
+            <span class="result__title">${highlight(entry.title, qs)}</span>
+          </a>
+          <p>${highlight(snippet(entry, qs), qs)}</p>
+        </li>`;
+      })
+      .join('');
+  }
+
+  run();
+</script>

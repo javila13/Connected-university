@@ -92,6 +92,26 @@ menuButton?.addEventListener('click', () => {
   document.querySelector('.site-header')?.classList.toggle('is-open', open);
 });
 
+// --- Header search panel ----------------------------------------------------
+const searchButton = document.querySelector('[data-search-toggle]');
+const searchPanel = document.getElementById('site-search');
+
+function setSearchOpen(open, { restoreFocus = false } = {}) {
+  if (!searchButton || !searchPanel) return;
+  searchPanel.hidden = !open;
+  searchButton.setAttribute('aria-expanded', String(open));
+  if (open) searchPanel.querySelector('input')?.focus();
+  else if (restoreFocus) searchButton.focus();
+}
+
+searchButton?.addEventListener('click', () => setSearchOpen(searchPanel.hidden));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && searchPanel && !searchPanel.hidden) setSearchOpen(false, { restoreFocus: true });
+});
+document.addEventListener('click', (e) => {
+  if (searchPanel && !searchPanel.hidden && !e.target.closest('#site-search, [data-search-toggle]')) setSearchOpen(false);
+});
+
 // --- Professor Login is inert (PLAN.md §4: mirror only) -----------------------
 document.querySelectorAll('[data-inert-link]').forEach((a) =>
   a.addEventListener('click', (e) => e.preventDefault()),

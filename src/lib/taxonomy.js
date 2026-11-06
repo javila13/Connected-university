@@ -2,7 +2,7 @@
 // layout and the client scripts all import from here, so a typo in a page's
 // frontmatter fails the build instead of silently skewing the simulation.
 
-/** Values allowed in a page's `section`. `system` is for the 404 page only. */
+/** Values allowed in a page's `section`. `search` is the search page; `system` is the 404 page. */
 export const SECTIONS = [
   'home',
   'about',
@@ -20,8 +20,31 @@ export const SECTIONS = [
   'advancement',
   'continuing-ed',
   'athletics',
+  'search',
   'system',
 ];
+
+/** Human labels for sections (search results, breadcrumbs). */
+export const SECTION_LABELS = {
+  home: 'Home',
+  about: 'About',
+  news: 'News',
+  events: 'Events',
+  visit: 'Visit',
+  contact: 'Contact',
+  careers: 'Careers',
+  legal: 'Privacy',
+  academics: 'Academics',
+  admissions: 'Admissions',
+  'student-success': 'Student Success',
+  portal: 'Student Portal',
+  alumni: 'Alumni',
+  advancement: 'Giving',
+  'continuing-ed': 'Continuing Ed',
+  athletics: 'Athletics',
+  search: 'Search',
+  system: '',
+};
 
 /** Values allowed in a page's `audience` (PLAN.md §5.1). */
 export const AUDIENCES = ['prospect', 'student', 'alumni', 'donor', 'learner', 'fan'];
@@ -35,13 +58,14 @@ export const AGENT_PERSONAS = {
 
 /**
  * `auto` widget routing (PLAN.md D6): Piper for inbound inquiry, the
- * Agentforce mock for constituent service. Learner and fan routing is not
- * spelled out in the plan; see docs/decisions.md (2026-11-06).
+ * Agentforce mock for constituent service. Continuing Ed (learner) and
+ * Athletics (fan) pages offer both (Jesse, 2026-11-06; docs/decisions.md).
+ * `widget` is 'piper' | 'agentforce' | 'both'.
  */
 export const AUDIENCE_ROUTING = {
   prospect: { widget: 'piper', agent: 'student-recruitment' },
-  learner: { widget: 'piper', agent: 'student-recruitment' },
-  fan: { widget: 'piper', agent: 'alumni-giving' },
+  learner: { widget: 'both', agent: 'student-recruitment' },
+  fan: { widget: 'both', agent: 'alumni-giving' },
   student: { widget: 'agentforce', agent: 'student-success' },
   alumni: { widget: 'agentforce', agent: 'alumni-giving' },
   donor: { widget: 'agentforce', agent: 'alumni-giving' },

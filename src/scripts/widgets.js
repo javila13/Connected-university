@@ -25,8 +25,8 @@ export function resolveWidgets(audience, settings) {
       [piper, agentforce] = [true, true];
       break;
     default: // auto
-      piper = route.widget === 'piper';
-      agentforce = route.widget === 'agentforce';
+      piper = route.widget === 'piper' || route.widget === 'both';
+      agentforce = route.widget === 'agentforce' || route.widget === 'both';
   }
   if (typeof settings.forcePiper === 'boolean') piper = settings.forcePiper;
   if (typeof settings.forceAgentforce === 'boolean') agentforce = settings.forceAgentforce;
