@@ -8,14 +8,22 @@
 //   document 'cu:form-submit'  detail { form, page, fields }
 //
 // Links can preselect fields: ?program=<program id>, ?type=<student type>,
-// ?amount=<whole dollars>, ?frequency=one-time|monthly, ?designation=<fund id>.
+// ?amount=<whole dollars>, ?frequency=one-time|monthly, ?designation=<fund id>,
+// ?interest=<certificate id or ce-inquiry option>.
 //
 // In a confirmation, [data-first-name] shows the first name and
 // [data-field="<name>"] shows a field (a select shows its option's label;
 // data-format="usd" formats dollars). [data-show-if="<name>=<value>"] is
 // shown only when that field has that value.
 
-const PARAMS = { program: 'program', type: 'studentType', amount: 'amount', frequency: 'frequency', designation: 'designation' };
+const PARAMS = {
+  program: 'program',
+  type: 'studentType',
+  amount: 'amount',
+  frequency: 'frequency',
+  designation: 'designation',
+  interest: 'interest',
+};
 
 function setField(form, name, value) {
   const el = form.elements.namedItem(name);

@@ -1,0 +1,98 @@
+---
+// Continuing Ed certificate page (PLAN.md §4). Copy and structured facts come
+// from content/certificates/<id>.md. body[data-topic] is the certificate's
+// id, which the Phase 2 affinity engine reads as continuing-ed interest
+// (PLAN.md §3: "certificate views → upsell affinity").
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import FacultyCards from '../../../components/FacultyCards.astro';
+import Faq from '../../../components/Faq.astro';
+import { pickLive, programUrl } from '../../../lib/routes.js';
+import { formatLabel } from '../../../lib/academics.js';
+import { fillFacts } from '../../../lib/fill-facts.js';
+import facts from '../../../../content/facts.json';
+
+export async function getStaticPaths() {
+  const certs = await getCollection('certificates');
+  return certs.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/certificates/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const director = d.director ? await getEntry(d.director) : null;
+const pathwayProgram = d.pathway ? await getEntry(d.pathway.program) : null;
+
+const discount = facts.alumni.ceDiscountPercent;
+const usd = (n: number) => '$' + n.toLocaleString('en-US');
+const alumniPrice = Math.round(d.price * (1 - discount / 100));
+
+const inquiry = await pickLive('/continuing-ed/inquiry/', '/continuing-ed/');
+const returnToCu = await pickLive('/continuing-ed/return/', '/continuing-ed/');
+---
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  section={d.section}
+  audience={d.audience}
+  topic={d.topic ?? entry.id}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.title} lede={d.description} eyebrow="Professional certificate" />
+  <div class="wrap detail">
+    <div class="detail__main">
+      <article class="prose" set:html={html} />
+
+      <section aria-labelledby="outcomes-heading">
+        <h2 id="outcomes-heading">What you'll learn</h2>
+        <ul class="check-list">{d.outcomes.map((o) => <li>{o}</li>)}</ul>
+      </section>
+
+      <section aria-labelledby="courses-heading">
+        <h2 id="courses-heading">Courses</h2>
+        <ul class="course-list">
+          {d.courses.map((c) => <li><span class="course-list__code">{c.code}</span> {c.title}</li>)}
+        </ul>
+      </section>
+
+      {d.pathway && pathwayProgram && (
+        <aside class="callout">
+          <p class="eyebrow">Keep going</p>
+          <p>
+            All {d.credits} graduate credits count toward the <a href={programUrl(pathwayProgram.id)}>{d.pathway.credential}</a>{d.pathway.focus ? ` with a ${d.pathway.focus} focus` : ''}, so your certificate is a head start on a master's degree.
+          </p>
+        </aside>
+      )}
+
+      {director && (
+        <section aria-labelledby="director-heading">
+          <h2 id="director-heading">Program director</h2>
+          <FacultyCards people={[director]} />
+        </section>
+      )}
+
+      <Faq faqs={d.faqs} where={where} />
+    </div>
+
+    <aside class="detail__side" aria-label="Certificate at a glance">
+      <div class="glance">
+        <h2>At a glance</h2>
+        <dl class="glance__facts">
+          <dt>Format</dt><dd>{d.formats.map(formatLabel).join(', ')}</dd>
+          <dt>Courses</dt><dd>{d.courses.length}</dd>
+          <dt>Credits</dt><dd>{d.credits} graduate credits</dd>
+          <dt>Length</dt><dd>{d.length}</dd>
+          <dt>Starts</dt><dd>{d.startTerms.join(', ')}</dd>
+          <dt>Tuition</dt><dd>{usd(d.price)}</dd>
+          <dt>Alumni</dt><dd>{usd(alumniPrice)} ({discount}% off)</dd>
+        </dl>
+        <div class="glance__actions">
+          <a class="btn btn--gold" href={`${inquiry}?interest=${entry.id}`} data-cta="ce-inquiry">Request Information</a>
+          <a class="btn btn--ghost" href={returnToCu} data-cta="return-to-cu">Alumni: Return to CU</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

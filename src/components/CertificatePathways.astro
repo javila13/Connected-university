@@ -1,0 +1,33 @@
+---
+// Block marker <!-- certificate-pathways -->: which degree each certificate's
+// credits count toward. Built from the certificate files, so credit numbers
+// aren't restated in copy.
+import { getCollection, getEntry } from 'astro:content';
+import { certificateUrl, programUrl } from '../lib/routes.js';
+
+const certs = (await getCollection('certificates'))
+  .filter((c) => c.data.pathway)
+  .sort((a, b) => a.data.shortTitle.localeCompare(b.data.shortTitle));
+const rows = await Promise.all(
+  certs.map(async (c) => {
+    const program = await getEntry(c.data.pathway!.program);
+    return { c, program };
+  }),
+);
+---
+<table class="pathways">
+  <thead>
+    <tr><th scope="col">Certificate</th><th scope="col">Graduate credits</th><th scope="col">Count toward</th></tr>
+  </thead>
+  <tbody>
+    {rows.map(({ c, program }) => (
+      <tr>
+        <th scope="row"><a href={certificateUrl(c.id)}>{c.data.shortTitle}</a></th>
+        <td>{c.data.credits}</td>
+        <td>
+          <a href={programUrl(program.id)}>{c.data.pathway!.credential}</a>{c.data.pathway!.focus ? `, ${c.data.pathway!.focus} focus` : ''}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>

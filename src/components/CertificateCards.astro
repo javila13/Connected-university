@@ -1,0 +1,25 @@
+---
+// Continuing Ed certificate cards for the catalog and the CE hub.
+import { certificateUrl } from '../lib/routes.js';
+import { formatLabel } from '../lib/academics.js';
+
+interface Props {
+  items: any[];
+}
+const { items } = Astro.props;
+---
+<ul class="cards">
+  {items.map((c) => (
+    <li>
+      <a class="card" href={certificateUrl(c.id)} data-certificate={c.id}>
+        <span class="card__eyebrow">Professional certificate</span>
+        <span class="card__title">{c.data.shortTitle}</span>
+        <span class="card__meta">
+          {c.data.courses.length} courses · {c.data.length}
+          <span class="card__formats"> — {c.data.formats.map(formatLabel).join(', ')}</span>
+        </span>
+        <span class="card__text">{c.data.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>
