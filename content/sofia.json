@@ -1,5 +1,5 @@
 {
-  "_about": "Sofia Sanders, the demo persona (PLAN.md §3, §5.5). Her known-profile attributes live only here, keyed by life stage (CLAUDE.md). Phase 1 fills the student stage for the Student Portal dashboard; Phase 2 adds the prospect, alumni and learner stages and the identity stitch. Name, email, program, advisor and the Organic Chemistry storyline come from the demo-org narrative; every other value is a draft for Jesse to check against the org (PLAN.md §8.3). Course codes and the advisor id must exist in content/programs or content/faculty, or the build fails. Dates use {{facts.path}} tokens.",
+  "_about": "Sofia Sanders, the demo persona (PLAN.md §3, §5.5, §5.7). Her known-profile attributes live only here, keyed by life stage (CLAUDE.md). Each stage also seeds the affinities its /demo persona preset loads. Values marked in docs/decisions.md as coming from the demo-org narrative are verified; everything else is a draft for Jesse to check against the org (PLAN.md §8.3). The build fails if a stage names a program, course, advisor, certificate, fund or affinity category the site doesn't have. Dates and amounts from facts.json use {{facts.path}} tokens.",
   "person": {
     "firstName": "Sofia",
     "lastName": "Sanders",
@@ -7,7 +7,34 @@
     "program": "environmental-science"
   },
   "stages": {
+    "prospect": {
+      "label": "Prospect: admitted, not committed",
+      "constituentRole": "Prospective student",
+      "applicationDecision": "Accepted",
+      "applicantDecision": null,
+      "highSchoolGpa": 3.8,
+      "sat": 1320,
+      "campusVisits": 2,
+      "smsOptIn": false,
+      "aid": [
+        { "name": "Dean's Scholarship", "amount": "${{facts.scholarships.dean}} a year" },
+        { "name": "Sustainability Leaders Scholarship", "amount": "${{facts.scholarships.sustainabilityLeaders}} a year" }
+      ],
+      "deadlines": [
+        { "label": "Enrollment deposit", "date": "{{facts.admissions.deadlines.enrollmentDeposit}}" },
+        { "label": "Housing application", "date": "{{facts.admissions.deadlines.housingApplication}}" }
+      ],
+      "affinities": {
+        "academic-interest:environmental-science": 14,
+        "interest:admissions": 10,
+        "interest:visit": 4,
+        "topic:admitted-students": 6,
+        "life-stage:prospect": 18
+      }
+    },
     "student": {
+      "label": "Student: junior, early alert resolved",
+      "constituentRole": "Student",
       "classYear": "Junior",
       "standing": "Good academic standing",
       "cumulativeGpa": 3.05,
@@ -38,7 +65,52 @@
         { "label": "Spring registration opens", "date": "{{facts.registrar.springRegistration}}" },
         { "label": "Spring balance due", "date": "{{facts.registrar.springBalanceDue}}" },
         { "label": "Renew your FAFSA", "date": "{{facts.admissions.deadlines.aidPriority}}" }
-      ]
+      ],
+      "affinities": {
+        "academic-interest:environmental-science": 8,
+        "interest:student-success": 10,
+        "interest:portal": 6,
+        "topic:advising": 4,
+        "topic:tutoring": 3,
+        "life-stage:student": 14
+      }
+    },
+    "alumna": {
+      "label": "Alumna and first-time donor",
+      "constituentRole": "Alumni",
+      "graduatedYearsAgo": 3,
+      "degreeShort": "B.S.",
+      "employer": "A regional water district",
+      "jobTitle": "Water quality specialist",
+      "city": "Long Beach, CA",
+      "smsOptIn": true,
+      "gifts": [{ "amount": 500, "fund": "tutoring", "when": "Last fiscal year" }],
+      "nextAsk": "Connected Circle membership, ${{facts.giving.connectedCircle.member}} a year",
+      "affinities": {
+        "academic-interest:environmental-science": 4,
+        "interest:alumni": 9,
+        "interest:advancement": 7,
+        "topic:giving-societies": 3,
+        "life-stage:alumni": 10,
+        "life-stage:donor": 7
+      }
+    },
+    "learner": {
+      "label": "Learner: certificate holder, not enrolled",
+      "constituentRole": "Alumni",
+      "credential": "sustainability",
+      "credentialEarned": "18 months ago",
+      "enrollment": "Not currently enrolled",
+      "emailEngagement": "Opened Continuing Ed emails in the last 90 days",
+      "smsOptIn": true,
+      "nextStep": { "program": "business-administration", "label": "Online MBA, Sustainable Business focus" },
+      "affinities": {
+        "academic-interest:sustainability-studies": 3,
+        "interest:continuing-ed": 8,
+        "topic:sustainability": 9,
+        "life-stage:learner": 10,
+        "life-stage:alumni": 4
+      }
     }
   }
 }

@@ -4,21 +4,30 @@
 //
 // State shape:
 //   { version, deviceId, firstSeen,
-//     events:     [{ id, ts, action, url, title, section, audience, program?, topic?, detail?, engaged?, points }],
-//     affinities: { [key]: { type, value, label, score, updated } } }
+//     events:     [{ id, ts, action, url, title, section, audience, program?, topic?, detail?, engaged?, points, individualId? }],
+//     affinities: { [key]: { type, value, label, score, updated, seeded? } },
+//     identity:   { known: false } | { known: true, personId, unifiedId, email, stage, stitchedAt, via },
+//     timeline:   [{ ts, kind, text, detail? }] }   identity steps for the Identity tab
 import { STATE_KEY, CHANNEL, MAX_EVENTS } from './config.js';
 
 const VERSION = 1;
 const randomId = (prefix) => prefix + Math.random().toString(36).slice(2, 10).padEnd(8, '0');
 
 function fresh() {
-  return { version: VERSION, deviceId: randomId('dev_'), firstSeen: null, events: [], affinities: {} };
+  return { version: VERSION, deviceId: randomId('dev_'), firstSeen: null, events: [], affinities: {}, identity: { known: false }, timeline: [] };
+}
+
+// Profiles saved before the identity fields existed get them added.
+function normalize(s) {
+  s.identity ??= { known: false };
+  s.timeline ??= [];
+  return s;
 }
 
 function read() {
   try {
     const s = JSON.parse(localStorage.getItem(STATE_KEY));
-    if (s && s.version === VERSION && Array.isArray(s.events)) return s;
+    if (s && s.version === VERSION && Array.isArray(s.events)) return normalize(s);
   } catch {
     /* corrupt or unavailable: start fresh */
   }

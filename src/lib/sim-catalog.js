@@ -1,6 +1,7 @@
-// Labels the simulation shows for affinity categories: program titles for
-// academic interest, and certificate and team names for topics. Written into
-// every page as JSON at build time, so the browser needs no lookup.
+// Labels the simulation shows: program titles for academic interest,
+// certificate and team names for topics, and faculty names and certificate
+// titles for Sofia's profile. Written into every page (and /demo, /data360)
+// as JSON at build time, so the browser needs no lookup.
 import { getCollection } from 'astro:content';
 
 let cached;
@@ -12,6 +13,8 @@ export async function getSimCatalog() {
     ...Object.fromEntries((await getCollection('certificates')).map((c) => [c.id, `${c.data.shortTitle} certificate`])),
     ...Object.fromEntries((await getCollection('teams')).map((t) => [t.id, t.data.name])),
   };
-  cached = { programs, topics };
+  const faculty = Object.fromEntries((await getCollection('faculty')).map((f) => [f.id, f.data.name]));
+  const certificates = Object.fromEntries((await getCollection('certificates')).map((c) => [c.id, c.data.title]));
+  cached = { programs, topics, faculty, certificates };
   return cached;
 }

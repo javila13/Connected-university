@@ -40,6 +40,7 @@ export function startTracking({ catalog }) {
         ...meta,
         ...(detail ? { detail } : {}),
         points,
+        ...(s.identity?.known ? { individualId: s.identity.unifiedId } : {}),
       });
     });
     return id;

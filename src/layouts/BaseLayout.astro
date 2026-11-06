@@ -12,6 +12,7 @@ import Footer from '../components/Footer.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import { assertPageMeta } from '../lib/taxonomy.js';
 import { getSimCatalog } from '../lib/sim-catalog.js';
+import { checkSofia } from '../lib/sofia-check.js';
 import facts from '../../content/facts.json';
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
 const { title, description, section, audience, program, topic, personaHook } = Astro.props;
 assertPageMeta({ section, audience }, Astro.url.pathname);
 const fullTitle = section === 'home' ? `${facts.name} | Home` : `${title} | ${facts.name}`;
+await checkSofia();
 const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
 ---
 <!doctype html>
