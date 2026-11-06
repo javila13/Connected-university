@@ -3,6 +3,12 @@
 // Settings persist to localStorage and reach open site tabs via BroadcastChannel.
 import ToolLayout from '../layouts/ToolLayout.astro';
 import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
+import { getSimCatalog } from '../lib/sim-catalog.js';
+import sofia from '../../content/sofia.json';
+
+const stages = Object.entries(sofia.stages).map(([id, s]) => ({ id, label: s.label }));
+const presetLabels: Record<string, string> = { prospect: 'Sofia · Prospect', student: 'Sofia · Student', alumna: 'Sofia · Alumna/Donor', learner: 'Sofia · Learner' };
+const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
 ---
 <ToolLayout title="Demo control panel">
   <header class="tool-header">
@@ -71,20 +77,32 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
 
     <section class="card">
       <h2>Visitor</h2>
-      <p class="help">Consent: <span class="pill" id="consent-state">–</span></p>
+      <p class="help">
+        Current visitor: <span class="pill" id="visitor-state">–</span> · Consent: <span class="pill" id="consent-state">–</span>
+      </p>
       <div class="buttons">
         <button type="button" class="slds-btn slds-btn--brand" data-action="reset-visitor">Reset visitor</button>
         <button type="button" class="slds-btn" data-action="clear-consent">Clear consent only</button>
-        <button type="button" class="slds-btn" disabled title="Phase 2">Become Sofia</button>
       </div>
       <p class="help">Reset clears the simulated profile and the consent cookie. Settings are kept.</p>
-      <h3 class="sub">Persona presets <span class="pill">Phase 2</span></h3>
+
+      <h3 class="sub">Become Sofia</h3>
+      <p class="help">Stitches the current visitor, and everything they've done so far, to Sofia Sanders at the life stage you pick. Use it after browsing anonymously.</p>
       <div class="buttons">
-        <button type="button" class="slds-btn" disabled>Anonymous</button>
-        <button type="button" class="slds-btn" disabled>Sofia · Prospect</button>
-        <button type="button" class="slds-btn" disabled>Sofia · Student</button>
-        <button type="button" class="slds-btn" disabled>Sofia · Alumna/Donor</button>
-        <button type="button" class="slds-btn" disabled>Sofia · Learner</button>
+        <label class="select inline">
+          <span class="visually-hidden">Life stage</span>
+          <select id="become-stage">
+            {stages.map((s) => <option value={s.id}>{s.label}</option>)}
+          </select>
+        </label>
+        <button type="button" class="slds-btn" data-action="become-sofia">Become Sofia</button>
+      </div>
+
+      <h3 class="sub">Persona presets</h3>
+      <p class="help">Starts over as Sofia at a life stage, with her earlier affinities loaded, so a story can begin mid-journey. Also accepts cookies if needed.</p>
+      <div class="buttons">
+        <button type="button" class="slds-btn" data-preset="anonymous">Anonymous</button>
+        {stages.map((s) => <button type="button" class="slds-btn" data-preset={s.id}>{presetLabels[s.id] ?? s.label}</button>)}
       </div>
     </section>
 
@@ -127,6 +145,7 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
       <p class="help"><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>I</kbd> on any site page opens or closes the Data 360 inspector drawer.</p>
     </section>
   </main>
+  <script type="application/json" id="cu-sim-catalog" set:html={simCatalog} />
 </ToolLayout>
 
 <style>
@@ -208,7 +227,15 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
     clearOverrides,
     onSettingsChange,
   } from '../scripts/settings.js';
-  import { getConsent, clearConsent } from '../scripts/consent.js';
+  import { getConsent, clearConsent, setConsent } from '../scripts/consent.js';
+  import * as store from '../../sim/store.js';
+  import { stitch, loadPreset, fullName, STAGES } from '../../sim/identity.js';
+
+  let catalog = {};
+  try {
+    catalog = JSON.parse(document.getElementById('cu-sim-catalog')?.textContent || '{}');
+  } catch {}
+  store.startSync();
   import { resolveWidgets, getConfig } from '../scripts/widgets.js';
   import { AGENT_PERSONAS } from '../lib/taxonomy.js';
 
@@ -261,6 +288,13 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
     consentEl.textContent = consent ?? 'not answered';
     consentEl.className = `pill ${consent === 'all' ? 'pill--ok' : 'pill--warn'}`;
 
+    const sim = store.getState();
+    const visitorEl = $('#visitor-state');
+    visitorEl.textContent = sim.identity?.known
+      ? `${fullName} · ${STAGES[sim.identity.stage]}`
+      : `Anonymous · ${sim.events.length} engagement ${sim.events.length === 1 ? 'row' : 'rows'}`;
+    visitorEl.className = `pill ${sim.identity?.known ? 'pill--ok' : ''}`;
+
     const { qualifiedToken } = getConfig();
     $('#cfg-qualified').innerHTML = qualifiedToken
       ? `<span class="pill pill--ok">Live</span> token <code>${qualifiedToken.slice(0, 4)}…</code> from <code>demo-config.js</code>`
@@ -301,9 +335,27 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
           .filter((k) => k.startsWith('cu_sim'))
           .forEach((k) => localStorage.removeItem(k));
       } catch {}
+      store.reset();
       clearConsent();
       render();
       say('Visitor reset: simulated profile and consent cleared.');
+    } else if (action === 'become-sofia') {
+      const stage = (document.getElementById('become-stage') as HTMLSelectElement).value;
+      if (getConsent() !== 'all') setConsent('all');
+      stitch({ stage, via: 'Become Sofia (demo panel)' });
+      render();
+      say(`Stitched to ${fullName}, ${STAGES[stage]}. Open site tabs update automatically.`);
+    }
+    const preset = (e.target as HTMLElement).closest<HTMLElement>('[data-preset]')?.dataset.preset;
+    if (preset === 'anonymous') {
+      store.reset();
+      render();
+      say('Preset loaded: a new anonymous visitor.');
+    } else if (preset) {
+      if (getConsent() !== 'all') setConsent('all');
+      loadPreset(preset, catalog);
+      render();
+      say(`Preset loaded: ${fullName}, ${STAGES[preset]}.`);
     }
   });
 
@@ -316,6 +368,7 @@ import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
   );
 
   onSettingsChange(render);
+  store.subscribe(() => render());
   window.addEventListener('focus', render);
   render();
 </script>

@@ -3,6 +3,7 @@
 // Every value is escaped.
 import { OBJECTS } from './config.js';
 import { rankAffinities, TYPE_LABELS } from './affinity.js';
+import { stageRows, stageLabel, stageInfo, person } from './profile.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const time = (iso) => (iso ? new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '–');
@@ -24,7 +25,36 @@ export function statusNote({ consent, simulation }) {
   return '';
 }
 
-export function profileView(state) {
+const facts = (rows) =>
+  `<dl class="d360-facts">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
+
+function knownProfileView(state, { catalog = {} } = {}) {
+  const id = state.identity;
+  const info = stageInfo(id.stage);
+  const top = rankAffinities(state).slice(0, 3);
+  const prefs = info.smsOptIn ? 'Email and text' : 'Email';
+  return `
+    ${objectTag(OBJECTS.individual)}
+    <div class="d360-profile">
+      <div class="d360-avatar d360-avatar--known" aria-hidden="true">${esc(person.firstName[0] + person.lastName[0])}</div>
+      <div>
+        <p class="d360-profile__name">${esc(`${person.firstName} ${person.lastName}`)}</p>
+        <p class="d360-muted">${esc(person.email)}</p>
+        <p><span class="d360-stage">${esc(stageLabel(id.stage))}</span></p>
+      </div>
+    </div>
+    ${facts([
+      ['Unified Individual', id.unifiedId],
+      ['Constituent role', info.constituentRole ?? ''],
+      ...stageRows(id.stage, catalog),
+      ['Contact preferences', prefs],
+      ['Top affinities', top.length ? top.map((a) => a.label).join(', ') : 'None yet'],
+    ])}
+    <p class="d360-muted">Known since ${esc(time(id.stitchedAt))}, via ${esc(id.via)}. Device <code>${esc(state.deviceId)}</code> and its ${state.events.length} engagement ${state.events.length === 1 ? 'row' : 'rows'} belong to this Unified Individual.</p>`;
+}
+
+export function profileView(state, ctx = {}) {
+  if (state.identity?.known) return knownProfileView(state, ctx);
   const total = state.events.length;
   const top = rankAffinities(state).slice(0, 3);
   return `
@@ -42,7 +72,38 @@ export function profileView(state) {
       <dt>Engagement rows</dt><dd>${total}</dd>
       <dt>Top affinities</dt><dd>${top.length ? top.map((a) => esc(a.label)).join(', ') : 'None yet'}</dd>
     </dl>
-    <p class="d360-muted">Coming in the identity-stitch release: submitting any form with an email, or signing in to the Student Portal, stitches this device to a known person.</p>`;
+    <p class="d360-muted">Coming in the identity-stitch release: submitting any form with an email, or signing in to the Student Portal, stitches this device to a known person. Until then, use <b>Become Sofia</b> or a persona preset in /demo.</p>`;
+}
+
+export function identityView(state) {
+  const id = state.identity ?? { known: false };
+  const steps = [
+    ...(state.firstSeen ? [{ ts: state.firstSeen, kind: 'device', text: 'Anonymous device first seen', detail: `Device ${state.deviceId}` }] : []),
+    ...(state.timeline ?? []),
+  ].sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
+  return `
+    <p class="d360-object">Party identification</p>
+    ${facts([
+      ['Device ID', state.deviceId],
+      ['Email', id.known ? id.email : 'Unknown'],
+      ['Unified Individual', id.known ? id.unifiedId : 'Not resolved yet'],
+      ['CRM contact', id.known ? `${person.firstName} ${person.lastName}` : 'None'],
+    ])}
+    <h3 class="d360-group">Identity timeline</h3>
+    ${
+      steps.length
+        ? `<ol class="d360-timeline">${steps
+            .map(
+              (s) => `
+          <li class="d360-timeline__item d360-timeline__item--${esc(s.kind)}">
+            <p class="d360-muted">${esc(time(s.ts))}</p>
+            <p class="d360-timeline__text">${esc(s.text)}</p>
+            ${s.detail ? `<p class="d360-muted">${esc(s.detail)}</p>` : ''}
+          </li>`,
+            )
+            .join('')}</ol>`
+        : `<p class="d360-empty">Nothing yet. The device is recorded on the first page view.</p>`
+    }`;
 }
 
 export function engagementView(state, { isNew = () => false } = {}) {
@@ -95,7 +156,7 @@ export function affinitiesView(state) {
                 <span class="d360-affinity__score">${a.score}</span>
               </div>
               <div class="d360-bar" aria-hidden="true"><span style="width:${Math.max(4, Math.round((a.score / max) * 100))}%"></span></div>
-              <p class="d360-muted">Updated ${esc(time(a.updated))}</p>
+              <p class="d360-muted">${a.seeded ? 'From earlier engagement · ' : ''}Updated ${esc(time(a.updated))}</p>
             </li>`,
           )
           .join('')}
@@ -108,4 +169,5 @@ export const TABS = [
   { id: 'profile', label: 'Profile', render: profileView },
   { id: 'engagement', label: 'Engagement', render: engagementView },
   { id: 'affinities', label: 'Affinities', render: affinitiesView },
+  { id: 'identity', label: 'Identity', render: identityView },
 ];

@@ -12,5 +12,5 @@ try {
 } catch {}
 
 store.startSync();
-mountInspector({ store });
+mountInspector({ store, catalog });
 onConsentGranted(() => startTracking({ catalog }));

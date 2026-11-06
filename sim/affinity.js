@@ -13,6 +13,21 @@ export const humanize = (slug) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+/** Label for a category of a given type and value. */
+export function labelFor(type, value, catalog = {}) {
+  if (type === 'academic-interest') return catalog.programs?.[value] ?? humanize(value);
+  if (type === 'interest') return SECTION_LABELS[value] ?? humanize(value);
+  if (type === 'topic') return catalog.topics?.[value] ?? humanize(value);
+  if (type === 'life-stage') return LIFE_STAGES[value] ?? humanize(value);
+  return humanize(value);
+}
+
+/** "academic-interest:nursing" -> { type, value } */
+export function parseKey(key) {
+  const i = key.indexOf(':');
+  return { type: key.slice(0, i), value: key.slice(i + 1) };
+}
+
 /**
  * Categories for one page.
  * @param {{ section?: string, audience?: string, program?: string, topic?: string }} meta
@@ -23,15 +38,15 @@ export function categoriesFor(meta, catalog = {}) {
   const add = (type, value, label) => {
     if (value && !out.some((c) => c.key === `${type}:${value}`)) out.push({ key: `${type}:${value}`, type, value, label });
   };
-  if (meta.program) add('academic-interest', meta.program, catalog.programs?.[meta.program] ?? humanize(meta.program));
+  if (meta.program) add('academic-interest', meta.program, labelFor('academic-interest', meta.program, catalog));
   const sectionLabel = INTEREST_SECTIONS.includes(meta.section) ? SECTION_LABELS[meta.section] : null;
   if (sectionLabel) add('interest', meta.section, sectionLabel);
   if (meta.topic && meta.topic !== meta.section && meta.topic !== meta.program) {
-    const label = catalog.topics?.[meta.topic] ?? humanize(meta.topic);
+    const label = labelFor('topic', meta.topic, catalog);
     // "giving" on the Giving hub is the same signal as the Giving interest.
     if (label.toLowerCase() !== sectionLabel?.toLowerCase()) add('topic', meta.topic, label);
   }
-  if (meta.audience) add('life-stage', meta.audience, LIFE_STAGES[meta.audience] ?? humanize(meta.audience));
+  if (meta.audience) add('life-stage', meta.audience, labelFor('life-stage', meta.audience, catalog));
   return out;
 }
 

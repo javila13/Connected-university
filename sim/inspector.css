@@ -381,3 +381,50 @@ body.d360-open .d360-launcher {
 .d360-object + .d360-group {
   margin-top: 0.2rem;
 }
+
+/* Known profile and identity timeline */
+.d360-avatar--known {
+  background: var(--d360-brand);
+  font-size: 15px;
+}
+.d360-stage {
+  display: inline-block;
+  margin-top: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #d8edff;
+  color: var(--d360-brand-dark);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.d360-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 2px solid var(--d360-border);
+}
+.d360-timeline__item {
+  position: relative;
+  padding: 0 0 0.85rem 0.6rem;
+}
+.d360-timeline__item::before {
+  content: '';
+  position: absolute;
+  left: -1.42rem;
+  top: 0.25rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: #c9c7c5;
+  border: 2px solid var(--d360-bg);
+}
+.d360-timeline__item--stitch::before,
+.d360-timeline__item--preset::before {
+  background: var(--d360-success);
+}
+.d360-timeline__item--stage::before {
+  background: var(--d360-brand);
+}
+.d360-timeline__text {
+  font-weight: 600;
+}

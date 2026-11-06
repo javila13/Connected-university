@@ -22,7 +22,7 @@ function writeUi(ui) {
   } catch {}
 }
 
-export function mountInspector({ store }) {
+export function mountInspector({ store, catalog = {} }) {
   const ui = readUi();
   if (!TABS.some((t) => t.id === ui.tab)) ui.tab = 'engagement';
   // Rows first seen in the last 2 seconds are highlighted. Rows already in the
@@ -75,7 +75,7 @@ export function mountInspector({ store }) {
     }
     panel.setAttribute('aria-labelledby', `d360-tab-${ui.tab}`);
     const tab = TABS.find((t) => t.id === ui.tab);
-    panel.innerHTML = tab.render(state, { isNew });
+    panel.innerHTML = tab.render(state, { isNew, catalog });
   }
 
   function setOpen(open, { focus = false } = {}) {

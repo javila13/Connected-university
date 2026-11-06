@@ -301,3 +301,24 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
   Tickets mapping to alumna/donor is my call, because Athletics has no Sofia stage *(uncertain — flag for review)*.
 - 2026-11-06: In real life a gift is an identity moment too. It becomes a Gift Transaction on a Contact, and Data 360 resolves that Contact to the Unified Individual. The demo org needs the Contact ID on the Gift Transaction for that to work *(verified — edu-cloud-dc-demo skill)*. Whether a live website stitches at the moment of the gift depends on the giving platform sending an identity event with the email; many process the gift first and sync it to CRM later *(hypothesis — needs validation against the giving platform used in a demo)*. If the visitor is already Sofia, a gift is logged as a conversion and changes nothing else. This ships in the identity-stitch release (Phase 2 PR 3). PLAN.md is unchanged; this log records the extension.
 - 2026-11-06: The inspector's Profile tab now says the stitch is coming in the identity-stitch release, and that any form with an email or a portal sign-in triggers it.
+
+### Process after Phase 2 PR 1
+- 2026-11-06: Merged PR #9 at Jesse's request (`d453d9c`). The collection release went live about 20 seconds after the merge *(verified — `npm run smoke` 1,135/1,135 and the simulation browser suite 40/40 against the live site, 2026-11-06)*.
+
+### Companion window and presets (Phase 2 PR 2)
+- 2026-11-06: `content/sofia.json` now has all four life stages (`prospect`, `student`, `alumna`, `learner`). Each has a label, its CRM attributes and the affinities its persona preset seeds.
+  - From the demo-org narrative *(verified — edu-cloud-dc-demo skill)*:
+    - Prospect: admitted to Environmental Science, not committed, GPA 3.8, SAT 1320, visited twice.
+    - Alumna: graduated three years ago; first gift of $500 last year; hasn't been asked to upgrade.
+    - Learner: sustainability certificate 18 months ago, not enrolled, still opening emails.
+  - Drafts for Jesse to check *(uncertain — flag for review, PLAN.md §8.3)*:
+    - Prospect: aid offer of Dean's + Sustainability Leaders scholarships.
+    - Alumna: the $500 gift went to the Tutoring & Learning Center (the help she got as a student); water quality specialist at a regional water district; Long Beach.
+    - All stages: the SMS opt-ins and every seeded affinity score.
+- 2026-11-06: The alumna's class year is worked out in the browser as the current year minus `graduatedYearsAgo` (3), so it never goes stale. Amounts and deadlines are `{{facts}}` tokens.
+- 2026-11-06: The build now checks `sofia.json` (`src/lib/sofia-check.js`, from BaseLayout). These must exist on the site or the build fails *(verified — broke a fund and a topic on purpose, 2026-11-06)*: all four stages, every seeded affinity (its program, section, page topic or audience), the alumna's gift funds, the learner's certificate and next-step program, and every token.
+- 2026-11-06: Unified Individual IDs are random (`ui_` + 12 hex characters), made when Sofia first becomes known in a browser. The demo org's real Contact and Unified Individual IDs aren't used (CLAUDE.md: no org IDs).
+- 2026-11-06: **Become Sofia** (`/demo`) stitches the current visitor at the stage picked. It keeps the device, the anonymous engagement rows (re-attributed to her Unified Individual) and the affinities she earned. It logs the stitch with the number of rows moved. Doing it again with another stage only changes the stage (logged); the Unified Individual stays the same *(verified — Playwright, 2026-11-06)*.
+- 2026-11-06: **Persona presets** start over as Sofia at a stage, with that stage's affinities seeded and marked "From earlier engagement". New activity adds to them. Presets don't invent engagement rows. Presets and Become Sofia accept cookies if they haven't been answered, since a presenter is driving.
+- 2026-11-06: New **Identity** tab, in the drawer and `/data360`. It shows a Party identification table (device ID, email, Unified Individual, CRM contact) and the identity timeline (device first seen, stitches, stage changes, preset loads). The Profile tab now shows Sofia's attributes for her current stage.
+- 2026-11-06: The `/data360` companion shows Profile, Affinities, Engagement and Identity **all at once**, not as tabs. It's meant for a second screen the presenter shouldn't have to touch. It updates live through the same cross-tab sync and only reads the profile; it never records.
