@@ -47,6 +47,8 @@ const pages = defineCollection({
     listGroupBySchool: z.boolean().optional(),
     /** Renders the faculty directory after the copy. */
     listFaculty: z.boolean().optional(),
+    /** Renders a demo form after the copy (components/DemoForm.astro). */
+    form: z.enum(['request-info', 'apply']).optional(),
   }),
 });
 

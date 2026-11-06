@@ -36,9 +36,11 @@ const relatedItems = related.map((p) => ({ entry: p, credentials: p.data.credent
 const routes = await getRouteSet();
 const certificate = d.certificate && routes.has(d.certificate.href) ? d.certificate : null;
 
+// The forms preselect this program when linked with ?program=<id>.
+const withProgram = (href) => (href === '/admissions/' ? href : href + '?program=' + entry.id);
 const links = {
-  requestInfo: await pickLive('/admissions/request-information/', '/admissions/'),
-  apply: await pickLive('/admissions/apply/', '/admissions/'),
+  requestInfo: withProgram(await pickLive('/admissions/request-information/', '/admissions/')),
+  apply: withProgram(await pickLive('/admissions/apply/', '/admissions/')),
   visit: await pickLive('/visit/'),
 };
 ---

@@ -57,6 +57,13 @@ for (const path of locs) {
     }
     check(`${path} structured data is valid JSON`, ok);
   }
+  // No form posts off-site. Demo forms (data-cu-form) have no action at all and tell the visitor so.
+  for (const [form] of body.matchAll(/<form\b[^>]*>/g)) {
+    check(`${path} form doesn't post off-site`, !/\saction="(https?:)?\/\//i.test(form), form);
+    if (!/data-cu-form="/.test(form)) continue;
+    check(`${path} demo form has no action`, !/\saction=/.test(form), form);
+    check(`${path} demo form carries the demo note`, body.includes('Nothing you enter leaves your browser'));
+  }
   for (const [, href] of body.matchAll(/<a\b[^>]*\shref="(\/[^"#?]*)/g)) {
     if (!internalLinks.has(href)) internalLinks.set(href, path);
   }

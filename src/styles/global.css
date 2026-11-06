@@ -742,6 +742,142 @@ code {
   }
 }
 
+/* ---- Tables, cost table, demo forms ----------------------------------- */
+.prose table,
+.cost-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0 1.5rem;
+  font-size: 0.97rem;
+}
+.prose th,
+.prose td,
+.cost-table th,
+.cost-table td {
+  text-align: left;
+  padding: 0.7rem 0.75rem 0.7rem 0;
+  border-bottom: 1px solid var(--cu-line);
+  vertical-align: top;
+}
+.prose thead th {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cu-muted);
+  border-bottom: 2px solid var(--cu-navy);
+}
+.cost-table {
+  max-width: 46rem;
+}
+.cost-table h2,
+.demo-form h2 {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+.cost-table th {
+  font-weight: 400;
+}
+.cost-table td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-right: 0;
+}
+.cost-table tfoot th,
+.cost-table tfoot td {
+  font-weight: 700;
+  color: var(--cu-navy);
+  border-bottom: 2px solid var(--cu-navy);
+}
+.demo-form {
+  max-width: 46rem;
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.25rem;
+  margin: 1.25rem 0 1.5rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.field--wide {
+  grid-column: 1 / -1;
+}
+.field label {
+  font-weight: 600;
+  font-size: 0.93rem;
+  color: var(--cu-navy);
+}
+.field .optional {
+  font-weight: 400;
+  color: var(--cu-muted);
+}
+.field input,
+.field select,
+.field textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #c3cad4;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--cu-text);
+}
+.field textarea {
+  resize: vertical;
+}
+.field [aria-invalid] {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 1px #b3261e;
+}
+.field--check {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.field--check input {
+  width: auto;
+  margin-top: 0.3rem;
+}
+.field--check label {
+  font-weight: 400;
+  color: var(--cu-text);
+}
+.form-error {
+  color: #b3261e;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+.form-note {
+  font-size: 0.88rem;
+  color: var(--cu-muted);
+  margin: 0.9rem 0 0;
+}
+.form-confirm {
+  margin-top: 1.25rem;
+  padding: 1.5rem 1.6rem;
+  background: var(--cu-bg-soft);
+  border: 1px solid var(--cu-line);
+  border-top: 3px solid var(--cu-gold);
+  border-radius: var(--radius);
+}
+.form-confirm:focus {
+  outline: none;
+}
+.form-confirm h3 {
+  font-size: 1.6rem;
+}
+.form-confirm .check-list {
+  margin-bottom: 1rem;
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ---- Footer ---------------------------------------------------------- */
 .site-footer {
   background: var(--cu-navy);
