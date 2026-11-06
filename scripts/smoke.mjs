@@ -58,6 +58,12 @@ for (const path of locs) {
     }
     check(`${path} structured data is valid JSON`, ok);
   }
+  // Personalization zones use only the PLAN.md §5.4 ids and render a default variant.
+  for (const [zone] of body.matchAll(/<[a-z]+\b[^>]*data-pz-zone="[^"]*"[^>]*>/g)) {
+    const name = zone.match(/data-pz-zone="([^"]*)"/)[1];
+    check(`${path} zone ${name} is a §5.4 zone`, ['pz-home-hero', 'pz-recommended-programs', 'pz-giving-cta', 'pz-next-credential'].includes(name));
+    check(`${path} zone ${name} has id="${name}" and a variant`, zone.includes(`id="${name}"`) && /data-pz-variant="[a-z0-9-]+"/.test(zone));
+  }
   // No form posts off-site. Demo forms (data-cu-form) have no action at all and tell the visitor so.
   for (const [form] of body.matchAll(/<form\b[^>]*>/g)) {
     check(`${path} form doesn't post off-site`, !/\saction="(https?:)?\/\//i.test(form), form);

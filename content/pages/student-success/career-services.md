@@ -28,7 +28,7 @@ Connect to Opportunity starts on day one. Career Services helps you explore what
 
 ## Learn from alumni
 
-Connected University alumni work across industries and come back to help. Join mentoring programs, informational interviews and alumni panels to learn how they got where they are.
+Connected University alumni work across industries and come back to help. Join mentoring programs, informational interviews and alumni panels through the [alumni network](/alumni/network/) to learn how they got where they are.
 
 ## For every major
 

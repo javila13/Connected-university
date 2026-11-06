@@ -141,3 +141,18 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-06: Sofia values from the demo-org narrative: name, email, Environmental Science, advisor Dr. Martinez, junior, dropped Organic Chemistry mid-semester, early alert, retook and recovered. The order (dropped, then the alert) follows the narrative *(verified — edu-cloud-dc-demo skill)*. Drafted values for Jesse to check against the org: cumulative GPA 3.05, 74 credits, term GPAs 1.90 then 3.30, retake grade B, current courses, next advising time, SMS opt-in on *(uncertain — flag for review, PLAN.md §8.3)*.
 - 2026-11-06: The dashboard reads the degree's 120 credits from the Environmental Science program file, so the number isn't restated in `sofia.json`.
 - 2026-11-06: Professor Login stays inert.
+
+### Process after PR 3
+- 2026-11-06: Merged PR #3 at Jesse's request (`33fbc49`) and restarted the branch from `main`. Student Success went live about 20 seconds after the merge *(verified — `npm run smoke` 520/520 against the live site, 2026-11-06)*.
+
+### Alumni (PR 4)
+- 2026-11-06: Pages: Alumni hub (rewritten), Events & Reunions, Alumni Network & Careers, Alumni Spotlights, Alumni Benefits and Update Your Info. The site now has 55 indexable pages.
+- 2026-11-06: Sofia stays off public pages (Jesse). Her alumna and donor stages appear only through the Phase 2 simulation, so the "we recognized her" moment stays fresh in demos. No Sofia spotlight now, and no "Why I give" story on Giving later.
+- 2026-11-06: Alumni save 15% on Continuing Education certificates (Jesse). It sets up Sofia's learner stage and the Return to CU page. In `facts.json` as `alumni.ceDiscountPercent`.
+- 2026-11-06: More invented `alumni` facts: "120,000+" alumni, milestone reunions every 5 years, Young Alumni = graduates of the last 10 years. The reunion and Young Alumni windows are policy numbers, but they went into `facts.json` too, under the numbers rule.
+- 2026-11-06: Update Your Info is a third demo form (`form: update-info`): class year (four digits), degree program, employer, job title, city, and opt-ins for the newsletter (on by default), events near me, mentoring and text reminders. It fires the same `cu:form-start` / `cu:form-submit` events; Phase 2 uses the submit as the alumni identity stitch (§5.5) *(verified — Playwright: events carry the fields, no network request, 2026-11-06)*. Page carries `personaHook: sofia-alumna`, as does the Alumni hub.
+- 2026-11-06: The `pz-giving-cta` zone (§5.4) now renders its default variant at the foot of every Alumni page except Update Your Info ("Help the next Connected U student", Give Now and Ways to Give). Pages opt in with `givingCta: true`, and Giving pages will use it too. Give Now points to the Giving hub until the Giving PR adds `/giving/give/`.
+- 2026-11-06: Spotlights: Wilma Grace and Courtney Tran-Kim plus three invented graduates (Daniel Okafor ’09, Engineering; Rosa Jimenez ’15 and ’21, Nursing; Kevin Lu ’19, Computer Science). What Wilma Grace and Courtney Tran-Kim do now is invented, beyond the award the live site gives them *(uncertain — flag for review)*. The copy uses names rather than pronouns for all five.
+- 2026-11-06: Regional chapters name real US cities, but no real employer, venue or partner.
+- 2026-11-06: Career Services now links to the alumni network.
+- 2026-11-06: `npm run smoke` now checks that every personalization zone on every page uses a §5.4 id, has a matching element id and renders a variant.

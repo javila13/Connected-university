@@ -878,6 +878,60 @@ code {
   }
 }
 
+/* ---- Giving CTA zone, fieldsets ---------------------------------------- */
+.giving-cta {
+  background: var(--cu-gold);
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+}
+.giving-cta__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 3rem;
+}
+.giving-cta__inner > div:first-child {
+  max-width: 40rem;
+}
+.giving-cta .eyebrow {
+  font: 600 0.8rem/1.3 var(--font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cu-navy);
+  margin: 0 0 0.6rem;
+}
+.giving-cta h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+}
+.giving-cta p {
+  margin: 0;
+}
+.giving-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.giving-cta .btn--ghost {
+  color: var(--cu-navy);
+  border-color: var(--cu-navy);
+}
+.field-set {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0.6rem;
+}
+.field-set legend {
+  font-weight: 600;
+  font-size: 0.93rem;
+  color: var(--cu-navy);
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+.field-set .field--check {
+  display: flex;
+}
+
 /* ---- Student Portal --------------------------------------------------- */
 .portal-signin {
   max-width: 28rem;
