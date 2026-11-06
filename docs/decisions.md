@@ -7,7 +7,10 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 ### Stack and hosting
 - 2026-11-06: Astro 7.4.7 and Express 5.3.0, the latest releases on npm at build time; Node `22.x` in `engines` *(verified — `npm view`, 2026-11-06)*.
 - 2026-11-06: `astro` sits in `dependencies`, not `devDependencies`, so the Heroku build doesn't depend on how devDependencies are installed and pruned.
-- 2026-11-06: Heroku's Node buildpack runs `npm run build` automatically, then `Procfile` starts `node server.js` *(hypothesis — needs validation; part of spike S2, not yet run on Heroku)*.
+- 2026-11-06: Heroku runs the `build` script from `package.json` during the build, after installing dependencies *(verified — Heroku Dev Center "Node.js Classic Buildpack Builds", updated 2025-09-04)*. A `Procfile` takes precedence over the `start` script for the web process, and `NODE_ENV` defaults to `production` *(verified — "Node.js Behavior in Heroku", updated 2025-09-04)*. Not yet run on a real Heroku app; that is spike S2.
+- 2026-11-06: New Common Runtime apps are Cedar-generation, so they use the classic Node.js buildpack; Fir is only available in Private Spaces *(verified — "Getting Started on Heroku with Node.js")*.
+- 2026-11-06: Node `22.x` is Maintenance LTS on Heroku until 2027-04-30 *(verified — "Heroku Node.js Support", updated 2026-11-05)*. `22.x` currently resolves to 22.23.4, which is exactly Astro 7.4.7's minimum (`>=22.23.4`) *(verified — heroku-buildpack-nodejs `inventory/node.toml`, 2026-11-06)*. If a future Astro update raises its minimum ahead of Heroku's inventory, the build will fail; check this when upgrading Astro.
+- 2026-11-06: D8 check: an Eco web dyno sleeps after 30 minutes without traffic; Basic doesn't sleep. Eco is a $5/month account-wide pool and Basic is $7/month per dyno. Without an Eco subscription, new apps default to Basic *(verified — Heroku "Dyno Sizes", "Eco Dyno Hours", pricing page, and "Getting Started on Heroku with Node.js", fetched 2026-11-06)*.
 - 2026-11-06: Content collections live in `/content` at the repo root, not `src/content`, so the repo reads as a content model for the Contentful talk track (D2).
 - 2026-11-06: Phase 0 browser scripts live in `src/scripts/` (consent, settings, widget slots). `sim/` is created in Phase 2 and imports settings from there.
 
@@ -62,6 +65,7 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 
 ### Environment
 - 2026-11-06: Created a personal cloud environment, "Connected-university", that allows `connecteduniversity-mc.org` so the build could read the live site's layout, colors and copy. No assets were downloaded (CLAUDE.md).
+- 2026-11-06: Added `devcenter.heroku.com` and `www.heroku.com` to that environment so the Heroku setup steps could be checked against the live docs.
 
 ### Phase 0 summary (for the retrospective)
 - **Delivered:** Astro + Express scaffold, `Procfile`, base layout mirroring the live site, 17 indexable pages (home, 8 section hubs, Visit, News, Events, Careers, Contact, Privacy, Student Portal shell, Search), 404, consent banner, site search, the `/demo` panel, a `/data360` placeholder that follows settings live, embed slots with stub config, a dynamic `robots.txt`/`sitemap.xml`, and `npm run smoke`.
