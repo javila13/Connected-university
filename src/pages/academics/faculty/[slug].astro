@@ -1,0 +1,76 @@
+---
+// Faculty profile (PLAN.md §4 Academics). Content from content/faculty/<id>.md.
+import { getCollection, getEntries } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { programUrl, pickLive } from '../../../lib/routes.js';
+import { schoolName } from '../../../lib/academics.js';
+import { fillFacts } from '../../../lib/fill-facts.js';
+
+export async function getStaticPaths() {
+  const people = await getCollection('faculty');
+  return people.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/faculty/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const programs = await getEntries(d.programs);
+const portal = await pickLive('/portal/');
+---
+<BaseLayout
+  title={d.name}
+  description={`${d.role}. ${d.description}`}
+  section={d.section}
+  audience={d.audience}
+  program={d.program}
+  topic={d.topic}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.name} lede={d.role} eyebrow={d.department} />
+  <div class="wrap detail">
+    <div class="detail__main">
+      <article class="prose" set:html={html} />
+      {d.research.length > 0 && (
+        <section aria-labelledby="research-heading">
+          <h2 id="research-heading">Research interests</h2>
+          <ul class="check-list">{d.research.map((r) => <li>{r}</li>)}</ul>
+        </section>
+      )}
+      {d.courses.length > 0 && (
+        <section aria-labelledby="courses-heading">
+          <h2 id="courses-heading">Courses taught</h2>
+          <ul class="course-list">
+            {d.courses.map((c) => <li><span class="course-list__code">{c.code}</span> {c.title}</li>)}
+          </ul>
+        </section>
+      )}
+    </div>
+    <aside class="detail__side" aria-label="Contact and office hours">
+      <div class="glance">
+        <h2>Office</h2>
+        <dl class="glance__facts">
+          <dt>Department</dt><dd>{d.department}</dd>
+          <dt>School</dt><dd>{schoolName(d.school)}</dd>
+          <dt>Office</dt><dd>{d.office}</dd>
+          <dt>Office hours</dt><dd>{d.officeHours}</dd>
+          {d.advises && <><dt>Advises</dt><dd>{d.advises}</dd></>}
+        </dl>
+        {programs.length > 0 && (
+          <>
+            <h3>Programs</h3>
+            <ul class="plain-list">
+              {programs.map((p) => <li><a href={programUrl(p.id)}>{p.data.title}</a></li>)}
+            </ul>
+          </>
+        )}
+        {d.advises && (
+          <p class="glance__note">
+            Current students book advising appointments in the <a href={portal}>Student Portal</a>.
+          </p>
+        )}
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

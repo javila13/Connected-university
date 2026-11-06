@@ -1,0 +1,29 @@
+---
+// Program cards: listing pages, the Academics hub and the
+// pz-recommended-programs zone. `items` come from programsFor() in
+// lib/academics.js, or are built from entries with all their credentials.
+import { programUrl } from '../lib/routes.js';
+import { schoolName, formatLabel, formatsOf } from '../lib/academics.js';
+import { fillFacts } from '../lib/fill-facts.js';
+
+interface Props {
+  items: { entry: any; credentials: any[] }[];
+  showSchool?: boolean;
+}
+const { items, showSchool = true } = Astro.props;
+---
+<ul class="cards">
+  {items.map(({ entry, credentials }) => (
+    <li>
+      <a class="card" href={programUrl(entry.id)} data-program={entry.id}>
+        {showSchool && <span class="card__eyebrow">{schoolName(entry.data.school)}</span>}
+        <span class="card__title">{entry.data.title}</span>
+        <span class="card__meta">
+          {credentials.map((c) => c.short).join(' · ')}
+          <span class="card__formats"> — {formatsOf(credentials).map(formatLabel).join(', ')}</span>
+        </span>
+        <span class="card__text">{fillFacts(entry.data.description, entry.id)}</span>
+      </a>
+    </li>
+  ))}
+</ul>

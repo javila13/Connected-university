@@ -35,6 +35,7 @@ const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[
 check('sitemap lists the home page', locs.includes('/'));
 check('sitemap excludes /demo/ and /data360/', !locs.some((p) => p.startsWith('/demo') || p.startsWith('/data360')));
 
+const internalLinks = new Map(); // href -> first page that links to it
 for (const path of locs) {
   const { res, body } = await get(path);
   const tag = bodyTag(body);
@@ -44,6 +45,27 @@ for (const path of locs) {
   check(`${path} has the footer disclaimer`, body.includes(facts.legal.disclaimer));
   check(`${path} is indexable`, !/name="robots"[^>]*noindex/i.test(body));
   check(`${path} has no copyright line`, !/©|&copy;|Copyright/i.test(body));
+  check(`${path} has no unfilled {{facts}} tokens`, !body.includes('{{'));
+  const program = path.match(/^\/academics\/programs\/([a-z0-9-]+)\/$/)?.[1];
+  if (program) check(`${path} declares data-program="${program}"`, tag.includes(`data-program="${program}"`));
+  for (const [, json] of body.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    let ok = true;
+    try {
+      JSON.parse(json);
+    } catch {
+      ok = false;
+    }
+    check(`${path} structured data is valid JSON`, ok);
+  }
+  for (const [, href] of body.matchAll(/<a\b[^>]*\shref="(\/[^"#?]*)/g)) {
+    if (!internalLinks.has(href)) internalLinks.set(href, path);
+  }
+}
+
+// Every internal link on every page resolves (catches copy that links to a page that isn't built yet).
+for (const [href, from] of internalLinks) {
+  const { res } = await get(href);
+  check(`link ${href} (from ${from}) resolves`, res.status === 200, `got ${res.status}`);
 }
 
 // Site search index
@@ -100,7 +122,7 @@ for (const path of ['/demo/', '/data360/']) {
   }
 }
 
-console.log(`${passed} checks passed against ${BASE} (${locs.length} pages in the sitemap)`);
+console.log(`${passed} checks passed against ${BASE} (${locs.length} pages in the sitemap, ${internalLinks.size} internal links)`);
 if (failures.length) {
   console.error(`${failures.length} failed:\n  - ${failures.join('\n  - ')}`);
   process.exit(1);

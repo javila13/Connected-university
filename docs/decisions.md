@@ -75,3 +75,34 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - **Status:** Phase 0 complete, 2026-11-06. Live at https://connected-university-website-64975a496d17.herokuapp.com. Work continues on `claude/new-session-pkohbl` and reaches `main` through pull requests.
 - **Not started:** Phase 1 pages, the simulation, the agent mock, the inspector.
 - **Open questions:** none left from Phase 0.
+
+## Phase 1: Content
+
+### How Phase 1 runs
+- 2026-11-06: Jesse skipped the Phase 0 retrospective. Phase 1 goes section by section, with one pull request per section into `main`. Jesse reviews on the live Heroku site after merging. Order: Academics → Admissions → Student Success → Alumni → Giving → Continuing Ed → Athletics → global pages (About, News, Events, Visit).
+- 2026-11-06: Copy depth is "medium" (Jesse): roughly 250–500 words per page. Key pages get an FAQ block, because Piper's crawl and the Phase 2 agent mock both answer from page text.
+
+### Content model
+- 2026-11-06: Two new collections. `programs` (`content/programs/<id>.md` → `/academics/programs/<id>/`) and `faculty` (`content/faculty/<id>.md` → `/academics/faculty/<id>/`). Each holds structured frontmatter (credentials, courses, careers, office hours) plus Markdown body copy. Program ↔ faculty and related-program links use `reference()`, so a bad id fails the build *(verified — broke one on purpose, 2026-11-06)*.
+- 2026-11-06: A "program" is an area of study that can hold several credentials. Business Administration holds the B.S. and the MBA, and Nursing holds the B.S.N., RN to B.S.N. and M.S.N. Listings filter by credential: the Online page shows only the online degrees.
+- 2026-11-06: A program page's `data-program` is its own id, not a frontmatter field, so it can't drift from the URL. Phase 2 reads it as academic interest (§5.3).
+- 2026-11-06: Markdown pages can list programs (`listPrograms: all | undergraduate | graduate | online`) or the faculty (`listFaculty: true`), and any page can carry `faqs`. FAQs render as page text plus schema.org `FAQPage` data.
+- 2026-11-06: Breadcrumbs appear on every page below a section hub.
+- 2026-11-06: Added "Degree Programs" (`/academics/programs/`) to the Academics menu, as an A–Z index grouped by school. §4 doesn't name an index page, but program pages need a parent.
+
+### Facts in copy
+- 2026-11-06: Copy quotes `facts.json` with `{{facts.path}}` tokens (e.g. `{{facts.programs.undergraduate}}`). Tokens are filled when the page renders, not when Markdown is parsed, so a `facts.json` change can't be hidden by Astro's content cache. An unknown or malformed token fails the build *(verified — 2026-11-06)*.
+- 2026-11-06: Added the five schools to `facts.json` (`schools`): Science & Sustainability, Business, Engineering & Computing, Nursing & Health Sciences, and Education & Human Development. They're invented. Copy names the schools but doesn't count them.
+- 2026-11-06: Program-level numbers (credits, length, start terms) live in each program's frontmatter, not `facts.json`. `facts.json` keeps the institution-wide figures. **Q** for Jesse: OK, or do you want every number in `facts.json`? *(uncertain — flag for review)*
+- 2026-11-06: All program details are invented: degree names, credits (120 for most bachelor's degrees, 128 for Engineering), course codes, start terms, concentrations and careers. No salary, placement or ranking figures, and no real accreditors, hospitals or employers.
+
+### Academics (PR 1)
+- 2026-11-06: Pages: Academics hub (rewritten), Undergraduate, Graduate, Online, Degree Programs index, Faculty directory, 8 program pages (§4) and 4 faculty profiles. That is 17 new pages plus the rewritten hub; the site now has 34 indexable pages.
+- 2026-11-06: The 8 program pages cover 4 of the 12 graduate programs (MBA, M.S. Computer Science, M.S.N., M.Ed.) and a few of the 36 undergraduate ones. Listing pages say "featured" so the counts in `facts.json` stay true.
+- 2026-11-06: Sofia hooks: Environmental Science is her program (`personaHook: sofia-prospect`). Its FAQ and advising copy set up the Organic Chemistry early alert. Dr. Martinez (`sofia-student`) teaches Organic Chemistry, advises Environmental Science majors, and raises early alerts. Sustainability Studies and Dr. Ostrowski (`sofia-learner`) point to the Continuing Ed sustainability certificate.
+- 2026-11-06: Dr. Martinez has no first name and the copy uses no pronouns, because the demo org only says "Dr. Martinez" *(verified — edu-cloud-dc-demo skill)*. **Q** for Jesse: if the org's record has a first name, I'll add it. The other three faculty (Helena Ostrowski, Samuel Okonjo, Rebecca Thornbury) are invented.
+- 2026-11-06: The Sustainability Studies page names Wilma Grace (YSS ’18) and Courtney Tran-Kim (YSS ’22) as graduates of the program. The live site gives their award but not their program, so that link is invented *(uncertain — flag for review)*. "YSS" is kept as written on the live site.
+- 2026-11-06: Program pages link to their Continuing Ed certificate (Sustainability, Data Analytics) only once that certificate page exists. The URLs are reserved now: `/continuing-ed/certificates/<id>/`.
+- 2026-11-06: Program pages carry the `pz-recommended-programs` zone with its default variant (the program's `related` list). The home page doesn't have the zone yet; it's added with the Phase 2 rules.
+- 2026-11-06: Program-page CTAs (Request Information, Apply) point to the Admissions hub until the Admissions PR adds those pages; they switch over automatically.
+- 2026-11-06: `npm run smoke` now also checks that every internal link on every page resolves, that no `{{facts}}` token is left unfilled, that structured data parses, and that program pages declare their `data-program`.

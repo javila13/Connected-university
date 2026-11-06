@@ -1,0 +1,131 @@
+---
+// Program page (PLAN.md §4 Academics). Copy and structured facts come from
+// content/programs/<id>.md. body[data-program] is the page's own id, which
+// the Phase 2 affinity engine reads as academic interest (PLAN.md §5.3).
+import { getCollection, getEntries } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ProgramCards from '../../../components/ProgramCards.astro';
+import FacultyCards from '../../../components/FacultyCards.astro';
+import Faq from '../../../components/Faq.astro';
+import { pickLive, getRouteSet } from '../../../lib/routes.js';
+import { schoolName, formatLabel } from '../../../lib/academics.js';
+import { fillFacts } from '../../../lib/fill-facts.js';
+
+export async function getStaticPaths() {
+  const programs = await getCollection('programs');
+  return programs.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const where = `content/programs/${entry.id}.md`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const description = fillFacts(d.description, where);
+const school = schoolName(d.school);
+const people = await getEntries(d.faculty);
+
+// Recommended programs (zone default): the program's own `related` list, else
+// other programs in the same school.
+let related = await getEntries(d.related);
+if (!related.length) {
+  related = (await getCollection('programs')).filter((p) => p.id !== entry.id && p.data.school === d.school);
+}
+const relatedItems = related.map((p) => ({ entry: p, credentials: p.data.credentials }));
+
+const routes = await getRouteSet();
+const certificate = d.certificate && routes.has(d.certificate.href) ? d.certificate : null;
+
+const links = {
+  requestInfo: await pickLive('/admissions/request-information/', '/admissions/'),
+  apply: await pickLive('/admissions/apply/', '/admissions/'),
+  visit: await pickLive('/visit/'),
+};
+---
+<BaseLayout
+  title={d.title}
+  description={description}
+  section={d.section}
+  audience={d.audience}
+  program={entry.id}
+  topic={d.topic}
+  personaHook={d.personaHook}
+>
+  <PageHero title={d.title} lede={description} eyebrow={school} />
+  <div class="wrap detail">
+    <div class="detail__main">
+      <article class="prose" set:html={html} />
+
+      <section aria-labelledby="courses-heading">
+        <h2 id="courses-heading">Sample courses</h2>
+        <ul class="course-list">
+          {d.courses.map((c) => <li><span class="course-list__code">{c.code}</span> {c.title}</li>)}
+        </ul>
+      </section>
+
+      <section aria-labelledby="careers-heading">
+        <h2 id="careers-heading">Where graduates go</h2>
+        <ul class="check-list">
+          {d.careers.map((c) => <li>{c}</li>)}
+        </ul>
+      </section>
+
+      {people.length > 0 && (
+        <section aria-labelledby="faculty-heading">
+          <h2 id="faculty-heading">Meet the faculty</h2>
+          <FacultyCards people={people} />
+        </section>
+      )}
+
+      {certificate && (
+        <aside class="callout">
+          <p class="eyebrow">Already working?</p>
+          <p>Get started with the <a href={certificate.href}>{certificate.label}</a> through Continuing Education.</p>
+        </aside>
+      )}
+
+      <Faq faqs={d.faqs} where={where} />
+    </div>
+
+    <aside class="detail__side" aria-label="Program at a glance">
+      <div class="glance">
+        <h2>At a glance</h2>
+        {d.credentials.map((c) => (
+          <dl class="glance__credential">
+            <dt class="glance__name">{c.name}</dt>
+            <dd>
+              <dl class="glance__facts">
+                <dt>Format</dt><dd>{c.formats.map(formatLabel).join(', ')}</dd>
+                <dt>Credits</dt><dd>{c.credits}</dd>
+                <dt>Length</dt><dd>{c.duration}</dd>
+              </dl>
+            </dd>
+          </dl>
+        ))}
+        <dl class="glance__facts">
+          <dt>Start terms</dt><dd>{d.startTerms.join(', ')}</dd>
+          <dt>School</dt><dd>{school}</dd>
+        </dl>
+        <div class="glance__actions">
+          <a class="btn btn--gold" href={links.requestInfo} data-cta="request-info">Request Information</a>
+          <a class="btn btn--navy" href={links.apply} data-cta="apply">Apply</a>
+          <a class="btn btn--ghost" href={links.visit} data-cta="visit">Visit Campus</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Personalization zone (PLAN.md §5.4): this is the default variant; Phase 2 re-ranks it by affinity. -->
+  <section
+    id="pz-recommended-programs"
+    class="band-soft"
+    data-pz-zone="pz-recommended-programs"
+    data-pz-variant="default"
+    aria-labelledby="recommended-heading"
+  >
+    <div class="wrap">
+      <h2 id="recommended-heading">You might also like</h2>
+      <ProgramCards items={relatedItems} />
+    </div>
+  </section>
+</BaseLayout>
