@@ -3,6 +3,7 @@
 //   pages    content/pages/**     -> /<path>/
 //   programs content/programs/*  -> /academics/programs/<id>/
 //   faculty  content/faculty/*   -> /academics/faculty/<id>/
+//   certificates content/certificates/* -> /continuing-ed/certificates/<id>/
 // News, events and teams collections arrive with their sections.
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
@@ -47,8 +48,12 @@ const pages = defineCollection({
     listGroupBySchool: z.boolean().optional(),
     /** Renders the faculty directory after the copy. */
     listFaculty: z.boolean().optional(),
-    /** Renders a demo form after the copy (components/DemoForm.astro). */
-    form: z.enum(['request-info', 'apply', 'update-info', 'give']).optional(),
+    /** Renders the Continuing Ed certificate cards after the copy. */
+    listCertificates: z.boolean().optional(),
+    /** Renders the pz-next-credential personalization zone after the copy. */
+    nextCredential: z.boolean().optional(),
+    /** Renders a demo form after the copy (DemoForm, GiftForm or CeInquiryForm). */
+    form: z.enum(['request-info', 'apply', 'update-info', 'give', 'ce-inquiry']).optional(),
     /** Renders the pz-giving-cta personalization zone at the foot of the page. */
     givingCta: z.boolean().optional(),
   }),
@@ -104,4 +109,34 @@ const faculty = defineCollection({
   }),
 });
 
-export const collections = { pages, programs, faculty };
+// Continuing Ed certificates. Like a program, a certificate's own numbers
+// (credits, price, length) live in its frontmatter. body[data-topic] is the
+// certificate's id, which the Phase 2 affinity engine reads (PLAN.md §5.3).
+const certificates = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/certificates', generateId: idFromPath }),
+  schema: z.object({
+    title: z.string(),
+    /** Short name for cards and menus, e.g. "Sustainability". */
+    shortTitle: z.string(),
+    description: z.string(),
+    ...meta,
+    formats: z.array(z.enum(FORMATS)).min(1),
+    credits: z.number().int().positive(),
+    length: z.string(),
+    /** Total tuition in dollars; the alumni price is worked out from facts.alumni.ceDiscountPercent. */
+    price: z.number().int().positive(),
+    startTerms: z.array(z.string()).min(1),
+    courses: z.array(course).min(1),
+    outcomes: z.array(z.string()).min(1),
+    director: reference('faculty').optional(),
+    /** The degree its credits count toward. */
+    pathway: z
+      .object({ program: reference('programs'), credential: z.string(), focus: z.string().optional() })
+      .optional(),
+    /** The default certificate in the pz-next-credential zone. Exactly one should be featured. */
+    featured: z.boolean().optional(),
+    faqs,
+  }),
+});
+
+export const collections = { pages, programs, faculty, certificates };

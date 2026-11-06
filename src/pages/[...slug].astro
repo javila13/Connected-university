@@ -1,10 +1,12 @@
 ---
 // Renders every Markdown page in content/pages. Optional frontmatter adds
-// program cards (listPrograms), the faculty directory (listFaculty), a demo
-// form (form) and an FAQ block. A block marker on its own line in the
-// Markdown places a component at that spot: `<!-- cost-table -->` (cost of
-// attendance) or `<!-- society-join -->` (Connected Circle join buttons). A section hub (a page whose route is a top-level nav item) also
-// lists the section's live child pages.
+// program cards (listPrograms), the faculty directory (listFaculty),
+// certificate cards (listCertificates), the pz-next-credential zone
+// (nextCredential), a demo form (form), an FAQ block and the pz-giving-cta
+// zone (givingCta). A block marker on its own line in the Markdown places a
+// component at that spot: `<!-- cost-table -->`, `<!-- society-join -->` or
+// `<!-- certificate-pathways -->`. A section hub (a page whose route is a
+// top-level nav item) also lists the section's live child pages.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
@@ -16,6 +18,10 @@ import DemoForm from '../components/DemoForm.astro';
 import GivingCta from '../components/GivingCta.astro';
 import GiftForm from '../components/GiftForm.astro';
 import SocietyJoin from '../components/SocietyJoin.astro';
+import CertificatePathways from '../components/CertificatePathways.astro';
+import CertificateCards from '../components/CertificateCards.astro';
+import NextCredential from '../components/NextCredential.astro';
+import CeInquiryForm from '../components/CeInquiryForm.astro';
 import { hubChildren } from '../lib/routes.js';
 import { programsFor, groupBySchool } from '../lib/academics.js';
 import { fillFacts } from '../lib/fill-facts.js';
@@ -30,8 +36,8 @@ const d = entry.data;
 const where = `content/pages/${entry.id}`;
 const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
 // Even indexes are HTML, odd indexes are block names.
-const BLOCKS = { 'cost-table': CostTable, 'society-join': SocietyJoin };
-const parts = html.split(/<!-- (cost-table|society-join) -->/);
+const BLOCKS = { 'cost-table': CostTable, 'society-join': SocietyJoin, 'certificate-pathways': CertificatePathways };
+const parts = html.split(/<!-- (cost-table|society-join|certificate-pathways) -->/);
 const description = fillFacts(d.description, where);
 const children = await hubChildren(`/${entry.id}/`);
 
@@ -42,6 +48,11 @@ const lastName = (p) => p.data.name.split(' ').at(-1);
 const people = d.listFaculty
   ? (await getCollection('faculty')).sort((a, b) => lastName(a).localeCompare(lastName(b)))
   : [];
+const certificates = d.listCertificates
+  ? (await getCollection('certificates')).sort((a, b) => a.data.shortTitle.localeCompare(b.data.shortTitle))
+  : [];
+const FORMS = { give: GiftForm, 'ce-inquiry': CeInquiryForm };
+const FormComponent = d.form ? FORMS[d.form as keyof typeof FORMS] : undefined;
 ---
 <BaseLayout
   title={d.title}
@@ -68,8 +79,15 @@ const people = d.listFaculty
         </ul>
       </nav>
     )}
-    {d.form === 'give' && <GiftForm />}
-    {d.form && d.form !== 'give' && <DemoForm kind={d.form} />}
+    {d.nextCredential && <NextCredential />}
+    {certificates.length > 0 && (
+      <section class="listing" aria-labelledby="certificates-heading">
+        <h2 id="certificates-heading">{d.listHeading ?? 'Certificates'}</h2>
+        <CertificateCards items={certificates} />
+      </section>
+    )}
+    {FormComponent && <FormComponent />}
+    {d.form && !FormComponent && <DemoForm kind={d.form as 'request-info' | 'apply' | 'update-info'} />}
     {programs.length > 0 && (
       <section class="listing" aria-labelledby="programs-heading">
         <h2 id="programs-heading">{d.listHeading ?? 'Programs'}</h2>

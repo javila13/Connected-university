@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions, Student Success, Alumni and Giving are done.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions, Student Success, Alumni, Giving and Continuing Ed are done.
 
 ## Run it locally
 
@@ -81,7 +81,9 @@ listPrograms: undergraduate # all | undergraduate | graduate | online: adds prog
 listHeading: Featured programs
 listGroupBySchool: true     # group the cards by school
 listFaculty: true           # adds the faculty directory
-form: request-info          # request-info | apply | update-info | give: adds a demo form (sends nothing)
+form: request-info          # request-info | apply | update-info | give | ce-inquiry: adds a demo form (sends nothing)
+listCertificates: true      # adds the Continuing Ed certificate cards
+nextCredential: true        # adds the pz-next-credential personalization zone
 givingCta: true             # adds the pz-giving-cta personalization zone (default variant)
 ```
 
@@ -89,7 +91,7 @@ givingCta: true             # adds the pz-giving-cta personalization zone (defau
 
 Institutional numbers live only in `content/facts.json`. Quote them with tokens, in Markdown or frontmatter: `Choose from {{facts.programs.undergraduate}} majors`. Numbers print with thousands separators (`${{facts.costs.undergraduate.tuition}}` → $47,850). An unknown token fails the build. A program's own credits, length and start terms live in its program file instead.
 
-A block marker on its own line places a component there: `<!-- cost-table -->` (cost of attendance) or `<!-- society-join -->` (Connected Circle join buttons).
+A block marker on its own line places a component there: `<!-- cost-table -->` (cost of attendance), `<!-- society-join -->` (Connected Circle join buttons) or `<!-- certificate-pathways -->` (which degree each certificate counts toward).
 
 ### Student Portal
 
@@ -97,18 +99,19 @@ A block marker on its own line places a component there: `<!-- cost-table -->` (
 
 ### Demo forms
 
-Request Information, Apply, the alumni Update Your Info form and Give Now send nothing, and Give Now has no payment fields. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>`, `?type=transfer-student`, `?amount=1000`, `?frequency=monthly` or `?designation=<fund id>` to preselect fields.
+Request Information, Apply, the alumni Update Your Info form and Give Now send nothing, and Give Now has no payment fields. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>`, `?type=transfer-student`, `?amount=1000`, `?frequency=monthly`, `?designation=<fund id>` or `?interest=<certificate id>` to preselect fields.
 
 ### Programs and faculty
 
 - **Program:** add `content/programs/<id>.md`; it's served at `/academics/programs/<id>/`. Frontmatter holds `school` (an id from `facts.json`), `credentials` (name, short, level, formats, credits, duration), `startTerms`, `courses`, `careers`, and optional `faculty`, `related`, `certificate` and `faqs`. See `content/programs/environmental-science.md`.
 - **Faculty:** add `content/faculty/<id>.md`; it's served at `/academics/faculty/<id>/`. See `content/faculty/olga-martinez.md`.
+- **Certificate:** add `content/certificates/<id>.md`; it's served at `/continuing-ed/certificates/<id>/`. Frontmatter holds formats, credits, length, price, start terms, courses, outcomes, and optional `director`, `pathway` and `featured` (exactly one certificate is featured). See `content/certificates/sustainability.md`.
 - `faculty`, `related` and `programs` lists take ids. A typo fails the build.
 
 ## Layout
 
 ```
-content/          pages, programs, faculty (Markdown); facts.json, nav.json, sofia.json
+content/          pages, programs, faculty, certificates (Markdown); facts.json, nav.json, sofia.json
 src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
 src/scripts/      consent, demo settings, chat widget slots, search

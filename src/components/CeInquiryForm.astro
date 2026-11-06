@@ -1,0 +1,91 @@
+---
+// Continuing Ed inquiry demo form, an identity moment (PLAN.md §5.5). Sends
+// nothing; fires cu:form-start / cu:form-submit (form: 'ce-inquiry') via
+// src/scripts/forms.js. ?interest=<certificate id> preselects the interest,
+// as do corporate-training, finish-degree and masters.
+import { getCollection } from 'astro:content';
+import { pickLive } from '../lib/routes.js';
+
+const certs = (await getCollection('certificates')).sort((a, b) => a.data.shortTitle.localeCompare(b.data.shortTitle));
+const startTerms = [...new Set(certs.flatMap((c) => c.data.startTerms))];
+const links = {
+  catalog: await pickLive('/continuing-ed/certificates/', '/continuing-ed/'),
+  returnToCu: await pickLive('/continuing-ed/return/', '/continuing-ed/'),
+};
+---
+<section class="demo-form" aria-labelledby="ce-heading">
+  <h2 id="ce-heading">Tell us what you're looking for</h2>
+  <form data-cu-form="ce-inquiry" novalidate>
+    <div class="form-grid">
+      <div class="field">
+        <label for="ce-first">First name</label>
+        <input id="ce-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="ce-last">Last name</label>
+        <input id="ce-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for="ce-email">Email</label>
+        <input id="ce-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="ce-phone">Mobile phone <span class="optional">(optional)</span></label>
+        <input id="ce-phone" name="phone" type="tel" autocomplete="tel" />
+      </div>
+      <div class="field field--wide">
+        <label for="ce-interest">I'm interested in</label>
+        <select id="ce-interest" name="interest" required>
+          <option value="">Choose one</option>
+          <optgroup label="Professional certificates">
+            {certs.map((c) => <option value={c.id}>{c.data.title}</option>)}
+          </optgroup>
+          <optgroup label="Other options">
+            <option value="masters">A master's degree</option>
+            <option value="finish-degree">Finishing my bachelor's degree</option>
+            <option value="corporate-training">Training for my team or company</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label for="ce-employer">Employer <span class="optional">(optional)</span></label>
+        <input id="ce-employer" name="employer" type="text" autocomplete="organization" />
+      </div>
+      <div class="field">
+        <label for="ce-start">Preferred start</label>
+        <select id="ce-start" name="startTerm">
+          <option value="">Not sure yet</option>
+          {startTerms.map((t) => <option value={t.toLowerCase()}>{t}</option>)}
+        </select>
+      </div>
+      <div class="field field--wide field--check">
+        <input id="ce-alum" name="alumni" type="checkbox" value="yes" />
+        <label for="ce-alum">I'm a Connected University graduate.</label>
+      </div>
+      <div class="field field--wide">
+        <label for="ce-message">Questions for us <span class="optional">(optional)</span></label>
+        <textarea id="ce-message" name="message" rows="3"></textarea>
+      </div>
+      <div class="field field--wide field--check">
+        <input id="ce-sms" name="smsOptIn" type="checkbox" value="yes" />
+        <label for="ce-sms">Text me about start dates and deadlines.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Request Information</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="ce-inquiry" tabindex="-1" hidden>
+    <h3>Thanks, <span data-first-name></span>. Your request about <span data-field="interest"></span> is in.</h3>
+    <p>While you wait, you can:</p>
+    <ul class="check-list">
+      <li><a href={links.catalog}>Browse the certificate catalog</a></li>
+      <li><a href={links.returnToCu}>See what alumni save</a></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>
