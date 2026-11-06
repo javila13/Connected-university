@@ -18,7 +18,8 @@ A fictitious university website used in Salesforce Higher Ed demos. It **simulat
 - Personalization rules live in `content/personalization-rules.json`; variants are content files; every zone renders a default. Zone ids are exactly those in `PLAN.md` §5.4
 - Sofia's known-profile attributes live only in `content/sofia.json`, keyed by life stage
 - Agent conversations live in `content/agent-scripts.json`, one persona per audience (`PLAN.md` §5.8). Every intent has quick-reply chips and a fallback; responses may read `sim` state and `sofia.json`. Widget mode (`auto` / `piper` / `agentforce` / `both`) is read from `/demo` settings, never hardcoded per page
-- Institutional numbers come only from `content/facts.json`. If copy needs a number that isn't there, add it to the file first and note it in `docs/decisions.md`
+- Institutional numbers come only from `content/facts.json`. If copy needs a number that isn't there, add it to the file first and note it in `docs/decisions.md`. Copy quotes them with `{{facts.path}}` tokens
+- A program's own numbers (credits, length, start terms) live only in its frontmatter in `content/programs/`. Don't restate any of these numbers by hand anywhere else in copy
 - One campus address, defined once in `facts.json`
 - Named people: Sofia Sanders (persona) and Dr. Martinez (Chemistry faculty, her advisor). Invent everyone else; no real names, no real PII
 - Footer disclaimer on every page: "Connected University is not a real school. This is a demo site for Salesforce demo purposes only."

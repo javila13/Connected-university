@@ -52,7 +52,7 @@ The B.S. starts with the core of business: accounting, marketing, finance, opera
 
 ## MBA
 
-The MBA is built for working professionals. Courses run in eight-week terms, online or in a hybrid format, so you can keep working while you study. You'll finish with a strategy capstone for a real organization, often your own employer.
+The MBA is built for working professionals. Courses run online or in a hybrid format, so you can keep working while you study. You'll finish with a strategy capstone for a real organization, often your own employer.
 
 ## What you'll learn
 

@@ -56,7 +56,7 @@ You'll start with programming and data structures, then move into systems, algor
 
 ## Master of Science
 
-The M.S. deepens your expertise in distributed systems, machine learning and software architecture. Full-time students finish in two years; working professionals can study part time online.
+The M.S. deepens your expertise in distributed systems, machine learning and software architecture. Study full time on campus, or part time online while you work.
 
 ## What you'll learn
 

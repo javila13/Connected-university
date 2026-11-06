@@ -48,7 +48,7 @@ faqs:
   - q: Does the B.S.N. prepare me for the licensure exam?
     a: Yes. The B.S.N. prepares you for the national licensure exam for registered nurses, with review sessions and practice exams built into your final year.
   - q: I'm already an RN. How does the RN to B.S.N. work?
-    a: Licensed RNs with an associate degree or diploma transfer their prior nursing coursework and complete the remaining credits fully online, often while working full time. Courses run year-round so you can finish in about a year.
+    a: Licensed RNs with an associate degree or diploma transfer their prior nursing coursework and complete the remaining credits fully online, often while working full time. Courses run year-round, so you can keep making progress without a summer break.
   - q: What can I do with the M.S.N.?
     a: The online M.S.N. has two tracks, Nurse Educator and Nursing Leadership, for RNs who want to teach, precept or move into management.
 ---

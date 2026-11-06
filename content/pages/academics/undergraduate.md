@@ -14,7 +14,7 @@ faqs:
   - q: Can I double major or add a minor?
     a: Yes. Many students combine related fields, such as Environmental Science with a minor in Sustainability Studies, or Psychology with Business Administration. Your advisor will help you map out the requirements.
   - q: How many credits do I need to graduate?
-    a: Each program page lists the credits for that degree. Most bachelor's degrees can be completed in four years of full-time study.
+    a: Each program page lists the credits and typical length of its degrees in the At a glance box.
 ---
 
 Your undergraduate years are where you find what you're passionate about and build the skills to do something with it. At Connected University you'll get the academic depth of a research university with the personal attention of a small college.
