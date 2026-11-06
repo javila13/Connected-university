@@ -288,3 +288,16 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-06: The inspector drawer opens from a blue "Data 360" tab on the right edge or with **Ctrl+Alt+I**. It remembers whether it's open, and which tab, across page loads (per browser tab, `sessionStorage`). Tabs in this PR: Profile (anonymous visitor and device), Engagement and Affinities. Identity and Decisions arrive with their PRs. New rows flash for 2 seconds. Under `.d360` the styles are Lightning-like, not a copy (CLAUDE.md), and the "Simulated" badge follows `/demo`.
 - 2026-11-06: On screens 1024px and wider, the open drawer narrows the page instead of covering it, so the presenter can keep clicking sidebar buttons while watching. To keep the header fitting, the menu now collapses by the header's own width (a CSS container query) rather than the window's. A browser test caught the drawer hiding the "At a glance" Request Information button *(verified — Playwright, 2026-11-06)*.
 - 2026-11-06: `/demo`: the disabled "Open inspector drawer" button is replaced by instructions (tab or Ctrl+Alt+I), since the drawer lives on site pages, not in `/demo`.
+- 2026-11-06: **Identity moments widened (Jesse):** every demo form that collects an email stitches the anonymous visitor to Sofia, not only PLAN.md §5.5's list. The recruiting questionnaire is the exception, since it's for high-school athletes. Each form loads the Sofia life stage that fits:
+
+  | Form | Sofia stage |
+  | --- | --- |
+  | Request Information, Apply, Campus Tour | prospect |
+  | Student Portal sign-in | student |
+  | Update Your Info, Give Now, Tickets | alumna/donor |
+  | CE Inquiry | learner |
+  | Event RSVP | the event's audience: Open House, Admitted Students Day and the lecture → prospect; Homecoming → alumna; Giving Day → donor; certificate info session → learner |
+
+  Tickets mapping to alumna/donor is my call, because Athletics has no Sofia stage *(uncertain — flag for review)*.
+- 2026-11-06: In real life a gift is an identity moment too. It becomes a Gift Transaction on a Contact, and Data 360 resolves that Contact to the Unified Individual. The demo org needs the Contact ID on the Gift Transaction for that to work *(verified — edu-cloud-dc-demo skill)*. Whether a live website stitches at the moment of the gift depends on the giving platform sending an identity event with the email; many process the gift first and sync it to CRM later *(hypothesis — needs validation against the giving platform used in a demo)*. If the visitor is already Sofia, a gift is logged as a conversion and changes nothing else. This ships in the identity-stitch release (Phase 2 PR 3). PLAN.md is unchanged; this log records the extension.
+- 2026-11-06: The inspector's Profile tab now says the stitch is coming in the identity-stitch release, and that any form with an email or a portal sign-in triggers it.

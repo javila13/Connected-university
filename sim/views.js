@@ -42,7 +42,7 @@ export function profileView(state) {
       <dt>Engagement rows</dt><dd>${total}</dd>
       <dt>Top affinities</dt><dd>${top.length ? top.map((a) => esc(a.label)).join(', ') : 'None yet'}</dd>
     </dl>
-    <p class="d360-muted">An identity moment (Request Information, a portal sign-in, Update Your Info or a CE inquiry) will stitch this device to a known person.</p>`;
+    <p class="d360-muted">Coming in the identity-stitch release: submitting any form with an email, or signing in to the Student Portal, stitches this device to a known person.</p>`;
 }
 
 export function engagementView(state, { isNew = () => false } = {}) {
