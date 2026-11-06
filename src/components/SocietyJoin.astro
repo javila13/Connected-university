@@ -1,0 +1,14 @@
+---
+// "Join the Connected Circle" buttons for the Giving Societies page. The links
+// prefill the Give Now form; amounts come from facts.json.
+import facts from '../../content/facts.json';
+import { pickLive } from '../lib/routes.js';
+
+const { member, monthly } = facts.giving.connectedCircle;
+const give = await pickLive('/giving/give/', '/giving/');
+const usd = (n: number) => '$' + n.toLocaleString('en-US');
+---
+<div class="society-join">
+  <a class="btn btn--gold" href={`${give}?amount=${member}`} data-cta="join-connected-circle">Join with a gift of {usd(member)}</a>
+  <a class="btn btn--navy" href={`${give}?amount=${monthly}&frequency=monthly`} data-cta="join-connected-circle-monthly">Join with {usd(monthly)} a month</a>
+</div>

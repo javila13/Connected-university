@@ -156,3 +156,18 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-06: Regional chapters name real US cities, but no real employer, venue or partner.
 - 2026-11-06: Career Services now links to the alumni network.
 - 2026-11-06: `npm run smoke` now checks that every personalization zone on every page uses a §5.4 id, has a matching element id and renders a variant.
+
+### Process after PR 4
+- 2026-11-06: Merged PR #4 at Jesse's request (`4fcda79`) and restarted the branch from `main`. Alumni went live about 20 seconds after the merge *(verified — `npm run smoke` 600/600 against the live site, 2026-11-06)*.
+
+### Giving (PR 5)
+- 2026-11-06: Pages: Giving hub (rewritten), Give Now, Ways to Give, Giving Societies, Giving Day, Impact Stories, Planned Giving and Scholarship Funds. Athletics Fund stays a menu link to `/athletics/boosters/`, which appears once the Athletics PR builds it. The site now has 62 indexable pages.
+- 2026-11-06: The mid-level society is the **Connected Circle** (Jesse). Levels: Member $1,000 a year or $84 a month, Leader $2,500, Benefactor $5,000, and a separate President's Council at $10,000+. Member to Benefactor sits inside the org's mid-level segment ($500–$9,999, 6B); President's Council matches major gifts ($10,000+, 6A) *(verified — segment filters in the edu-cloud-dc-demo skill)*. Sofia's upgrade ask is to join at $1,000, double her $500 first gift. Giving Societies carries `personaHook: sofia-donor`, as do the Giving hub and Give Now.
+- 2026-11-06: Give Now has **no payment fields at all**. Nothing is sent, stored or charged, and a public page shouldn't invite real card numbers. The form takes amount (preset buttons or another amount), one-time or monthly, fund, name, email, optional class year and tribute, and an anonymity opt-out. A valid submit fires `cu:form-submit` with `form: 'give'`, which Phase 2 logs as the Give Now conversion (§3) *(verified — Playwright: no payment inputs, no network request, 2026-11-06)*.
+- 2026-11-06: New `giving` facts, all invented: fiscal year July 1 to June 30, preset amounts, society levels, $25,000 minimum for a named endowed scholarship, and the list of funds a gift can go to. The form, the Ways to Give, Societies and Scholarship Funds copy, and Phase 2 rules all read from that one list.
+- 2026-11-06: Links can preselect gift fields: `?amount=`, `?frequency=monthly`, `?designation=<fund id>`. The Societies page's join buttons prefill $1,000 or $84 a month, and Scholarship Funds links preselect their fund. Bad values are ignored.
+- 2026-11-06: Markdown block markers are now general. A marker on its own line places a component: `<!-- cost-table -->` or `<!-- society-join -->`. The join buttons use one, so their amounts come from `facts.json` instead of being typed into the link URLs.
+- 2026-11-06: The `pz-giving-cta` zone shows its default variant on every Giving page except Give Now, so a donor's next step is never more than a scroll away. Give Now in the zone now points to `/giving/give/`.
+- 2026-11-06: Impact Stories feature invented students (Jordan Reyes, Amara Osei), with no pronouns. Jordan's story deliberately echoes Sofia's: an Environmental Science major who withdrew from Organic Chemistry and passed on the retake thanks to donor-funded study sessions. It shows what donor-funded tutoring does without naming Sofia, who stays off public pages *(uncertain — flag for review: keep the echo or change it?)*.
+- 2026-11-06: Ways to Give and Planned Giving use general tax language ("as allowed by law", "not tax advice") and give no federal tax ID. Mailing address and phone are `{{facts.campus.*}}` tokens.
+- 2026-11-06: Giving Day is "every March" with no date, like the other evergreen dates.

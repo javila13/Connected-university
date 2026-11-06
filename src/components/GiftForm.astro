@@ -1,0 +1,99 @@
+---
+// Give Now demo form. It has no payment fields on purpose: nothing is sent,
+// stored or charged, and a public page shouldn't invite real card numbers.
+// A valid submit fires cu:form-submit (form: 'give') with the amount,
+// frequency and fund, which Phase 2 logs as the Give Now conversion
+// (PLAN.md §3 Advancement). Preset amounts and funds come from facts.json.
+// Links can preselect: ?amount=1000&frequency=monthly&designation=<fund id>.
+import facts from '../../content/facts.json';
+import { pickLive } from '../lib/routes.js';
+
+const { presetAmounts, funds } = facts.giving;
+const usd = (n: number) => '$' + n.toLocaleString('en-US');
+const links = {
+  impact: await pickLive('/giving/impact/', '/giving/'),
+  societies: await pickLive('/giving/societies/', '/giving/'),
+};
+---
+<section class="demo-form" aria-labelledby="give-heading">
+  <h2 id="give-heading">Make your gift</h2>
+  <form data-cu-form="give" novalidate>
+    <div class="form-grid">
+      <fieldset class="field field--wide field-set">
+        <legend>Gift amount</legend>
+        <div class="amount-chips">
+          {presetAmounts.map((a) => (
+            <button class="amount-chip" type="button" data-amount={a} aria-pressed="false">{usd(a)}</button>
+          ))}
+        </div>
+        <label class="visually-hidden" for="give-amount">Amount in dollars</label>
+        <div class="amount-input">
+          <span aria-hidden="true">$</span>
+          <input id="give-amount" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="Other amount" required />
+        </div>
+      </fieldset>
+      <fieldset class="field field--wide field-set">
+        <legend>How often</legend>
+        <div class="radio-row">
+          <div class="field--check">
+            <input id="give-once" name="frequency" type="radio" value="one-time" checked />
+            <label for="give-once">One time</label>
+          </div>
+          <div class="field--check">
+            <input id="give-monthly" name="frequency" type="radio" value="monthly" />
+            <label for="give-monthly">Monthly</label>
+          </div>
+        </div>
+      </fieldset>
+      <div class="field field--wide">
+        <label for="give-designation">Designation</label>
+        <select id="give-designation" name="designation" required>
+          {funds.map((f, i) => <option value={f.id} selected={i === 0}>{f.name}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="give-first">First name</label>
+        <input id="give-first" name="firstName" type="text" autocomplete="given-name" required />
+      </div>
+      <div class="field">
+        <label for="give-last">Last name</label>
+        <input id="give-last" name="lastName" type="text" autocomplete="family-name" required />
+      </div>
+      <div class="field">
+        <label for="give-email">Email</label>
+        <input id="give-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="give-year">Class year, if you're an alum <span class="optional">(optional)</span></label>
+        <input id="give-year" name="classYear" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="YYYY" />
+      </div>
+      <div class="field field--wide">
+        <label for="give-tribute">In honor or memory of <span class="optional">(optional)</span></label>
+        <input id="give-tribute" name="tribute" type="text" />
+      </div>
+      <div class="field field--wide field--check">
+        <input id="give-anonymous" name="anonymous" type="checkbox" value="yes" />
+        <label for="give-anonymous">Please don't list my name in donor recognition.</label>
+      </div>
+    </div>
+    <p class="form-error" role="alert" hidden>Please fill in the highlighted fields.</p>
+    <button class="btn btn--gold" type="submit">Complete My Gift</button>
+    <p class="form-note">This is a demo form. Nothing you enter leaves your browser, and no payment is taken.</p>
+  </form>
+
+  <div class="form-confirm" data-cu-form-confirm="give" tabindex="-1" hidden>
+    <h3>Thank you, <span data-first-name></span>!</h3>
+    <p>
+      Your <span data-show-if="frequency=monthly">monthly </span>gift of <strong data-field="amount" data-format="usd"></strong>
+      to the <strong data-field="designation"></strong> helps a Connected U student keep moving toward graduation.
+    </p>
+    <ul class="check-list">
+      <li><a href={links.impact}>See the impact of giving</a></li>
+      <li><a href={links.societies}>Learn about the Connected Circle</a></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/forms.js';
+</script>

@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions, Student Success and Alumni are done.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions, Student Success, Alumni and Giving are done.
 
 ## Run it locally
 
@@ -81,7 +81,7 @@ listPrograms: undergraduate # all | undergraduate | graduate | online: adds prog
 listHeading: Featured programs
 listGroupBySchool: true     # group the cards by school
 listFaculty: true           # adds the faculty directory
-form: request-info          # request-info | apply | update-info: adds a demo form (sends nothing)
+form: request-info          # request-info | apply | update-info | give: adds a demo form (sends nothing)
 givingCta: true             # adds the pz-giving-cta personalization zone (default variant)
 ```
 
@@ -89,7 +89,7 @@ givingCta: true             # adds the pz-giving-cta personalization zone (defau
 
 Institutional numbers live only in `content/facts.json`. Quote them with tokens, in Markdown or frontmatter: `Choose from {{facts.programs.undergraduate}} majors`. Numbers print with thousands separators (`${{facts.costs.undergraduate.tuition}}` → $47,850). An unknown token fails the build. A program's own credits, length and start terms live in its program file instead.
 
-A line reading `<!-- cost-table -->` in a page places the cost-of-attendance table there.
+A block marker on its own line places a component there: `<!-- cost-table -->` (cost of attendance) or `<!-- society-join -->` (Connected Circle join buttons).
 
 ### Student Portal
 
@@ -97,7 +97,7 @@ A line reading `<!-- cost-table -->` in a page places the cost-of-attendance tab
 
 ### Demo forms
 
-Request Information, Apply and the alumni Update Your Info form send nothing. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>` or `?type=transfer-student` to preselect fields.
+Request Information, Apply, the alumni Update Your Info form and Give Now send nothing, and Give Now has no payment fields. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>`, `?type=transfer-student`, `?amount=1000`, `?frequency=monthly` or `?designation=<fund id>` to preselect fields.
 
 ### Programs and faculty
 

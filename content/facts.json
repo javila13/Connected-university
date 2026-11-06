@@ -66,6 +66,23 @@
     "reunionEveryYears": 5,
     "youngAlumniYears": 10
   },
+  "giving": {
+    "fiscalYear": "July 1 to June 30",
+    "presetAmounts": [50, 100, 250, 500, 1000],
+    "connectedCircle": { "member": 1000, "leader": 2500, "benefactor": 5000, "monthly": 84 },
+    "presidentsCouncil": 10000,
+    "endowedScholarshipMinimum": 25000,
+    "funds": [
+      { "id": "connected-fund", "name": "Connected Fund (greatest need)" },
+      { "id": "scholarships", "name": "Scholarships" },
+      { "id": "sustainability-leaders", "name": "Sustainability Leaders Scholarship Fund" },
+      { "id": "first-generation", "name": "First-Generation Scholars Fund" },
+      { "id": "tutoring", "name": "Tutoring & Learning Center" },
+      { "id": "science-sustainability", "name": "School of Science & Sustainability" },
+      { "id": "nursing", "name": "Nursing Scholarship Fund" },
+      { "id": "athletics", "name": "Athletics Fund" }
+    ]
+  },
   "scholarships": {
     "presidential": 25000,
     "dean": 15000,
