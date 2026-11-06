@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics and Admissions are done.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics, Admissions and Student Success are done.
 
 ## Run it locally
 
@@ -90,6 +90,10 @@ Institutional numbers live only in `content/facts.json`. Quote them with tokens,
 
 A line reading `<!-- cost-table -->` in a page places the cost-of-attendance table there.
 
+### Student Portal
+
+`/portal/` has a demo sign-in: any username and password, or **Sign in as Sofia (demo)**, shows Sofia's dashboard for that browser tab. The dashboard is built in the browser from `content/sofia.json` (student stage), so her record isn't in the page HTML. The build fails if `sofia.json` names a course, advisor or program the site doesn't have.
+
 ### Demo forms
 
 Request Information and Apply send nothing. A valid submit shows a confirmation and fires `cu:form-start` / `cu:form-submit` events on `document` with the field values, for the Phase 2 simulation. Link with `?program=<program id>` or `?type=transfer-student` to preselect fields.
@@ -103,7 +107,7 @@ Request Information and Apply send nothing. A valid submit shows a confirmation 
 ## Layout
 
 ```
-content/          pages, programs, faculty (Markdown); facts.json, nav.json
+content/          pages, programs, faculty (Markdown); facts.json, nav.json, sofia.json
 src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
 src/scripts/      consent, demo settings, chat widget slots, search

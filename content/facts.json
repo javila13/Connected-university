@@ -52,6 +52,14 @@
     "english": { "toefl": 80, "ielts": 6.5, "duolingo": 110 },
     "transfer": { "maxCredits": 90, "minGpa": 2.5 }
   },
+  "registrar": {
+    "addDrop": "the end of the second week of the term",
+    "withdraw": "the end of the tenth week of the term",
+    "springRegistration": "November 10",
+    "springBalanceDue": "January 5",
+    "fallRegistration": "April 6",
+    "fallBalanceDue": "August 15"
+  },
   "scholarships": {
     "presidential": 25000,
     "dean": 15000,
