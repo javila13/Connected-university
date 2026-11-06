@@ -5,13 +5,19 @@ import nav from '../../content/nav.json';
 
 const astroPages = import.meta.glob('/src/pages/**/*.astro');
 
+export const pageUrl = (id) => `/${id}/`;
+export const programUrl = (id) => `/academics/programs/${id}/`;
+export const facultyUrl = (id) => `/academics/faculty/${id}/`;
+
 let cached;
 
 /** Every static route the build will emit, with a trailing slash. */
 export async function getRouteSet() {
   if (cached) return cached;
   const set = new Set();
-  for (const entry of await getCollection('pages')) set.add(`/${entry.id}/`);
+  for (const entry of await getCollection('pages')) set.add(pageUrl(entry.id));
+  for (const entry of await getCollection('programs')) set.add(programUrl(entry.id));
+  for (const entry of await getCollection('faculty')) set.add(facultyUrl(entry.id));
   for (const file of Object.keys(astroPages)) {
     if (file.includes('[')) continue; // dynamic routes are covered by collections
     let route = file.slice('/src/pages'.length, -'.astro'.length).replace(/(^|\/)index$/, '$1');
@@ -60,4 +66,28 @@ export async function hubChildren(route) {
 export async function pickLive(...hrefs) {
   const routes = await getRouteSet();
   return hrefs.find((h) => routes.has(h)) ?? hrefs[hrefs.length - 1];
+}
+
+let titles;
+/** Route -> page title, for breadcrumbs. */
+async function getTitles() {
+  if (titles) return titles;
+  titles = new Map([['/', 'Home']]);
+  for (const e of await getCollection('pages')) titles.set(pageUrl(e.id), e.data.title);
+  for (const e of await getCollection('programs')) titles.set(programUrl(e.id), e.data.title);
+  for (const e of await getCollection('faculty')) titles.set(facultyUrl(e.id), e.data.name);
+  return titles;
+}
+
+/** Ancestor links for a route, e.g. `/academics/programs/nursing/` -> Home, Academics, Degree Programs. Empty for top-level pages. */
+export async function getCrumbs(route) {
+  const parts = route.split('/').filter(Boolean);
+  if (parts.length < 2) return [];
+  const known = await getTitles();
+  const crumbs = [{ label: 'Home', href: '/' }];
+  for (let i = 1; i < parts.length; i++) {
+    const href = `/${parts.slice(0, i).join('/')}/`;
+    if (known.has(href)) crumbs.push({ label: known.get(href), href });
+  }
+  return crumbs;
 }

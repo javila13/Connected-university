@@ -1,0 +1,21 @@
+---
+// Faculty cards for the directory and program pages.
+import { facultyUrl } from '../lib/routes.js';
+
+interface Props {
+  people: any[];
+}
+const { people } = Astro.props;
+---
+<ul class="cards cards--people">
+  {people.map((p) => (
+    <li>
+      <a class="card" href={facultyUrl(p.id)}>
+        <span class="card__eyebrow">{p.data.department}</span>
+        <span class="card__title">{p.data.name}</span>
+        <span class="card__meta">{p.data.role}</span>
+        <span class="card__text">{p.data.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>

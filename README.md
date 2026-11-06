@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** Phase 0 (scaffold) done. Phase 1 (content) is next.
+**Status:** Phase 0 (scaffold) is complete and live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phase 1 (content) is in progress, one section per pull request; Academics is done.
 
 ## Run it locally
 
@@ -14,7 +14,7 @@ npm run build && npm start      # http://localhost:3000
 npm run smoke      # in a second shell, against the running server
 ```
 
-`npm run smoke` checks robots.txt and the sitemap, and that every sitemap page returns 200 and carries its metadata and the footer disclaimer. It also checks the search index, `noindex` on `/demo` and `/data360`, 404 handling and cache headers. To test a deployed app, set `BASE_URL=https://your-app.herokuapp.com`.
+`npm run smoke` checks robots.txt and the sitemap, and that every sitemap page returns 200 and carries its metadata and the footer disclaimer. It also checks that every internal link resolves, the search index, `noindex` on `/demo` and `/data360`, 404 handling and cache headers. To test a deployed app, set `BASE_URL=https://your-app.herokuapp.com`.
 
 ## Deploy to Heroku (Jesse)
 
@@ -71,10 +71,32 @@ eyebrow: ...                     # optional kicker above the title
 
 A missing or unknown `section` or `audience` fails the build.
 
+Optional extras for Markdown pages:
+
+```yaml
+faqs:                       # rendered as an FAQ block plus schema.org FAQPage data
+  - q: Can I study online?
+    a: Yes. ...
+listPrograms: undergraduate # all | undergraduate | graduate | online: adds program cards
+listHeading: Featured programs
+listGroupBySchool: true     # group the cards by school
+listFaculty: true           # adds the faculty directory
+```
+
+### Numbers in copy
+
+Institutional numbers live only in `content/facts.json`. Quote them with tokens, in Markdown or frontmatter: `Choose from {{facts.programs.undergraduate}} majors`. An unknown token fails the build.
+
+### Programs and faculty
+
+- **Program:** add `content/programs/<id>.md`; it's served at `/academics/programs/<id>/`. Frontmatter holds `school` (an id from `facts.json`), `credentials` (name, short, level, formats, credits, duration), `startTerms`, `courses`, `careers`, and optional `faculty`, `related`, `certificate` and `faqs`. See `content/programs/environmental-science.md`.
+- **Faculty:** add `content/faculty/<id>.md`; it's served at `/academics/faculty/<id>/`. See `content/faculty/olga-martinez.md`.
+- `faculty`, `related` and `programs` lists take ids. A typo fails the build.
+
 ## Layout
 
 ```
-content/          pages (Markdown), facts.json, nav.json
+content/          pages, programs, faculty (Markdown); facts.json, nav.json
 src/pages/        home, contact, portal, search, 404, /demo, /data360, and the Markdown page route
 src/layouts/      BaseLayout (public pages), ToolLayout (presenter tools)
 src/scripts/      consent, demo settings, chat widget slots, search

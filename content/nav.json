@@ -15,6 +15,7 @@
         { "label": "Undergraduate", "href": "/academics/undergraduate/" },
         { "label": "Graduate", "href": "/academics/graduate/" },
         { "label": "Online", "href": "/academics/online/" },
+        { "label": "Degree Programs", "href": "/academics/programs/" },
         { "label": "Professional Certificates", "href": "/continuing-ed/certificates/" },
         { "label": "Faculty", "href": "/academics/faculty/" }
       ]

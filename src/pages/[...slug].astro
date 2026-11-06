@@ -1,9 +1,17 @@
 ---
-// Renders every Markdown page in content/pages. A section hub (a page whose
-// route is a top-level nav item) also lists the section's live child pages.
-import { getCollection, render } from 'astro:content';
+// Renders every Markdown page in content/pages. Optional frontmatter adds
+// program cards (listPrograms), the faculty directory (listFaculty) and an
+// FAQ block. A section hub (a page whose route is a top-level nav item) also
+// lists the section's live child pages.
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProgramCards from '../components/ProgramCards.astro';
+import FacultyCards from '../components/FacultyCards.astro';
+import Faq from '../components/Faq.astro';
 import { hubChildren } from '../lib/routes.js';
+import { programsFor, groupBySchool } from '../lib/academics.js';
+import { fillFacts } from '../lib/fill-facts.js';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -11,30 +19,32 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
 const d = entry.data;
+const where = `content/pages/${entry.id}`;
+const html = fillFacts(entry.rendered?.html ?? '', where, { html: true });
+const description = fillFacts(d.description, where);
 const children = await hubChildren(`/${entry.id}/`);
+
+const programs = d.listPrograms ? await programsFor(d.listPrograms) : [];
+const groups = d.listGroupBySchool ? groupBySchool(programs) : [];
+// Faculty directory is A to Z by last name.
+const lastName = (p) => p.data.name.split(' ').at(-1);
+const people = d.listFaculty
+  ? (await getCollection('faculty')).sort((a, b) => lastName(a).localeCompare(lastName(b)))
+  : [];
 ---
 <BaseLayout
   title={d.title}
-  description={d.description}
+  description={description}
   section={d.section}
   audience={d.audience}
   program={d.program}
   topic={d.topic}
   personaHook={d.personaHook}
 >
-  <section class="page-hero">
-    <div class="wrap">
-      {d.eyebrow && <p class="eyebrow">{d.eyebrow}</p>}
-      <h1>{d.title}</h1>
-      <p class="lede">{d.description}</p>
-    </div>
-  </section>
+  <PageHero title={d.title} lede={description} eyebrow={d.eyebrow} />
   <div class="wrap">
-    <article class="prose">
-      <Content />
-    </article>
+    <article class="prose" set:html={html} />
     {children.length > 0 && (
       <nav aria-label={`${d.title} pages`}>
         <ul class="link-grid">
@@ -42,5 +52,25 @@ const children = await hubChildren(`/${entry.id}/`);
         </ul>
       </nav>
     )}
+    {programs.length > 0 && (
+      <section class="listing" aria-labelledby="programs-heading">
+        <h2 id="programs-heading">{d.listHeading ?? 'Programs'}</h2>
+        {groups.length > 0
+          ? groups.map((g) => (
+              <div class="listing__group">
+                <h3>{g.school.name}</h3>
+                <ProgramCards items={g.items} showSchool={false} />
+              </div>
+            ))
+          : <ProgramCards items={programs} />}
+      </section>
+    )}
+    {people.length > 0 && (
+      <section class="listing" aria-labelledby="faculty-heading">
+        <h2 id="faculty-heading">{d.listHeading ?? 'Faculty'}</h2>
+        <FacultyCards people={people} />
+      </section>
+    )}
+    <Faq faqs={d.faqs} where={where} />
   </div>
 </BaseLayout>

@@ -1,5 +1,5 @@
 {
-  "_about": "Single source of truth for institutional facts (CLAUDE.md, PLAN.md §11). Copy that needs a number not listed here: add it here first and log it in docs/decisions.md. Seed values are from connecteduniversity-mc.org, fetched 2026-11-06.",
+  "_about": "Single source of truth for institutional facts (CLAUDE.md, PLAN.md §11). Copy that needs a number not listed here: add it here first and log it in docs/decisions.md. Markdown and frontmatter quote these with {{facts.path}} tokens, e.g. {{facts.programs.undergraduate}}. Seed values are from connecteduniversity-mc.org, fetched 2026-11-06.",
   "name": "Connected University",
   "shortName": "Connected U",
   "taglines": {
@@ -21,6 +21,13 @@
     "onlineCoursesLabel": "50+",
     "certificates": 20
   },
+  "schools": [
+    { "id": "science-sustainability", "name": "School of Science & Sustainability" },
+    { "id": "business", "name": "School of Business" },
+    { "id": "engineering-computing", "name": "School of Engineering & Computing" },
+    { "id": "nursing-health", "name": "School of Nursing & Health Sciences" },
+    { "id": "education-human-development", "name": "School of Education & Human Development" }
+  ],
   "research": {
     "budgetBillionsUsd": 5,
     "libraries": 21,
