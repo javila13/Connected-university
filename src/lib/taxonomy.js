@@ -60,18 +60,16 @@ export const AGENT_PERSONAS = {
 };
 
 /**
- * `auto` widget routing (PLAN.md D6): Piper for inbound inquiry, the
- * Agentforce mock for constituent service. Continuing Ed (learner) and
- * Athletics (fan) pages offer both (Jesse, 2026-11-06; docs/decisions.md).
- * `widget` is 'piper' | 'agentforce' | 'both'.
+ * The Agentforce mock persona for each page audience (PLAN.md D12, §5.8).
+ * Whether the mock shows at all is a /demo setting, off by default.
  */
-export const AUDIENCE_ROUTING = {
-  prospect: { widget: 'piper', agent: 'student-recruitment' },
-  learner: { widget: 'both', agent: 'student-recruitment' },
-  fan: { widget: 'both', agent: 'alumni-giving' },
-  student: { widget: 'agentforce', agent: 'student-success' },
-  alumni: { widget: 'agentforce', agent: 'alumni-giving' },
-  donor: { widget: 'agentforce', agent: 'alumni-giving' },
+export const AGENT_BY_AUDIENCE = {
+  prospect: 'student-recruitment',
+  learner: 'student-recruitment',
+  student: 'student-success',
+  alumni: 'alumni-giving',
+  donor: 'alumni-giving',
+  fan: 'alumni-giving',
 };
 
 /**

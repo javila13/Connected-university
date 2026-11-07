@@ -1,5 +1,5 @@
 // Runs on every public page (BaseLayout). Wires up consent, demo settings,
-// chat widget slots, the mobile menu and the /demo keyboard shortcut.
+// the Agentforce mock slot, the mobile menu and the /demo keyboard shortcut.
 import { captureUrlOverrides, getSettings, onSettingsChange, CHANNEL_NAME } from './settings.js';
 import { getConsent, setConsent, onConsentGranted } from './consent.js';
 import { applyWidgets } from './widgets.js';
@@ -47,7 +47,7 @@ window.addEventListener('cu:consent', (e) => {
 if ('BroadcastChannel' in window) {
   new BroadcastChannel(CHANNEL_NAME).addEventListener('message', (e) => {
     if (e.data?.type !== 'consent-changed') return;
-    if (e.data.value !== 'all' && document.querySelector('.cu-widget, #cu-qualified-loader')) {
+    if (e.data.value !== 'all' && document.querySelector('.cu-widget')) {
       location.reload();
       return;
     }
@@ -58,7 +58,7 @@ if ('BroadcastChannel' in window) {
 
 // --- Widgets ----------------------------------------------------------------
 function mountWidgets() {
-  if (applyWidgets(audience, getSettings()) === 'reload') location.reload();
+  applyWidgets(audience, getSettings());
 }
 
 function boot() {

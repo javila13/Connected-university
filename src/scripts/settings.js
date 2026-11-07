@@ -4,7 +4,7 @@
 //   DEFAULTS  <  saved settings (localStorage)  <  URL overrides (this tab only)
 //
 // URL params are copied into sessionStorage on first sight, so a presenter can
-// open a link like /?piper=0 and keep that override while clicking around in
+// open a link like /?agentforce=1 and keep that override while clicking around in
 // the same tab, without permanently changing the saved settings.
 import { AGENT_PERSONAS } from '../lib/taxonomy.js';
 
@@ -12,14 +12,14 @@ const STORAGE_KEY = 'cu_demo_settings';
 const OVERRIDE_KEY = 'cu_demo_overrides';
 export const CHANNEL_NAME = 'cu-demo';
 
-/** `off` hides every chat widget (Jesse, 2026-11-07). */
-export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both', 'off'];
 /** How a demo form's email resolves: always to Sofia, or to whoever was typed. */
 export const IDENTITY_MATCHING = ['sofia', 'typed'];
 
 export const DEFAULTS = Object.freeze({
   simulation: true,
-  widgetMode: 'auto',
+  // The Agentforce mock chat, bottom-right on every page. Off by default
+  // (Jesse, 2026-11-07); Piper comes from a Chrome extension, not the site.
+  agentforce: false,
   agentPersona: 'auto',
   consentAutoAccept: false,
   simulatedBadge: true,
@@ -28,9 +28,6 @@ export const DEFAULTS = Object.freeze({
   showWhy: true,
   // "Grounded in Data 360" notes under the Agentforce mock's answers.
   showGrounding: true,
-  // Per-widget kill switches/forcers from URL params; null = follow widgetMode.
-  forcePiper: null,
-  forceAgentforce: null,
 });
 
 const bool = (v) => (v === '1' || v === 'true' || v === 'on' ? true : v === '0' || v === 'false' || v === 'off' ? false : undefined);
@@ -38,9 +35,7 @@ const bool = (v) => (v === '1' || v === 'true' || v === 'on' ? true : v === '0' 
 /** URL param -> setting. Unknown or invalid values are ignored. */
 const PARAMS = {
   sim: (v) => ({ simulation: bool(v) }),
-  mode: (v) => ({ widgetMode: WIDGET_MODES.includes(v) ? v : undefined }),
-  piper: (v) => ({ forcePiper: bool(v) }),
-  agentforce: (v) => ({ forceAgentforce: bool(v) }),
+  agentforce: (v) => ({ agentforce: bool(v) }),
   agent: (v) => ({ agentPersona: v === 'auto' || v in AGENT_PERSONAS ? v : undefined }),
   badge: (v) => ({ simulatedBadge: bool(v) }),
   autoconsent: (v) => ({ consentAutoAccept: bool(v) }),
@@ -54,13 +49,9 @@ export const URL_PARAMS = Object.keys(PARAMS);
 export function sanitize(input) {
   const out = {};
   if (!input || typeof input !== 'object') return out;
-  for (const key of ['simulation', 'consentAutoAccept', 'simulatedBadge', 'showWhy', 'showGrounding']) {
+  for (const key of ['simulation', 'agentforce', 'consentAutoAccept', 'simulatedBadge', 'showWhy', 'showGrounding']) {
     if (typeof input[key] === 'boolean') out[key] = input[key];
   }
-  for (const key of ['forcePiper', 'forceAgentforce']) {
-    if (typeof input[key] === 'boolean' || input[key] === null) out[key] = input[key];
-  }
-  if (WIDGET_MODES.includes(input.widgetMode)) out.widgetMode = input.widgetMode;
   if (IDENTITY_MATCHING.includes(input.identityMatching)) out.identityMatching = input.identityMatching;
   if (input.agentPersona === 'auto' || input.agentPersona in AGENT_PERSONAS) out.agentPersona = input.agentPersona;
   return out;

@@ -4,7 +4,7 @@ Click-paths for running the Connected University demo. Each step says what to cl
 
 **Live site:** https://connected-university-website-64975a496d17.herokuapp.com
 
-**What's real and what's simulated:** Data 360 tracking, Personalization and Agentforce are simulated in the browser, so the demo is the same every time and needs no org. Qualified (Piper) is the only live embed. The inspector uses the object names from our Education Cloud demo org *(verified — edu-cloud-dc-demo skill)*, but it is Lightning-styled, not the real Data 360 screens. Say "simulated" if anyone asks.
+**What's real and what's simulated:** Data 360 tracking, Personalization and Agentforce are simulated in the browser, so the demo is the same every time and needs no org. The site loads no live chat widget: add Qualified (Piper) with the Chrome extension when your story needs it. The inspector uses the object names from our Education Cloud demo org *(verified — edu-cloud-dc-demo skill)*, but it is Lightning-styled, not the real Data 360 screens. Say "simulated" if anyone asks.
 
 ---
 
@@ -13,7 +13,7 @@ Click-paths for running the Connected University demo. Each step says what to cl
 1. Open the demo control panel: go to `/demo` on the site, or press **Ctrl + Alt + D** on any page.
 2. Turn on **Consent auto-accept**, so the cookie banner doesn't interrupt the story. Without it, accept cookies on the first page; nothing is recorded until you do.
 3. Click **Reset visitor**. This starts a fresh anonymous visitor with no history. Do it before every run.
-4. Check **Simulation** is on. If your story doesn't use chat, set **Chat widgets** to **off** to hide Piper and the Agentforce agents everywhere (or add `?mode=off` to a URL for one tab). Turn the **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** on or off for your audience. The last two are separate, so you can keep one and hide the other.
+4. Check **Simulation** is on. Chat is off by default: turn on **Agentforce mock** if your story uses the agent (or add `?agentforce=1` to a URL for one tab), and turn on the Piper Chrome extension if it uses Piper. Turn the **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** on or off for your audience. The last two are separate, so you can keep one and hide the other.
 5. Go back to the site's home page. You're ready.
 
 **Shortcuts:** **Ctrl + Alt + I** opens and closes the Data 360 inspector on any page. **Ctrl + Alt + D** opens the control panel. On some keyboard layouts Ctrl + Alt acts as AltGr; if a shortcut doesn't work, click the blue **Data 360** tab on the right edge instead *(hypothesis — test on your own laptop before a live demo)*.
@@ -192,11 +192,11 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 
 ## Click-path 6: Chat that knows her (Agentforce)
 
-**Story:** Continuing Ed, or any story where you want to show "Agentforce grounded in Data 360". **Time:** about 3 minutes. **Starts from:** a reset visitor on **Continuing Ed** (the agent is on Continuing Ed pages by default). Two screens help.
+**Story:** Continuing Ed, or any story where you want to show "Agentforce grounded in Data 360". **Time:** about 3 minutes. **Starts from:** **Agentforce mock** turned on in `/demo`, and a reset visitor on **Continuing Ed**. Two screens help.
 
 | # | Click | What the audience sees | Say |
 |---|---|---|---|
-| 1 | Click the blue chat bubble at the bottom left. | The **Student Recruitment Agent** opens and asks for a name and email first, with a **Skip** link. | "This is Agentforce on the website. Before the conversation starts, it asks who she is, the same way a pre-chat form does." |
+| 1 | Click the blue chat bubble at the bottom right. | The **Student Recruitment Agent** opens and asks for a name and email first, with a **Skip** link. | "This is Agentforce on the website. Before the conversation starts, it asks who she is, the same way a pre-chat form does." |
 | 2 | Click **Skip**, then type **Tell me about the data analytics certificate**. | A short description of the certificate, with **Explore the certificate** and **Request information** buttons. | "Even for an anonymous visitor, the agent answers from the site's own content and links to the source." |
 | 3 | Click **Talk to a person**, or type something the agent isn't scripted for, like **is there parking on campus**. | For an unscripted question it answers "Here's what I found on our site" with up to three linked pages. | "When there's no scripted answer, it grounds itself in our pages instead of making something up." |
 | 4 | Type **When is my deposit due?** | It gives the general deadline, says it can look up her own, and shows a sign-in form in the chat. | "Questions about her own record need to know who she is." |
@@ -204,12 +204,12 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 | 6 | Click **What's my next step?** | Her recommended next step, the online MBA with a Sustainable Business focus, with **Explore the MBA**. Under it: **Grounded in Data 360: Identity: Sofia Sanders · Life stage: Learner…** | "The answer comes from her profile, not a script that guesses. And every question she asks is an engagement event." |
 | 7 | Open the inspector's **Engagement** tab. | **Agent chat** rows, one per question, worth 3 points each. Asking about a program adds to that program's academic interest. | "The conversation feeds the same profile that drives personalization." |
 
-**Where each agent appears** (`/demo` → Chat widgets, **auto**):
+**Where each agent appears** (with **Agentforce mock** on, always bottom-right):
+- **Student Recruitment Agent:** Admissions, Academics and other prospect pages, and Continuing Ed.
 - **Student Success Agent:** Student Success pages and the Student Portal.
 - **Alumni & Giving Agent:** Alumni, Giving and Athletics pages.
-- **Student Recruitment Agent:** Continuing Ed pages.
 
-Admissions and other prospect pages show Piper. To show the Student Recruitment Agent there, set Chat widgets to **both** or **agentforce**, or add `?agentforce=1` to the URL.
+`/demo` → **Agent persona** forces one agent on every page. If the Piper extension is on too, its bubble may sit in the same corner *(hypothesis — check with the extension before a live demo)*.
 
 **Who the agent knows:**
 - **Anonymous** (skipped the sign-in): general answers, plus suggestions from browsing ("It looks like you've been exploring Nursing").
@@ -220,7 +220,7 @@ Admissions and other prospect pages show Piper. To show the Student Recruitment 
 
 | Preset · page | Agent | Ask | She hears |
 |---|---|---|---|
-| Prospect · Admitted Students (`?agentforce=1`) | Student Recruitment | When is my deposit due? · What does it cost? · My scholarships | Her $400 deposit and May 1 deadline; that her scholarships cover $20,000 a year; the Dean's and Sustainability Leaders scholarships |
+| Prospect · Admitted Students | Student Recruitment | When is my deposit due? · What does it cost? · My scholarships | Her $400 deposit and May 1 deadline; that her scholarships cover $20,000 a year; the Dean's and Sustainability Leaders scholarships |
 | Student · Student Portal | Student Success | (greeting) · Am I on track? · My courses · Find tutoring | Her advisor appointment with Dr. Olga Martinez; good standing, 3.05 GPA, 74 credits, early alert resolved; her four courses |
 | Alumna/Donor · Alumni | Alumni & Giving | (greeting) · Join the Connected Circle · Update my info | Thanks for her $500 gift; the $1,000 or $84-a-month ask; her job and city from her record |
 | Learner · Continuing Ed | Student Recruitment | What's my next step? · Alumni discount | The MBA pathway; her 15% alumni discount |

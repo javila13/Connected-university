@@ -1447,7 +1447,7 @@ code {
   padding: 0.85rem 1.4rem;
 }
 
-/* ---- Chat widget slots (stubs; PLAN.md D6) ---------------------------- */
+/* ---- Chat widget slot: the Agentforce mock (PLAN.md §5.8) -------------- */
 .cu-widget {
   position: fixed;
   bottom: 20px;
@@ -1460,10 +1460,6 @@ code {
 .cu-widget--right {
   right: 20px;
 }
-.cu-widget--left {
-  left: 20px;
-  align-items: flex-start;
-}
 .cu-widget__bubble {
   position: relative;
   width: 60px;
@@ -1475,9 +1471,6 @@ code {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   display: grid;
   place-items: center;
-}
-.cu-widget--piper .cu-widget__bubble {
-  background: var(--cu-navy);
 }
 .cu-widget--agentforce .cu-widget__bubble {
   background: #0176d3; /* Lightning brand blue: "Lightning-styled is enough" (CLAUDE.md) */
@@ -1498,9 +1491,6 @@ code {
   padding: 0.85rem 1rem;
   color: #fff;
   font-weight: 600;
-}
-.cu-widget--piper .cu-widget__head {
-  background: var(--cu-navy);
 }
 .cu-widget--agentforce .cu-widget__head {
   background: #0176d3;

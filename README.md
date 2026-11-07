@@ -1,6 +1,6 @@
 # Connected University demo site
 
-A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser; Qualified (Piper) is the only live embed. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
+A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser. The site loads no live chat widget: presenters add Qualified (Piper) with a Chrome extension. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
 **Status:** live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phases 0 (scaffold) and 1 (content, 106 pages) are complete. Phase 2 (simulation) is in progress: the event store, affinity engine, Data 360 inspector drawer, `/data360` companion window, persona presets, Become Sofia, the automatic identity stitch, personalization (four zones, "Why am I seeing this?", the decisions log) and the Agentforce mock are in. **Demo click-paths for the team are in [`docs/demo-guide.md`](docs/demo-guide.md).**
 
@@ -26,7 +26,7 @@ npm run smoke      # in a second shell, against the running server
 
 ## Configure
 
-- **Qualified (Piper):** paste the token from your Qualified JS snippet into `public/demo-config.js`. It's a public value, not a secret. Leave it empty to show a placeholder bubble.
+- **Qualified (Piper):** nothing to configure on the site. Presenters add Piper with a Chrome extension; the site stays publicly crawlable for it.
 - **Brand assets:** drop files into `public/assets/` and rebuild:
   - `logo.svg`: header logo, replaces the text typemark
   - `logo-reversed.svg`: footer logo on navy
@@ -41,14 +41,14 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | Control | What it does |
 |---|---|
 | Simulation | Turns the simulated Data 360, Personalization and Agentforce mock on or off |
-| Chat widgets | `auto` (Piper on public pages, Agentforce on student/alumni/giving pages, both on Continuing Ed and Athletics), `piper`, `agentforce`, `both`, `off` (no chat widgets) |
+| Agentforce mock | Off by default. On: a chat agent bottom-right on every page, matched to the page's audience (Student Recruitment on prospect and Continuing Ed pages, Student Success on student pages, Alumni & Giving on alumni, giving and athletics pages) |
 | Agent persona | Force one Agentforce persona on every page |
 | Consent auto-accept | Skip the cookie banner |
 | "Simulated" badge | Show or hide the badge on simulated UI |
 | "Why am I seeing this?" | Show or hide the button on each personalized zone |
 | "Grounded in Data 360" notes | Show or hide the notes under the Agentforce mock's answers |
 
-URL params override the saved settings for one browser tab: `?mode=both` (or `?mode=off`), `?piper=0`, `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`, `?grounding=0`.
+URL params override the saved settings for one browser tab: `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`, `?grounding=0`.
 
 ## Simulation (`sim/`)
 
@@ -138,7 +138,7 @@ src/scripts/      consent, demo settings, chat widget slots, search, demo forms,
 sim/              the simulation: profile store, affinity engine, tracker, inspector
 integrations/     build step that writes the search index
 src/lib/          metadata vocabulary, nav and route helpers
-public/           demo-config.js, assets/
+public/           assets/, favicon
 server.js         Express: dist/, robots.txt, sitemap.xml
 scripts/smoke.mjs post-deploy smoke test
 ```
