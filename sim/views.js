@@ -3,7 +3,7 @@
 // Every value is escaped.
 import { OBJECTS } from './config.js';
 import { rankAffinities, TYPE_LABELS } from './affinity.js';
-import { stageRows, stageLabel, stageInfo, person } from './profile.js';
+import { stageRows, stageLabel, stageInfo, person, fundName } from './profile.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const time = (iso) => (iso ? new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '–');
@@ -50,7 +50,22 @@ function knownProfileView(state, { catalog = {} } = {}) {
       ['Contact preferences', prefs],
       ['Top affinities', top.length ? top.map((a) => a.label).join(', ') : 'None yet'],
     ])}
+    ${conversionsView(state)}
     <p class="d360-muted">Known since ${esc(time(id.stitchedAt))}, via ${esc(id.via)}. Device <code>${esc(state.deviceId)}</code> and its ${state.events.length} engagement ${state.events.length === 1 ? 'row' : 'rows'} belong to this Unified Individual.</p>`;
+}
+
+const usd = (n) => `$${Number(n || 0).toLocaleString('en-US')}`;
+
+/** Gifts and ticket orders made in this demo session. */
+function conversionsView(state) {
+  const list = state.conversions ?? [];
+  if (!list.length) return '';
+  const rows = list.map((c) =>
+    c.type === 'gift'
+      ? [`Gift, ${time(c.ts)}`, `${usd(c.amount)}${c.frequency === 'monthly' ? ' monthly' : ''} to ${fundName(c.fund)}`]
+      : [`Tickets, ${time(c.ts)}`, `${c.game}, ${usd(c.total)}`],
+  );
+  return `<h3 class="d360-group">Conversions this visit</h3>${facts(rows)}`;
 }
 
 export function profileView(state, ctx = {}) {
@@ -72,7 +87,7 @@ export function profileView(state, ctx = {}) {
       <dt>Engagement rows</dt><dd>${total}</dd>
       <dt>Top affinities</dt><dd>${top.length ? top.map((a) => esc(a.label)).join(', ') : 'None yet'}</dd>
     </dl>
-    <p class="d360-muted">Coming in the identity-stitch release: submitting any form with an email, or signing in to the Student Portal, stitches this device to a known person. Until then, use <b>Become Sofia</b> or a persona preset in /demo.</p>`;
+    <p class="d360-muted">Submitting any form with an email (except the recruiting questionnaire), or signing in to the Student Portal, stitches this device to a known person.</p>`;
 }
 
 export function identityView(state) {

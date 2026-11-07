@@ -3,6 +3,7 @@
 import { onConsentGranted } from '../src/scripts/consent.js';
 import * as store from './store.js';
 import { startTracking } from './tracker.js';
+import { startStitching } from './stitcher.js';
 import { mountInspector } from './inspector.js';
 
 // Labels for programs, certificates and teams, written into the page at build time.
@@ -13,4 +14,9 @@ try {
 
 store.startSync();
 mountInspector({ store, catalog });
-onConsentGranted(() => startTracking({ catalog }));
+// The tracker registers first, so a form's FORM_SUBMIT row exists before the
+// stitch re-attributes the device's rows to Sofia.
+onConsentGranted(() => {
+  startTracking({ catalog });
+  startStitching();
+});

@@ -33,19 +33,25 @@ function becomeKnown(s, { stage, via, ts }) {
 /**
  * Stitches the current visitor to Sofia at `stage`. If she's already known,
  * only the stage changes (and the step is logged).
- * @param {{ stage: string, via: string }} opts  via: what triggered it, e.g. "Request Information form"
+ * @param {{ stage: string, via: string, email?: string }} opts
+ *   via: what triggered it, e.g. "Request Information form"; email: what the visitor typed, if anything
  */
-export function stitch({ stage, via }) {
+export function stitch({ stage, via, email }) {
   if (!STAGES[stage]) throw new Error(`[sim] unknown Sofia stage "${stage}"`);
   update((s) => {
     const ts = now();
     if (!s.identity?.known) {
       const moved = becomeKnown(s, { stage, via, ts });
+      const typed = email?.trim().toLowerCase();
+      const match =
+        typed && typed !== sofia.person.email
+          ? `Email entered: ${email.trim()}. In this demo every identity resolves to ${fullName} (${sofia.person.email}).`
+          : `Matched ${sofia.person.email} to ${fullName}.`;
       s.timeline.push({
         ts,
         kind: 'stitch',
         text: `Identity moment: ${via}`,
-        detail: `Matched ${sofia.person.email} to ${fullName}. ${moved} engagement ${moved === 1 ? 'row' : 'rows'} from device ${s.deviceId} now belong to her Unified Individual.`,
+        detail: `${match} ${moved} engagement ${moved === 1 ? 'row' : 'rows'} from device ${s.deviceId} now belong to her Unified Individual.`,
       });
     } else if (s.identity.stage !== stage) {
       s.identity.stage = stage;
