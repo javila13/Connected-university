@@ -1,0 +1,104 @@
+{
+  "_about": "Personalization rules (PLAN.md §5.4). For each zone on a page, the first rule whose `when` matches picks the variant; with no match the zone keeps its default. Variants are content files in content/variants/<zone>/<variant>.md, except pz-recommended-programs, whose `rank` variant reorders the program cards by academic interest. `when` keys: person (sofia | visitor | known | anonymous), stage (a sofia.json stage), topAffinity (\"academic-interest\" = any program, \"certificate\" = any certificate topic, or a specific program id) with minScore, affinity (a category key such as \"interest:athletics\") with minScore, and conversion (gift | tickets). [[token]] placeholders in a reason are filled from the visitor's profile. The build fails on an unknown zone, variant, stage or key.",
+  "rules": [
+    {
+      "id": "hero-admitted",
+      "zone": "pz-home-hero",
+      "when": { "person": "sofia", "stage": "prospect" },
+      "variant": "admitted",
+      "reason": "Known profile: admitted to [[herProgramTitle]] and not committed yet, so she's in the Priority Yield audience (2A). The hero leads with her deposit deadline."
+    },
+    {
+      "id": "hero-student",
+      "zone": "pz-home-hero",
+      "when": { "person": "sofia", "stage": "student" },
+      "variant": "student",
+      "reason": "Known profile: current student. The hero points to her deadlines and the Student Portal instead of recruiting her."
+    },
+    {
+      "id": "hero-alumna",
+      "zone": "pz-home-hero",
+      "when": { "person": "sofia", "stage": "alumna" },
+      "variant": "alumna",
+      "reason": "Known profile: alumna and donor. The hero welcomes her home instead of recruiting her."
+    },
+    {
+      "id": "hero-learner",
+      "zone": "pz-home-hero",
+      "when": { "person": "sofia", "stage": "learner" },
+      "variant": "learner",
+      "reason": "Known profile: certificate holder who isn't enrolled and is still engaged (8C). The hero offers her next credential."
+    },
+    {
+      "id": "hero-new-contact",
+      "zone": "pz-home-hero",
+      "when": { "person": "visitor" },
+      "variant": "new-contact",
+      "reason": "Known contact with no CRM history yet: welcomed by name, with next steps for a new inquiry."
+    },
+    {
+      "id": "hero-top-program",
+      "zone": "pz-home-hero",
+      "when": { "topAffinity": "academic-interest", "minScore": 3 },
+      "variant": "program",
+      "reason": "[[programTitle]] is the visitor's top academic interest, with [[programScore]] points (3 or more needed)."
+    },
+    {
+      "id": "hero-athletics",
+      "zone": "pz-home-hero",
+      "when": { "affinity": "interest:athletics", "minScore": 5 },
+      "variant": "athletics",
+      "reason": "Athletics interest of [[athleticsScore]] points (5 or more needed)."
+    },
+    {
+      "id": "programs-next-step",
+      "zone": "pz-recommended-programs",
+      "when": { "person": "sofia", "stage": "learner" },
+      "variant": "rank",
+      "pin": "business-administration",
+      "reason": "Known profile: certificate holder. Business Administration comes first because the online MBA is her recommended next step; the rest follow her academic interests."
+    },
+    {
+      "id": "programs-by-interest",
+      "zone": "pz-recommended-programs",
+      "when": { "topAffinity": "academic-interest", "minScore": 1 },
+      "variant": "rank",
+      "reason": "Programs reordered by academic interest. [[programTitle]] leads with [[programScore]] points."
+    },
+    {
+      "id": "giving-thanks",
+      "zone": "pz-giving-cta",
+      "when": { "conversion": "gift" },
+      "variant": "thanks",
+      "reason": "The visitor gave during this visit, so the band says thank you instead of asking again."
+    },
+    {
+      "id": "giving-upgrade",
+      "zone": "pz-giving-cta",
+      "when": { "person": "sofia", "stage": "alumna" },
+      "variant": "upgrade",
+      "reason": "Known profile: first-time donor ([[lastGiftAmount]] to the [[lastGiftFund]]) who hasn't been asked to upgrade (6C). The band invites her to the Connected Circle."
+    },
+    {
+      "id": "giving-athletics",
+      "zone": "pz-giving-cta",
+      "when": { "affinity": "interest:athletics", "minScore": 5 },
+      "variant": "athletics",
+      "reason": "Athletics interest of [[athleticsScore]] points (5 or more needed), so the ask is the Athletics Fund."
+    },
+    {
+      "id": "credential-mba",
+      "zone": "pz-next-credential",
+      "when": { "person": "sofia", "stage": "learner" },
+      "variant": "mba",
+      "reason": "Known profile: holds the Professional Certificate in Sustainability and isn't enrolled (8C). Her next step is the MBA with a Sustainable Business focus."
+    },
+    {
+      "id": "credential-by-interest",
+      "zone": "pz-next-credential",
+      "when": { "topAffinity": "certificate", "minScore": 3 },
+      "variant": "certificate",
+      "reason": "The [[certificateTitle]] is the visitor's top certificate interest, with [[certificateScore]] points (3 or more needed)."
+    }
+  ]
+}

@@ -436,3 +436,17 @@ body.d360-open .d360-launcher {
   background: #ece1f9;
   color: #481a88;
 }
+
+/* Personalization decisions */
+.d360-action--decision {
+  background: #e3dafd;
+  color: #3e1c96;
+}
+.d360-decision__reason {
+  margin: 0.2rem 0 0.3rem;
+}
+.d360-decision__signals {
+  margin: 0 0 0.3rem;
+  padding-left: 1.1rem;
+  color: var(--d360-weak);
+}

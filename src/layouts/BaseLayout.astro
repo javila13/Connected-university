@@ -13,6 +13,7 @@ import ConsentBanner from '../components/ConsentBanner.astro';
 import { assertPageMeta } from '../lib/taxonomy.js';
 import { getSimCatalog } from '../lib/sim-catalog.js';
 import { checkSofia } from '../lib/sofia-check.js';
+import { checkRules } from '../lib/rules-check.js';
 import facts from '../../content/facts.json';
 
 interface Props {
@@ -29,6 +30,7 @@ const { title, description, section, audience, program, topic, personaHook } = A
 assertPageMeta({ section, audience }, Astro.url.pathname);
 const fullTitle = section === 'home' ? `${facts.name} | Home` : `${title} | ${facts.name}`;
 await checkSofia();
+await checkRules();
 const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
 ---
 <!doctype html>
@@ -43,6 +45,18 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline src="/demo-config.js"></script>
+    <script is:inline>
+      // Personalization anti-flicker: with consent and a saved profile, zones
+      // stay invisible until sim/personalize.js has picked their variant
+      // (at most 1.5 s), so the default doesn't flash first.
+      try {
+        if (/(?:^|;\s*)cu_consent=all/.test(document.cookie) && localStorage.getItem('cu_sim_state')) {
+          var cuRoot = document.documentElement;
+          cuRoot.classList.add('pz-pending');
+          setTimeout(function () { cuRoot.classList.remove('pz-pending'); }, 1500);
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body
     data-section={section}

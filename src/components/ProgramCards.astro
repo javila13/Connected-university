@@ -2,6 +2,8 @@
 // Program cards: listing pages, the Academics hub and the
 // pz-recommended-programs zone. `items` come from programsFor() in
 // lib/academics.js, or are built from entries with all their credentials.
+// In the zone, `rank` marks the list the personalization engine reorders and
+// `limit` shows only the first n cards (the rest are hidden until re-ranked).
 import { programUrl } from '../lib/routes.js';
 import { schoolName, formatLabel, formatsOf } from '../lib/academics.js';
 import { fillFacts } from '../lib/fill-facts.js';
@@ -9,12 +11,14 @@ import { fillFacts } from '../lib/fill-facts.js';
 interface Props {
   items: { entry: any; credentials: any[] }[];
   showSchool?: boolean;
+  rank?: boolean;
+  limit?: number;
 }
-const { items, showSchool = true } = Astro.props;
+const { items, showSchool = true, rank = false, limit = 0 } = Astro.props;
 ---
-<ul class="cards">
-  {items.map(({ entry, credentials }) => (
-    <li>
+<ul class="cards" data-pz-rank={rank ? '' : undefined}>
+  {items.map(({ entry, credentials }, i) => (
+    <li hidden={limit > 0 && i >= limit}>
       <a class="card" href={programUrl(entry.id)} data-program={entry.id}>
         {showSchool && <span class="card__eyebrow">{schoolName(entry.data.school)}</span>}
         <span class="card__title">{entry.data.title}</span>

@@ -5,6 +5,8 @@ import * as store from './store.js';
 import { startTracking } from './tracker.js';
 import { startStitching } from './stitcher.js';
 import { mountInspector } from './inspector.js';
+import { startPersonalization } from './personalize.js';
+import './personalize.css';
 
 // Labels for programs, certificates and teams, written into the page at build time.
 let catalog = {};
@@ -20,3 +22,5 @@ onConsentGranted(() => {
   startTracking({ catalog });
   startStitching();
 });
+// Zones keep their defaults until consent; the engine checks it on every run.
+startPersonalization({ catalog });
