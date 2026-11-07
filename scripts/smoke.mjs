@@ -130,12 +130,10 @@ for (const path of ['/demo/', '/data360/']) {
   check('404 page has the footer disclaimer', body.includes(facts.legal.disclaimer));
 }
 
-// demo-config.js and fingerprinted assets
+// No Piper from the site (it comes from a Chrome extension), and fingerprinted assets
 {
-  const { res } = await get('/demo-config.js');
-  check('demo-config.js is served', res.status === 200, `got ${res.status}`);
-  check('demo-config.js revalidates', /no-cache/.test(res.headers.get('cache-control') || ''));
   const { body: home } = await get('/');
+  check('home page loads no Qualified script', !/qualified\.com|demo-config\.js/i.test(home));
   const asset = home.match(/\/_astro\/[^"']+\.(?:css|js)/)?.[0];
   check('home page references a built asset', Boolean(asset));
   if (asset) {

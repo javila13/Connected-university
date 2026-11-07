@@ -31,14 +31,11 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
           <span class="pill pill--warn" data-override-for="simulation" hidden>URL override</span>
         </label>
 
-        <fieldset class="radio-group">
-          <legend><strong>Chat widgets</strong> <span class="pill pill--warn" data-override-for="widgetMode,forcePiper,forceAgentforce" hidden>URL override</span></legend>
-          <label><input type="radio" name="widgetMode" value="auto" /> <span><b>auto</b> · Piper on public pages, Agentforce on student, alumni and giving pages, both on Continuing Ed and Athletics</span></label>
-          <label><input type="radio" name="widgetMode" value="piper" /> <span><b>piper</b> · Piper everywhere</span></label>
-          <label><input type="radio" name="widgetMode" value="agentforce" /> <span><b>agentforce</b> · Agentforce mock everywhere</span></label>
-          <label><input type="radio" name="widgetMode" value="both" /> <span><b>both</b> · both everywhere, mock bottom-left</span></label>
-          <label><input type="radio" name="widgetMode" value="off" /> <span><b>off</b> · no chat widgets on any page</span></label>
-        </fieldset>
+        <label class="switch">
+          <input type="checkbox" data-setting="agentforce" />
+          <span><strong>Agentforce mock</strong> · a chat agent bottom-right on every page, matched to the page's audience. Off by default. The site doesn't load Piper; presenters add it with a Chrome extension</span>
+          <span class="pill pill--warn" data-override-for="agentforce" hidden>URL override</span>
+        </label>
 
         <label class="select">
           <span><strong>Agent persona</strong> <span class="pill pill--warn" data-override-for="agentPersona" hidden>URL override</span></span>
@@ -76,13 +73,13 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     </section>
 
     <section class="card">
-      <h2>Widget routing preview</h2>
+      <h2>Agent routing preview</h2>
       <p class="help">What each page audience shows with the current settings (once consent is given).</p>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Audience</th><th>Piper</th><th>Agentforce mock</th><th>Agent persona</th></tr></thead>
+          <thead><tr><th>Audience</th><th>Agentforce mock</th><th>Agent persona</th></tr></thead>
           <tbody id="routing">
-            {AUDIENCES.map((a) => <tr data-audience={a}><td>{a}</td><td></td><td></td><td></td></tr>)}
+            {AUDIENCES.map((a) => <tr data-audience={a}><td>{a}</td><td></td><td></td></tr>)}
           </tbody>
         </table>
       </div>
@@ -140,7 +137,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       <div class="table-scroll">
         <table>
           <tbody>
-            <tr><th scope="row">Qualified (Piper)</th><td id="cfg-qualified"></td></tr>
+            <tr><th scope="row">Qualified (Piper)</th><td><span class="pill">Not loaded by the site</span> added during demos with a Chrome extension</td></tr>
             <tr><th scope="row">Agentforce</th><td><span class="pill pill--ok">Simulated</span> client-side mock, no embed ID needed</td></tr>
             <tr><th scope="row">Data 360 / Personalization</th><td><span class="pill pill--ok">Simulated</span> client-side, no SDK</td></tr>
           </tbody>
@@ -148,7 +145,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       </div>
       <h3 class="sub">URL overrides in this tab</h3>
       <p class="help">
-        Add <code>?piper=0</code>, <code>?agentforce=1</code>, <code>?mode=both</code>, <code>?agent=student-success</code>,
+        Add <code>?agentforce=1</code>, <code>?agent=student-success</code>,
         <code>?sim=0</code>, <code>?badge=0</code>, <code>?autoconsent=1</code>, <code>?match=typed</code>, <code>?why=0</code> or <code>?grounding=0</code> to any page URL. Overrides last for that
         browser tab and beat the saved settings above.
       </p>
@@ -255,7 +252,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     catalog = JSON.parse(document.getElementById('cu-sim-catalog')?.textContent || '{}');
   } catch {}
   store.startSync();
-  import { resolveWidgets, getConfig } from '../scripts/widgets.js';
+  import { resolveAgent } from '../scripts/widgets.js';
   import { AGENT_PERSONAS } from '../lib/taxonomy.js';
 
   captureUrlOverrides();
@@ -287,19 +284,15 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     document.querySelectorAll<HTMLInputElement>('input[type=checkbox][data-setting]').forEach((input) => {
       input.checked = Boolean(s[input.dataset.setting as keyof typeof s]);
     });
-    document.querySelectorAll<HTMLInputElement>('input[name=widgetMode]').forEach((r) => {
-      r.checked = r.value === s.widgetMode;
-    });
     ($('select[data-setting=agentPersona]') as HTMLSelectElement).value = s.agentPersona;
     document.querySelectorAll<HTMLElement>('[data-override-for]').forEach((pill) => {
       pill.hidden = !pill.dataset.overrideFor!.split(',').some((key) => key in overrides);
     });
 
     document.querySelectorAll<HTMLTableRowElement>('#routing tr').forEach((row) => {
-      const plan = resolveWidgets(row.dataset.audience, s);
-      row.cells[1].innerHTML = plan.piper ? yes : no;
-      row.cells[2].innerHTML = plan.agentforce ? `${yes} bottom-${plan.agentCorner}` : no;
-      row.cells[3].textContent = plan.agentforce ? AGENT_PERSONAS[plan.agentPersona as keyof typeof AGENT_PERSONAS] : '–';
+      const plan = resolveAgent(row.dataset.audience, s);
+      row.cells[1].innerHTML = plan.agentforce ? `${yes} bottom-right` : no;
+      row.cells[2].textContent = plan.agentforce ? AGENT_PERSONAS[plan.agentPersona as keyof typeof AGENT_PERSONAS] : '–';
     });
 
     const consent = getConsent();
@@ -317,11 +310,6 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     });
     visitorEl.className = `pill ${sim.identity?.known ? 'pill--ok' : ''}`;
 
-    const { qualifiedToken } = getConfig();
-    $('#cfg-qualified').innerHTML = qualifiedToken
-      ? `<span class="pill pill--ok">Live</span> token <code>${qualifiedToken.slice(0, 4)}…</code> from <code>demo-config.js</code>`
-      : '<span class="pill pill--warn">Stub</span> no token in <code>public/demo-config.js</code>; a placeholder bubble shows instead';
-
     $('#overrides').textContent = Object.keys(overrides).length ? JSON.stringify(overrides, null, 2) : 'none';
     $('#effective').textContent = JSON.stringify(s, null, 2);
   }
@@ -330,8 +318,6 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     const t = e.target as HTMLInputElement | HTMLSelectElement;
     if (t instanceof HTMLInputElement && t.type === 'checkbox' && t.dataset.setting) {
       saveSettings({ [t.dataset.setting]: t.checked });
-    } else if (t instanceof HTMLInputElement && t.name === 'widgetMode') {
-      saveSettings({ widgetMode: t.value });
     } else if (t instanceof HTMLInputElement && t.name === 'identityMatching') {
       saveSettings({ identityMatching: t.value });
     } else if (t instanceof HTMLSelectElement && t.dataset.setting === 'agentPersona') {

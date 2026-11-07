@@ -74,7 +74,7 @@ app.use(
     extensions: ['html'],
     setHeaders(res, file) {
       // Pages, the demo config and the search index must always revalidate so deploys show up.
-      if (/(\.html|demo-config\.js|search-index\.json)$/.test(file)) res.set('Cache-Control', 'no-cache');
+      if (/(\.html|search-index\.json)$/.test(file)) res.set('Cache-Control', 'no-cache');
     },
   }),
 );
