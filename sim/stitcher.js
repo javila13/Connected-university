@@ -7,7 +7,9 @@
 // /demo "Identity matching" decides whose profile a form's email opens:
 //   sofia (default)  every email resolves to Sofia, so every story beat works
 //   typed            Sofia's email -> Sofia; any other email -> a new contact
-// The portal's demo sign-in always signs in as Sofia.
+// The portal's demo sign-in always signs in as Sofia. The Agentforce mock's
+// sign-in form (form "agent-chat", Jesse 2026-11-07) works like an RSVP: the
+// stage comes from the page's audience.
 import { getSettings } from '../src/scripts/settings.js';
 import { isGranted } from '../src/scripts/consent.js';
 import { stitch, stitchVisitor, SOFIA_EMAIL } from './identity.js';
@@ -33,9 +35,10 @@ export const FORM_LABELS = {
   tickets: 'Tickets order',
   'ce-inquiry': 'CE Inquiry form',
   rsvp: 'Event registration',
+  'agent-chat': 'Agentforce chat',
 };
 
-/** Event audience -> Sofia stage, for RSVPs. */
+/** Page audience -> Sofia stage, for RSVPs and chat. */
 export const AUDIENCE_STAGES = {
   prospect: 'prospect',
   student: 'student',
@@ -67,7 +70,8 @@ export function startStitching() {
   document.addEventListener('cu:form-submit', (e) => {
     if (!active()) return;
     const { form, fields = {} } = e.detail ?? {};
-    const stage = form === 'rsvp' ? AUDIENCE_STAGES[document.body.dataset.audience] : FORM_STAGES[form];
+    const byAudience = form === 'rsvp' || form === 'agent-chat';
+    const stage = byAudience ? AUDIENCE_STAGES[document.body.dataset.audience] : FORM_STAGES[form];
     if (!stage) return;
     recordConversion(form, fields);
     const via = FORM_LABELS[form] ?? form;

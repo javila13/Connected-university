@@ -1,0 +1,705 @@
+{
+  "_about": "Agentforce mock conversations (PLAN.md §5.8). One agent per audience group (D12). Each agent has a greeting, intents and a fallback. A message matches the intent with the most `match` hits (regular expressions, case-insensitive); a mention of a program or certificate counts for intents with `mentions`. Each greeting and intent lists `responses`, and the first one whose `when` matches the visitor is used, so known-profile answers come first and the last response (no `when`) works for anyone. `when` uses the personalization conditions (person, stage, topAffinity + minScore, affinity + minScore, conversion) plus `has`, which is true when a [[token]] has a value. Every response has quick-reply `chips`; `links` are buttons; `identify: true` shows the chat sign-in form; `card` shows an estimate. [[tokens]] are filled from the visitor's profile in the browser; {{facts.path}} tokens from content/facts.json. Unmatched questions are answered from the site's own pages before the fallback. The build fails on an unknown condition, token, fact or link.",
+  "agents": {
+    "student-recruitment": {
+      "greeting": [
+        {
+          "when": { "person": "sofia", "stage": "prospect" },
+          "text": "Welcome back, [[firstName]]! Congratulations again on your admission to [[herProgramTitle]]. Your enrollment deposit is due {{facts.admissions.deadlines.enrollmentDeposit}}. What can I help with?",
+          "chips": ["When is my deposit due?", "My scholarships", "Housing", "Plan a visit"]
+        },
+        {
+          "when": { "person": "sofia", "stage": "learner" },
+          "text": "Welcome back, [[firstName]]! You earned the [[credentialTitle]] [[credentialEarned]]. Want to see where it can take you next?",
+          "chips": ["What's my next step?", "Alumni discount", "Browse certificates"]
+        },
+        {
+          "when": { "person": "known" },
+          "text": "Hi [[firstName]]! I'm the Student Recruitment Agent. I can help you find a program, apply, understand cost and aid, or plan a visit.",
+          "chips": ["Find a program", "How do I apply?", "What does it cost?", "Plan a visit"]
+        },
+        {
+          "when": { "topAffinity": "academic-interest", "minScore": 3 },
+          "text": "Hi! I'm the Student Recruitment Agent. It looks like you've been exploring [[programTitle]]. Want to know more about it, or something else?",
+          "chips": ["Tell me about [[programTitle]]", "How do I apply?", "What does it cost?", "Plan a visit"]
+        },
+        {
+          "text": "Hi! I'm the Student Recruitment Agent. I can help you find a program, apply, understand cost and aid, or plan a visit.",
+          "chips": ["Find a program", "How do I apply?", "What does it cost?", "Plan a visit"]
+        }
+      ],
+      "intents": [
+        {
+          "id": "deposit",
+          "match": ["deposit", "\\bcommit", "my deadline", "when is my", "enroll(ment)? deadline"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "Your ${{facts.admissions.deposits.enrollment}} enrollment deposit is due {{facts.admissions.deadlines.enrollmentDeposit}}, and your housing application is due {{facts.admissions.deadlines.housingApplication}}. You can pay the deposit in the Student Portal.",
+              "links": [
+                { "label": "Submit your deposit", "href": "/portal/" },
+                { "label": "Admitted students", "href": "/admissions/admitted/" }
+              ],
+              "chips": ["My scholarships", "Housing", "Plan a visit"]
+            },
+            {
+              "when": { "person": "visitor" },
+              "text": "I don't see an admission decision for you yet, [[firstName]], so there's no deposit due. Once you're admitted, you confirm your place with a deposit by {{facts.admissions.deadlines.enrollmentDeposit}}.",
+              "links": [{ "label": "Start your application", "href": "/admissions/apply/" }],
+              "chips": ["How do I apply?", "What does it cost?"]
+            },
+            {
+              "when": { "person": "anonymous" },
+              "text": "Admitted first-year students confirm their place with a deposit by {{facts.admissions.deadlines.enrollmentDeposit}}. If you've been admitted, I can look up your own deadlines. Who am I chatting with?",
+              "identify": true,
+              "chips": ["How do I apply?", "What does it cost?"]
+            },
+            {
+              "text": "Admitted first-year students confirm their place with a ${{facts.admissions.deposits.enrollment}} deposit by {{facts.admissions.deadlines.enrollmentDeposit}}.",
+              "links": [{ "label": "Admitted students", "href": "/admissions/admitted/" }],
+              "chips": ["How do I apply?", "What does it cost?"]
+            }
+          ]
+        },
+        {
+          "id": "scholarships",
+          "match": ["scholarship", "financial aid", "\\baid\\b", "fafsa", "grant"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "You've been offered the [[aidList]]. The details are in the Student Portal. File the FAFSA by {{facts.admissions.deadlines.aidPriority}} to be considered for need-based aid too.",
+              "links": [
+                { "label": "Student Portal", "href": "/portal/" },
+                { "label": "Scholarships", "href": "/admissions/affordability/scholarships/" }
+              ],
+              "chips": ["What does it cost?", "When is my deposit due?"]
+            },
+            {
+              "text": "{{facts.research.scholarshipRecipientsPercent}}% of our students receive scholarships, and most are awarded automatically when you're admitted. Merit scholarships range from ${{facts.scholarships.sustainabilityLeaders}} to ${{facts.scholarships.presidential}} a year. File the FAFSA by {{facts.admissions.deadlines.aidPriority}} for need-based aid.",
+              "links": [
+                { "label": "Scholarships", "href": "/admissions/affordability/scholarships/" },
+                { "label": "Tuition and aid", "href": "/admissions/affordability/" }
+              ],
+              "chips": ["What does it cost?", "How do I apply?"]
+            }
+          ]
+        },
+        {
+          "id": "cost",
+          "match": ["\\bcost", "tuition", "price", "afford", "expensive", "how much", "\\bfees?\\b"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "Undergraduate tuition is ${{facts.costs.undergraduate.tuition}} a year. Your scholarships cover [[aidTotal]] of it each year.",
+              "links": [
+                { "label": "Tuition and fees", "href": "/admissions/affordability/tuition/" },
+                { "label": "Student Portal", "href": "/portal/" }
+              ],
+              "chips": ["My scholarships", "Housing", "When is my deposit due?"]
+            },
+            {
+              "text": "Undergraduate tuition is ${{facts.costs.undergraduate.tuition}} a year, plus ${{facts.costs.undergraduate.fees}} in fees. Housing and meals add about ${{facts.costs.undergraduate.housing}} and ${{facts.costs.undergraduate.meals}}. Graduate programs are ${{facts.costs.graduatePerCredit}} per credit. {{facts.research.scholarshipRecipientsPercent}}% of students receive scholarships.",
+              "links": [
+                { "label": "Tuition and fees", "href": "/admissions/affordability/tuition/" },
+                { "label": "Scholarships", "href": "/admissions/affordability/scholarships/" }
+              ],
+              "chips": ["Scholarships and aid", "How do I apply?"]
+            }
+          ]
+        },
+        {
+          "id": "housing",
+          "match": ["housing", "\\bdorm", "residence hall", "live on campus", "roommate"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "Your housing application is due {{facts.admissions.deadlines.housingApplication}}, with a ${{facts.admissions.deposits.housing}} housing deposit. Housing and meals run about ${{facts.costs.undergraduate.housing}} and ${{facts.costs.undergraduate.meals}} a year.",
+              "links": [
+                { "label": "Campus life", "href": "/student-success/campus-life/" },
+                { "label": "Admitted students", "href": "/admissions/admitted/" }
+              ],
+              "chips": ["When is my deposit due?", "Plan a visit"]
+            },
+            {
+              "text": "Housing and meals run about ${{facts.costs.undergraduate.housing}} and ${{facts.costs.undergraduate.meals}} a year. Admitted students apply for housing by {{facts.admissions.deadlines.housingApplication}}.",
+              "links": [{ "label": "Campus life", "href": "/student-success/campus-life/" }],
+              "chips": ["What does it cost?", "Plan a visit"]
+            }
+          ]
+        },
+        {
+          "id": "transfer",
+          "match": ["transfer", "\\d+\\s*\\+?\\s*credits?\\b"],
+          "responses": [
+            {
+              "when": { "has": "estimateCredits" },
+              "text": "Here's a quick estimate:",
+              "card": {
+                "title": "Transfer credit estimate",
+                "value": "Up to [[estimateCredits]] credits",
+                "note": "We accept up to {{facts.admissions.transfer.maxCredits}} transfer credits with a {{facts.admissions.transfer.minGpa}} GPA or higher. Your final credit comes from an official evaluation of your transcripts."
+              },
+              "links": [
+                { "label": "Transfer admissions", "href": "/admissions/transfer/" },
+                { "label": "Apply", "href": "/admissions/apply/?type=transfer-student" }
+              ],
+              "chips": ["What does it cost?", "Find a program"]
+            },
+            {
+              "text": "We accept up to {{facts.admissions.transfer.maxCredits}} transfer credits with a {{facts.admissions.transfer.minGpa}} GPA or higher. How many college credits have you completed?",
+              "chips": ["15 credits", "30 credits", "60 credits", "90+ credits"]
+            }
+          ]
+        },
+        {
+          "id": "apply",
+          "match": ["\\bappl(y|ication)", "admission", "get in", "requirement", "early action", "regular decision"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "You're already in, [[firstName]]: you were admitted to [[herProgramTitle]]. Your next step is the enrollment deposit, due {{facts.admissions.deadlines.enrollmentDeposit}}.",
+              "links": [
+                { "label": "Submit your deposit", "href": "/portal/" },
+                { "label": "Admitted students", "href": "/admissions/admitted/" }
+              ],
+              "chips": ["My scholarships", "Housing"]
+            },
+            {
+              "when": { "person": "visitor", "has": "typedProgramTitle" },
+              "text": "Glad you're interested in [[typedProgramTitle]], [[firstName]]. First-year applicants can apply Early Action by {{facts.admissions.deadlines.earlyAction}} or Regular Decision by {{facts.admissions.deadlines.regularDecision}}. I don't see an application for you yet. Want to start one?",
+              "links": [{ "label": "Start your application", "href": "/admissions/apply/?program=[[typedProgramId]]" }],
+              "chips": ["What does it cost?", "Plan a visit"]
+            },
+            {
+              "when": { "person": "visitor" },
+              "text": "First-year applicants can apply Early Action by {{facts.admissions.deadlines.earlyAction}} or Regular Decision by {{facts.admissions.deadlines.regularDecision}}. I don't see an application for you yet, [[firstName]]. Want to start one?",
+              "links": [{ "label": "Start your application", "href": "/admissions/apply/" }],
+              "chips": ["What does it cost?", "Plan a visit"]
+            },
+            {
+              "text": "First-year applicants can apply Early Action by {{facts.admissions.deadlines.earlyAction}} or Regular Decision by {{facts.admissions.deadlines.regularDecision}}. Transfer students apply by {{facts.admissions.deadlines.transferFall}} for fall.",
+              "links": [
+                { "label": "Apply now", "href": "/admissions/apply/" },
+                { "label": "Undergraduate admissions", "href": "/admissions/undergraduate/" }
+              ],
+              "chips": ["What does it cost?", "Transfer credit", "Plan a visit"]
+            }
+          ]
+        },
+        {
+          "id": "visit",
+          "match": ["visit", "\\btours?\\b", "see (the )?campus", "come to campus", "open house"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "prospect" },
+              "text": "You've been to campus [[campusVisits]] already, [[firstName]]. Admitted Students Day is the next one to come to: meet your future classmates and faculty before your deposit is due.",
+              "links": [
+                { "label": "Admitted Students Day", "href": "/events/admitted-students-day/" },
+                { "label": "Book a tour", "href": "/visit/campus-tour/" }
+              ],
+              "chips": ["When is my deposit due?", "Housing"]
+            },
+            {
+              "text": "Campus tours run weekdays at {{facts.visits.weekdayTours}} and Saturdays at {{facts.visits.saturdayTour}}. You can also take the virtual tour any time.",
+              "links": [
+                { "label": "Book a tour", "href": "/visit/campus-tour/" },
+                { "label": "Virtual tour", "href": "/visit/virtual-tour/" }
+              ],
+              "chips": ["Find a program", "How do I apply?"]
+            }
+          ]
+        },
+        {
+          "id": "next-credential",
+          "match": ["next step", "\\bmba\\b", "master'?s", "where (can|could) it take", "go back to school", "return"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "learner" },
+              "text": "Your [[credentialTitle]] carries graduate credits that count toward the MBA, so you're already part of the way there. Your recommended next step: [[nextStepLabel]].",
+              "links": [
+                { "label": "Explore the MBA", "href": "/academics/programs/business-administration/" },
+                { "label": "Talk to an advisor", "href": "/continuing-ed/inquiry/?interest=masters" }
+              ],
+              "chips": ["Alumni discount", "Browse certificates"]
+            },
+            {
+              "text": "Many of our professional certificates earn graduate credits that count toward a master's degree. Alumni who come back can also pick up where they left off.",
+              "links": [
+                { "label": "Return to CU", "href": "/continuing-ed/return/" },
+                { "label": "Graduate programs", "href": "/academics/graduate/" }
+              ],
+              "chips": ["Browse certificates", "Alumni discount"]
+            }
+          ]
+        },
+        {
+          "id": "certificates",
+          "match": ["certificate", "credential", "continuing ed", "upskill", "professional development"],
+          "mentions": ["certificate"],
+          "responses": [
+            {
+              "when": { "has": "askedCertificateTitle" },
+              "text": "The [[askedCertificateTitle]]: [[askedCertificateDescription]]",
+              "links": [
+                { "label": "Explore the certificate", "href": "[[askedCertificateUrl]]" },
+                { "label": "Request information", "href": "/continuing-ed/inquiry/?interest=[[askedCertificateId]]" }
+              ],
+              "chips": ["Alumni discount", "Browse certificates"]
+            },
+            {
+              "when": { "topAffinity": "certificate", "minScore": 1 },
+              "text": "You've been looking at the [[certificateTitle]]: [[certificateDescription]] We offer {{facts.programs.certificates}} professional certificates in all.",
+              "links": [
+                { "label": "Explore the certificate", "href": "[[certificateUrl]]" },
+                { "label": "All certificates", "href": "/continuing-ed/certificates/" }
+              ],
+              "chips": ["Alumni discount", "Talk to a person"]
+            },
+            {
+              "text": "We offer {{facts.programs.certificates}} professional certificates, online or hybrid, built for working adults. Many earn graduate credits toward a master's degree.",
+              "links": [
+                { "label": "Certificate catalog", "href": "/continuing-ed/certificates/" },
+                { "label": "Ask a question", "href": "/continuing-ed/inquiry/" }
+              ],
+              "chips": ["Data Analytics", "Project Management", "Alumni discount"]
+            }
+          ]
+        },
+        {
+          "id": "discount",
+          "match": ["discount", "\\bsave\\b", "alumni (price|rate)"],
+          "responses": [
+            {
+              "when": { "person": "sofia" },
+              "text": "As a Connected U graduate, you save {{facts.alumni.ceDiscountPercent}}% on every professional certificate, [[firstName]].",
+              "links": [{ "label": "Return to CU", "href": "/continuing-ed/return/" }],
+              "chips": ["What's my next step?", "Browse certificates"]
+            },
+            {
+              "text": "Connected U alumni save {{facts.alumni.ceDiscountPercent}}% on every professional certificate.",
+              "links": [{ "label": "Return to CU", "href": "/continuing-ed/return/" }],
+              "chips": ["Browse certificates", "Find a program"]
+            }
+          ]
+        },
+        {
+          "id": "programs",
+          "match": ["program", "\\bmajors?\\b", "degree", "\\bstudy", "tell me about", "do you (offer|have)"],
+          "mentions": ["program", "certificate"],
+          "responses": [
+            {
+              "when": { "has": "askedProgramTitle" },
+              "text": "[[askedProgramTitle]]: [[askedProgramDescription]]",
+              "links": [
+                { "label": "Explore [[askedProgramTitle]]", "href": "[[askedProgramUrl]]" },
+                { "label": "Request information", "href": "/admissions/request-information/?program=[[askedProgramId]]" }
+              ],
+              "chips": ["What does it cost?", "How do I apply?", "Plan a visit"]
+            },
+            {
+              "when": { "has": "askedCertificateTitle" },
+              "text": "The [[askedCertificateTitle]]: [[askedCertificateDescription]]",
+              "links": [
+                { "label": "Explore the certificate", "href": "[[askedCertificateUrl]]" },
+                { "label": "Request information", "href": "/continuing-ed/inquiry/?interest=[[askedCertificateId]]" }
+              ],
+              "chips": ["Alumni discount", "Browse certificates"]
+            },
+            {
+              "when": { "topAffinity": "academic-interest", "minScore": 1 },
+              "text": "Based on what you've been exploring, [[programTitle]] looks like a good fit: [[programDescription]] We offer {{facts.programs.undergraduate}} undergraduate and {{facts.programs.graduate}} graduate programs in all.",
+              "links": [
+                { "label": "Explore [[programTitle]]", "href": "[[programUrl]]" },
+                { "label": "All programs", "href": "/academics/programs/" }
+              ],
+              "chips": ["What does it cost?", "How do I apply?", "Plan a visit"]
+            },
+            {
+              "text": "We offer {{facts.programs.undergraduate}} undergraduate and {{facts.programs.graduate}} graduate programs, on campus and online. Tell me a subject you're interested in.",
+              "links": [{ "label": "All programs", "href": "/academics/programs/" }],
+              "chips": ["Environmental Science", "Nursing", "Business Administration", "Computer Science"]
+            }
+          ]
+        },
+        {
+          "id": "human",
+          "match": ["\\bhuman\\b", "real person", "counselor", "talk to (a|some)", "speak (to|with)", "\\bcall\\b"],
+          "responses": [
+            {
+              "text": "Happy to connect you with the admissions team. Call {{facts.campus.phone}}, or send a request and someone will follow up.",
+              "links": [
+                { "label": "Request information", "href": "/admissions/request-information/" },
+                { "label": "Contact us", "href": "/contact/" }
+              ],
+              "chips": ["Find a program", "Plan a visit"]
+            }
+          ]
+        }
+      ],
+      "fallback": {
+        "text": "I'm not sure I can help with that one yet. Here's what I can do:",
+        "chips": ["Find a program", "How do I apply?", "What does it cost?", "Talk to a person"]
+      }
+    },
+    "student-success": {
+      "greeting": [
+        {
+          "when": { "person": "sofia", "stage": "student" },
+          "text": "Hi [[firstName]]! Your next advising appointment with [[advisorName]] is [[nextAdvising]], and spring registration opens {{facts.registrar.springRegistration}}. What can I help with?",
+          "chips": ["My advisor", "My deadlines", "Find tutoring", "Am I on track?"]
+        },
+        {
+          "when": { "person": "known" },
+          "text": "Hi [[firstName]]! I'm the Student Success Agent. I don't see a current student record for you, so I'll answer in general. I can help with advising, courses, deadlines, tutoring and fees.",
+          "chips": ["Advising", "Deadlines", "Find tutoring", "Fees"]
+        },
+        {
+          "text": "Hi! I'm the Student Success Agent. I can help with advising, courses, deadlines, tutoring and fees. Sign in to the Student Portal, or tell me who you are, and I can answer about your own record.",
+          "links": [{ "label": "Student Portal", "href": "/portal/" }],
+          "chips": ["Advising", "Deadlines", "Find tutoring", "Fees"]
+        }
+      ],
+      "intents": [
+        {
+          "id": "progress",
+          "match": ["on track", "graduat", "standing", "\\bgpa\\b", "how am i doing", "credits earned"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "You're in [[standing]] with a [[cumulativeGpa]] GPA and [[creditsEarned]] credits earned, and you're on track to graduate with your class. Your early alert in [[earlyAlertCourse]] ([[earlyAlertTerm]]) is resolved.",
+              "links": [{ "label": "Student Portal", "href": "/portal/" }],
+              "chips": ["My advisor", "My courses", "Find tutoring"]
+            },
+            {
+              "when": { "person": "anonymous" },
+              "text": "Your advisor can check your progress toward graduation with you. Tell me who you are and I'll look up your record.",
+              "identify": true,
+              "chips": ["Advising", "Find tutoring"]
+            },
+            {
+              "text": "Your advisor can check your progress toward graduation with you, and the Student Portal shows your credits and standing.",
+              "links": [{ "label": "Academic advising", "href": "/student-success/advising/" }],
+              "chips": ["Advising", "Find tutoring"]
+            }
+          ]
+        },
+        {
+          "id": "advising",
+          "match": ["advis", "appointment", "\\bmeet", "mentor"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "Your advisor is [[advisorName]], and your next appointment is [[nextAdvising]]. You can book another time in the Student Portal.",
+              "links": [
+                { "label": "Book an appointment", "href": "/portal/" },
+                { "label": "Academic advising", "href": "/student-success/advising/" }
+              ],
+              "chips": ["Am I on track?", "My courses", "My deadlines"]
+            },
+            {
+              "when": { "person": "anonymous" },
+              "text": "Every student has a faculty advisor, and you book appointments in the Student Portal. Tell me who you are and I'll look up yours.",
+              "identify": true,
+              "chips": ["Deadlines", "Find tutoring"]
+            },
+            {
+              "text": "Every student has a faculty advisor, and you book appointments in the Student Portal. Academic Advising can also help with walk-in questions.",
+              "links": [{ "label": "Academic advising", "href": "/student-success/advising/" }],
+              "chips": ["Deadlines", "Find tutoring"]
+            }
+          ]
+        },
+        {
+          "id": "fees",
+          "match": ["\\bfees?\\b", "balance", "\\bbill", "\\bpay", "tuition", "owe"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "Your spring balance is due {{facts.registrar.springBalanceDue}}. Renew your FAFSA by {{facts.admissions.deadlines.aidPriority}} to keep your aid.",
+              "links": [{ "label": "Registrar and deadlines", "href": "/student-success/registrar/" }],
+              "chips": ["My deadlines", "My advisor"]
+            },
+            {
+              "text": "Spring balances are due {{facts.registrar.springBalanceDue}} and fall balances {{facts.registrar.fallBalanceDue}}. Registrar & Deadlines has the full calendar.",
+              "links": [
+                { "label": "Registrar and deadlines", "href": "/student-success/registrar/" }
+              ],
+              "chips": ["Deadlines", "Advising"]
+            }
+          ]
+        },
+        {
+          "id": "deadlines",
+          "match": ["deadline", "\\bdue\\b", "registration", "register", "\\bdrop\\b", "withdraw", "\\bwhen\\b"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "Here's what's coming up for you: [[studentDeadlines]].",
+              "links": [{ "label": "Registrar and deadlines", "href": "/student-success/registrar/" }],
+              "chips": ["My courses", "My advisor", "Fees"]
+            },
+            {
+              "text": "Spring registration opens {{facts.registrar.springRegistration}}, and spring balances are due {{facts.registrar.springBalanceDue}}. You can add or drop a class until {{facts.registrar.addDrop}}.",
+              "links": [{ "label": "Registrar and deadlines", "href": "/student-success/registrar/" }],
+              "chips": ["Advising", "Fees"]
+            }
+          ]
+        },
+        {
+          "id": "tutoring",
+          "match": ["tutor", "study (help|session)", "struggl", "help with (a |my )?class", "chemistry", "writing"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "The Tutoring & Learning Center helped you get back on track in [[earlyAlertCourse]]. It's free, and it can help with this term's courses too, like [[firstCourse]].",
+              "links": [{ "label": "Tutoring & Learning Center", "href": "/student-success/tutoring/" }],
+              "chips": ["My courses", "My advisor"]
+            },
+            {
+              "text": "The Tutoring & Learning Center, on the second floor of the main library, offers free drop-in tutoring, weekly study sessions and writing support.",
+              "links": [{ "label": "Tutoring & Learning Center", "href": "/student-success/tutoring/" }],
+              "chips": ["Advising", "Deadlines"]
+            }
+          ]
+        },
+        {
+          "id": "courses",
+          "match": ["course", "class", "my schedule", "taking", "enrolled in"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "student" },
+              "text": "This term you're taking [[courseList]]. Spring registration opens {{facts.registrar.springRegistration}}.",
+              "links": [{ "label": "Student Portal", "href": "/portal/" }],
+              "chips": ["Find tutoring", "My advisor", "My deadlines"]
+            },
+            {
+              "text": "You can search courses and register in the Student Portal. Spring registration opens {{facts.registrar.springRegistration}}.",
+              "links": [{ "label": "Student Portal", "href": "/portal/" }],
+              "chips": ["Advising", "Deadlines"]
+            }
+          ]
+        },
+        {
+          "id": "wellness",
+          "match": ["wellness", "counsel", "health", "stress", "anxi", "mental"],
+          "responses": [
+            {
+              "text": "Health & Wellness offers free, confidential counseling, plus health care and recreation. You can book in the Student Portal or walk in for urgent concerns.",
+              "links": [{ "label": "Health & Wellness", "href": "/student-success/wellness/" }],
+              "chips": ["Find tutoring", "Advising"]
+            }
+          ]
+        },
+        {
+          "id": "careers",
+          "match": ["career", "\\bjob", "internship", "resume"],
+          "responses": [
+            {
+              "text": "Career Services helps with internships, resumes and job searches, and connects you with Connected U alumni in your field.",
+              "links": [{ "label": "Career Services", "href": "/student-success/career-services/" }],
+              "chips": ["Advising", "Find tutoring"]
+            }
+          ]
+        },
+        {
+          "id": "human",
+          "match": ["\\bhuman\\b", "real person", "talk to (a|some)", "speak (to|with)", "\\bcall\\b"],
+          "responses": [
+            {
+              "text": "Academic Advising is the best place to start, and they'll point you to the right office. You can also call {{facts.campus.phone}}.",
+              "links": [
+                { "label": "Academic advising", "href": "/student-success/advising/" },
+                { "label": "Contact us", "href": "/contact/" }
+              ],
+              "chips": ["Deadlines", "Find tutoring"]
+            }
+          ]
+        }
+      ],
+      "fallback": {
+        "text": "I'm not sure I can help with that one yet. Here's what I can do:",
+        "chips": ["Advising", "Deadlines", "Find tutoring", "Talk to a person"]
+      }
+    },
+    "alumni-giving": {
+      "greeting": [
+        {
+          "when": { "conversion": "gift" },
+          "text": "Thank you[[commaFirstName]]! Your [[giftAmount]] gift to the [[giftFund]] is already at work. What else can I help with?",
+          "chips": ["See gift impact", "Alumni events", "Athletics tickets"]
+        },
+        {
+          "when": { "person": "sofia", "stage": "alumna" },
+          "text": "Welcome back, [[firstName]]! Thank you for your [[lastGiftAmount]] gift to the [[lastGiftFund]]. How can I help today?",
+          "chips": ["Join the Connected Circle", "Alumni events", "Update my info", "Athletics tickets"]
+        },
+        {
+          "when": { "person": "known" },
+          "text": "Hi [[firstName]]! I'm the Alumni & Giving Agent. I can help with alumni events, giving, updating your info and athletics.",
+          "chips": ["Ways to give", "Alumni events", "Update my info", "Athletics tickets"]
+        },
+        {
+          "when": { "affinity": "interest:athletics", "minScore": 5 },
+          "text": "Go {{facts.athletics.mascot}}! I'm the Alumni & Giving Agent. I can help with tickets, the schedule and the Condor Club.",
+          "chips": ["Athletics tickets", "Game schedule", "Condor Club"]
+        },
+        {
+          "text": "Hi! I'm the Alumni & Giving Agent. I can help with alumni events, ways to give, updating your info and athletics tickets.",
+          "chips": ["Ways to give", "Alumni events", "Update my info", "Athletics tickets"]
+        }
+      ],
+      "intents": [
+        {
+          "id": "impact",
+          "match": ["impact", "where does my (gift|money)", "what does my gift"],
+          "responses": [
+            {
+              "text": "Gifts fund scholarships, tutoring and the moments that keep students on track. Here are some of their stories.",
+              "links": [{ "label": "Impact stories", "href": "/giving/impact/" }],
+              "chips": ["Ways to give", "Alumni events"]
+            }
+          ]
+        },
+        {
+          "id": "boosters",
+          "match": ["booster", "condor club", "athletics fund"],
+          "responses": [
+            {
+              "text": "The Condor Club supports scholarships, travel, equipment and sports medicine for every {{facts.athletics.mascot}} team. Levels start at ${{facts.athletics.boosterLevels.fan}} a year.",
+              "links": [
+                { "label": "Join the Condor Club", "href": "/athletics/boosters/" },
+                { "label": "Give to athletics", "href": "/giving/give/?designation=athletics" }
+              ],
+              "chips": ["Athletics tickets", "Game schedule"]
+            }
+          ]
+        },
+        {
+          "id": "giving",
+          "match": ["\\bgive\\b", "giving", "donat", "\\bgift", "connected circle", "societ", "upgrade", "pledge"],
+          "responses": [
+            {
+              "when": { "conversion": "gift" },
+              "text": "Thank you again for your [[giftAmount]] gift today[[commaFirstName]]. Here's what gifts like yours make possible.",
+              "links": [{ "label": "Impact stories", "href": "/giving/impact/" }],
+              "chips": ["Giving societies", "Alumni events"]
+            },
+            {
+              "when": { "person": "sofia", "stage": "alumna" },
+              "text": "Your [[lastGiftAmount]] gift to the [[lastGiftFund]] helped students stay on track. Ready to do more? The Connected Circle starts at ${{facts.giving.connectedCircle.member}} a year, or ${{facts.giving.connectedCircle.monthly}} a month.",
+              "links": [
+                { "label": "Join with ${{facts.giving.connectedCircle.member}}", "href": "/giving/give/?amount={{facts.giving.connectedCircle.member|raw}}" },
+                { "label": "${{facts.giving.connectedCircle.monthly}} a month", "href": "/giving/give/?amount={{facts.giving.connectedCircle.monthly|raw}}&frequency=monthly" }
+              ],
+              "chips": ["Giving societies", "See gift impact"]
+            },
+            {
+              "when": { "person": "visitor" },
+              "text": "I don't see a giving history for you yet, [[firstName]], so your first gift would be a great start. You can give to the fund you care about most in a couple of minutes.",
+              "links": [
+                { "label": "Give now", "href": "/giving/give/" },
+                { "label": "Ways to give", "href": "/giving/ways-to-give/" }
+              ],
+              "chips": ["See gift impact", "Giving societies"]
+            },
+            {
+              "text": "You can give online in a couple of minutes, to the fund you care about most. Gifts of ${{facts.giving.connectedCircle.member}} or more a year make you a member of the Connected Circle.",
+              "links": [
+                { "label": "Give now", "href": "/giving/give/" },
+                { "label": "Ways to give", "href": "/giving/ways-to-give/" }
+              ],
+              "chips": ["See gift impact", "Giving societies"]
+            }
+          ]
+        },
+        {
+          "id": "update-info",
+          "match": ["update", "address", "moved", "new job", "my info", "contact info", "change my"],
+          "responses": [
+            {
+              "when": { "person": "sofia", "stage": "alumna" },
+              "text": "Your record shows you're a [[jobTitle]] at [[employer]], in [[city]]. If anything has changed, you can update it in a minute.",
+              "links": [{ "label": "Update your info", "href": "/alumni/update-info/" }],
+              "chips": ["Alumni events", "Join the Connected Circle"]
+            },
+            {
+              "text": "Keep your record current so classmates can find you and we can invite you to events near you.",
+              "links": [{ "label": "Update your info", "href": "/alumni/update-info/" }],
+              "chips": ["Alumni events", "Ways to give"]
+            }
+          ]
+        },
+        {
+          "id": "events",
+          "match": ["event", "reunion", "homecoming", "network", "meet up"],
+          "responses": [
+            {
+              "text": "Every October, alumni and their families come home for Homecoming & Reunion Weekend: campus tours, faculty talks, the homecoming game and class reunion dinners. There are alumni events through the year too.",
+              "links": [
+                { "label": "Homecoming & Reunion Weekend", "href": "/events/homecoming-reunion-weekend/" },
+                { "label": "Alumni events", "href": "/alumni/events/" }
+              ],
+              "chips": ["Update my info", "Athletics tickets"]
+            }
+          ]
+        },
+        {
+          "id": "benefits",
+          "match": ["benefit", "perk", "discount", "library", "certificate"],
+          "responses": [
+            {
+              "text": "Graduates save {{facts.alumni.ceDiscountPercent}}% on professional certificates, keep career support and library access, and get invited to faculty lectures.",
+              "links": [{ "label": "Alumni benefits", "href": "/alumni/benefits/" }],
+              "chips": ["Alumni events", "Update my info"]
+            }
+          ]
+        },
+        {
+          "id": "tickets",
+          "match": ["ticket", "\\bgames?\\b", "schedule", "basketball", "soccer", "volleyball", "baseball", "athletic", "condors"],
+          "responses": [
+            {
+              "text": "Tickets are ${{facts.athletics.tickets.adult}} for adults and ${{facts.athletics.tickets.youthSenior}} for youth and seniors, and students get in free with their ID. An all-sports pass is ${{facts.athletics.allSportsPass}}.",
+              "links": [
+                { "label": "Get tickets", "href": "/athletics/tickets/" },
+                { "label": "Game schedule", "href": "/athletics/schedule/" }
+              ],
+              "chips": ["Condor Club", "Alumni events"]
+            }
+          ]
+        },
+        {
+          "id": "human",
+          "match": ["\\bhuman\\b", "real person", "talk to (a|some)", "speak (to|with)", "\\bcall\\b"],
+          "responses": [
+            {
+              "text": "Happy to connect you with our alumni and advancement team. Call {{facts.campus.phone}}, or send a message.",
+              "links": [{ "label": "Contact us", "href": "/contact/" }],
+              "chips": ["Ways to give", "Alumni events"]
+            }
+          ]
+        }
+      ],
+      "fallback": {
+        "text": "I'm not sure I can help with that one yet. Here's what I can do:",
+        "chips": ["Ways to give", "Alumni events", "Athletics tickets", "Talk to a person"]
+      }
+    }
+  },
+  "shared": {
+    "thanks": {
+      "match": ["^\\s*(thanks|thank you|thx)\\b"],
+      "text": "You're welcome! Anything else?"
+    },
+    "search": {
+      "text": "Here's what I found on our site:"
+    },
+    "identify": {
+      "prompt": "Before we start, can I get your name and email? I'll use them to look up your record. Or skip and chat without them.",
+      "responses": [
+        { "when": { "person": "sofia" }, "text": "Thanks[[commaFirstName]]! I found your record." },
+        { "text": "Thanks[[commaFirstName]]! I didn't find an existing record, so I've created a new contact for you." }
+      ]
+    }
+  }
+}

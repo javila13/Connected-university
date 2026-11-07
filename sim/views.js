@@ -16,6 +16,7 @@ const ACTION_LABELS = {
   CLICK: 'Click',
   FORM_START: 'Form start',
   FORM_SUBMIT: 'Form submit',
+  AGENT_INTERACTION: 'Agent chat',
 };
 
 /** Banner when nothing is being recorded. */
