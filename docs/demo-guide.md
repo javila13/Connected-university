@@ -77,6 +77,23 @@ Submitting any of these forms (or signing in to the Student Portal) stitches the
 
 The **recruiting questionnaire** doesn't stitch: it's for high-school athletes, not Sofia. **Give Now** and **Tickets** are also logged as conversions, and they appear under **Conversions this visit** in Profile.
 
+### Identity matching: Sofia, or whoever typed
+
+`/demo` → **Identity matching** decides whose profile a form's email opens:
+
+| Setting | What happens | Use it when |
+|---|---|---|
+| **Always Sofia** (default) | Any email resolves to Sofia, so every story beat works, even with a typo. | Story demos. Leave it here unless you have a reason not to. |
+| **Match typed email** | Sofia's email opens her profile. Any other email creates a **new contact** with only what was typed: name, email, phone, program, student type and the like. There's no CRM history, so there's no application, gift or credential; personalization and the agent work from browsing interests alone. | A net-new inquiry demo ("a brand-new prospect fills in Request Information"), or letting someone in the audience type their own name. |
+
+Rules worth knowing in **Match typed email**:
+- The **first identity wins** in a browser. A later form with a different email (even Sofia's) is logged as "Identity unchanged". To switch people, use **Reset visitor**.
+- The same email again adds the new details to the contact.
+- The **Student Portal** demo sign-in always signs in as Sofia.
+- Whatever someone types stays only in this browser until **Reset visitor**. Nothing is sent anywhere.
+
+For one tab only, add `?match=typed` to a page URL.
+
 ---
 
 ## Persona presets: start any story mid-journey

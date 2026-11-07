@@ -63,7 +63,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
 <script>
   import * as store from '../../sim/store.js';
   import { profileView, engagementView, affinitiesView, identityView } from '../../sim/views.js';
-  import { fullName, STAGES } from '../../sim/identity.js';
+  import { displayName, STAGES } from '../../sim/identity.js';
   import { getSettings, onSettingsChange } from '../scripts/settings.js';
 
   let catalog = {};
@@ -86,7 +86,10 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     for (const el of document.querySelectorAll<HTMLElement>('[data-view]')) {
       el.innerHTML = views[el.dataset.view as keyof typeof views](state, { isNew, catalog });
     }
-    who.textContent = state.identity?.known ? `${fullName} · ${STAGES[state.identity.stage]}` : 'Anonymous visitor';
+    const id = state.identity;
+    who.textContent = !id?.known
+      ? 'Anonymous visitor'
+      : `${displayName(id)} · ${id.personId === 'sofia' ? STAGES[id.stage] : 'New contact'}`;
     if (live) sync.textContent = `Updated ${new Date().toLocaleTimeString()}`;
     const s = getSettings();
     badge.hidden = !s.simulatedBadge;

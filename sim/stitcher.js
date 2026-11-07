@@ -3,9 +3,14 @@
 // stitches the visitor to Sofia at the life stage that fits. The recruiting
 // questionnaire is the exception (it's for high-school athletes). Gifts and
 // ticket orders are also logged as conversions.
+//
+// /demo "Identity matching" decides whose profile a form's email opens:
+//   sofia (default)  every email resolves to Sofia, so every story beat works
+//   typed            Sofia's email -> Sofia; any other email -> a new contact
+// The portal's demo sign-in always signs in as Sofia.
 import { getSettings } from '../src/scripts/settings.js';
 import { isGranted } from '../src/scripts/consent.js';
-import { stitch } from './identity.js';
+import { stitch, stitchVisitor, SOFIA_EMAIL } from './identity.js';
 import { update } from './store.js';
 
 /** Form -> Sofia stage. RSVP uses the event page's audience instead. */
@@ -65,7 +70,13 @@ export function startStitching() {
     const stage = form === 'rsvp' ? AUDIENCE_STAGES[document.body.dataset.audience] : FORM_STAGES[form];
     if (!stage) return;
     recordConversion(form, fields);
-    stitch({ stage, via: FORM_LABELS[form] ?? form, email: fields.email });
+    const via = FORM_LABELS[form] ?? form;
+    const typed = fields.email?.trim().toLowerCase();
+    if (getSettings().identityMatching === 'typed' && typed && typed !== SOFIA_EMAIL) {
+      stitchVisitor({ via, fields });
+    } else {
+      stitch({ stage, via, email: fields.email });
+    }
   });
   document.addEventListener('cu:portal-sign-in', () => {
     if (active()) stitch({ stage: 'student', via: 'Student Portal sign-in' });

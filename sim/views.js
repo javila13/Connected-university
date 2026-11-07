@@ -4,6 +4,8 @@
 import { OBJECTS } from './config.js';
 import { rankAffinities, TYPE_LABELS } from './affinity.js';
 import { stageRows, stageLabel, stageInfo, person, fundName } from './profile.js';
+import { displayName } from './identity.js';
+import { humanize } from './affinity.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const time = (iso) => (iso ? new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '–');
@@ -68,7 +70,48 @@ function conversionsView(state) {
   return `<h3 class="d360-group">Conversions this visit</h3>${facts(rows)}`;
 }
 
+/** A new contact made from a form (Identity matching: "Match typed email"). */
+function newContactView(state, { catalog = {} } = {}) {
+  const id = state.identity;
+  const p = id.profile ?? {};
+  const name = displayName(id);
+  const initials = name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+  const label = (v, map) => (v ? map?.[v] ?? humanize(v) : null);
+  const rows = [
+    ['Unified Individual', id.unifiedId],
+    ['Source', `New contact from the ${id.via}`],
+    ['Phone', p.phone],
+    ['Program of interest', label(p.program, catalog.programs)],
+    ['Student type', label(p.studentType)],
+    ['Interest', label(p.interest, catalog.certificates)],
+    ['Class year', p.classYear],
+    ['Job', [p.jobTitle, p.employer].filter(Boolean).join(', ') || null],
+    ['City', p.city],
+    ['Contact preferences', p.smsOptIn ? 'Email and text' : 'Email'],
+    ['Top affinities', rankAffinities(state).slice(0, 3).map((a) => a.label).join(', ') || 'None yet'],
+  ].filter(([, v]) => v);
+  return `
+    ${objectTag(OBJECTS.individual)}
+    <div class="d360-profile">
+      <div class="d360-avatar d360-avatar--new" aria-hidden="true">${esc(initials || '?')}</div>
+      <div>
+        <p class="d360-profile__name">${esc(name)}</p>
+        <p class="d360-muted">${esc(id.email)}</p>
+        <p><span class="d360-stage d360-stage--new">New contact</span></p>
+      </div>
+    </div>
+    ${facts(rows)}
+    ${conversionsView(state)}
+    <p class="d360-muted">No CRM history yet: this is a new record, so there's no application, gift or credential to personalize on. Personalization and the agent work from affinities and what was typed. Known since ${esc(time(id.stitchedAt))}.</p>`;
+}
+
 export function profileView(state, ctx = {}) {
+  if (state.identity?.known && state.identity.personId !== 'sofia') return newContactView(state, ctx);
   if (state.identity?.known) return knownProfileView(state, ctx);
   const total = state.events.length;
   const top = rankAffinities(state).slice(0, 3);
@@ -102,7 +145,7 @@ export function identityView(state) {
       ['Device ID', state.deviceId],
       ['Email', id.known ? id.email : 'Unknown'],
       ['Unified Individual', id.known ? id.unifiedId : 'Not resolved yet'],
-      ['CRM contact', id.known ? `${person.firstName} ${person.lastName}` : 'None'],
+      ['CRM contact', id.known ? (id.personId === 'sofia' ? displayName(id) : `${displayName(id)} (new)`) : 'None'],
     ])}
     <h3 class="d360-group">Identity timeline</h3>
     ${

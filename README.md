@@ -53,7 +53,7 @@ URL params override the saved settings for one browser tab: `?mode=both`, `?pipe
 Data 360 tracking is simulated in the browser (PLAN.md §5). With cookie consent and the Simulation switched on in `/demo`, every page view, call-to-action click and demo-form start and submit is recorded against an anonymous device and scored into affinities. Nothing leaves the browser.
 
 - **Inspector:** the blue **Data 360** tab on the right edge of any page, or **Ctrl+Alt+I**. Tabs: Profile, Engagement, Affinities, Identity. For two screens, `/data360` shows all four at once and updates live.
-- **Sofia:** any demo form with an email (except the recruiting questionnaire) or the Student Portal sign-in stitches the visitor to her known profile at the life stage that fits (see `docs/demo-guide.md`). `/demo` → **Become Sofia** does the same from the control panel; **Persona presets** start over as Sofia at a life stage (prospect, student, alumna/donor, learner). Her attributes live in `content/sofia.json`, checked at build time.
+- **Sofia:** any demo form with an email (except the recruiting questionnaire) or the Student Portal sign-in stitches the visitor to her known profile at the life stage that fits (see `docs/demo-guide.md`). `/demo` → **Identity matching** can instead make any other email a new contact with only what was typed. `/demo` → **Become Sofia** does the stitch from the control panel; **Persona presets** start over as Sofia at a life stage (prospect, student, alumna/donor, learner). Her attributes live in `content/sofia.json`, checked at build time.
 - **Reset:** `/demo` → **Reset visitor**.
 - **Weights:** `sim/config.js` (page view 1, click 3, form start 2, form submit 5, 30 seconds on a page +1).
 

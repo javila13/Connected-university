@@ -86,8 +86,14 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       </div>
       <p class="help">Reset clears the simulated profile and the consent cookie. Settings are kept.</p>
 
+      <fieldset class="radio-group">
+        <legend><strong>Identity matching</strong> <span class="pill pill--warn" data-override-for="identityMatching" hidden>URL override</span></legend>
+        <label><input type="radio" name="identityMatching" value="sofia" /> <span><b>Always Sofia</b> · any email on a form opens Sofia's profile, so every story beat works (default)</span></label>
+        <label><input type="radio" name="identityMatching" value="typed" /> <span><b>Match typed email</b> · Sofia's email opens her profile; any other email creates a new contact with only what was typed (no CRM history)</span></label>
+      </fieldset>
+
       <h3 class="sub">Become Sofia</h3>
-      <p class="help">Stitches the current visitor, and everything they've done so far, to Sofia Sanders at the life stage you pick. Use it after browsing anonymously.</p>
+      <p class="help">Stitches the current visitor, and everything they've done so far, to Sofia Sanders at the life stage you pick. Use it after browsing anonymously. If the visitor is already a new contact (Match typed email), Reset visitor first.</p>
       <div class="buttons">
         <label class="select inline">
           <span class="visually-hidden">Life stage</span>
@@ -130,7 +136,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       <h3 class="sub">URL overrides in this tab</h3>
       <p class="help">
         Add <code>?piper=0</code>, <code>?agentforce=1</code>, <code>?mode=both</code>, <code>?agent=student-success</code>,
-        <code>?sim=0</code>, <code>?badge=0</code> or <code>?autoconsent=1</code> to any page URL. Overrides last for that
+        <code>?sim=0</code>, <code>?badge=0</code>, <code>?autoconsent=1</code> or <code>?match=typed</code> to any page URL. Overrides last for that
         browser tab and beat the saved settings above.
       </p>
       <pre id="overrides">none</pre>
@@ -229,7 +235,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
   } from '../scripts/settings.js';
   import { getConsent, clearConsent, setConsent } from '../scripts/consent.js';
   import * as store from '../../sim/store.js';
-  import { stitch, loadPreset, fullName, STAGES } from '../../sim/identity.js';
+  import { stitch, loadPreset, fullName, STAGES, displayName } from '../../sim/identity.js';
 
   let catalog = {};
   try {
@@ -291,8 +297,11 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     const sim = store.getState();
     const visitorEl = $('#visitor-state');
     visitorEl.textContent = sim.identity?.known
-      ? `${fullName} · ${STAGES[sim.identity.stage]}`
+      ? `${displayName(sim.identity)} · ${sim.identity.personId === 'sofia' ? STAGES[sim.identity.stage] : 'New contact'}`
       : `Anonymous · ${sim.events.length} engagement ${sim.events.length === 1 ? 'row' : 'rows'}`;
+    document.querySelectorAll<HTMLInputElement>('input[name=identityMatching]').forEach((r) => {
+      r.checked = r.value === s.identityMatching;
+    });
     visitorEl.className = `pill ${sim.identity?.known ? 'pill--ok' : ''}`;
 
     const { qualifiedToken } = getConfig();
@@ -310,6 +319,8 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       saveSettings({ [t.dataset.setting]: t.checked });
     } else if (t instanceof HTMLInputElement && t.name === 'widgetMode') {
       saveSettings({ widgetMode: t.value });
+    } else if (t instanceof HTMLInputElement && t.name === 'identityMatching') {
+      saveSettings({ identityMatching: t.value });
     } else if (t instanceof HTMLSelectElement && t.dataset.setting === 'agentPersona') {
       saveSettings({ agentPersona: t.value });
     } else return;
