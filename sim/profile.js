@@ -7,7 +7,7 @@ import { fillFacts } from '../src/lib/fill-facts.js';
 
 const fill = (s) => fillFacts(s, 'content/sofia.json');
 const usd = (n) => `$${Number(n).toLocaleString('en-US')}`;
-const fundName = (id) => facts.giving.funds.find((f) => f.id === id)?.name ?? id;
+export const fundName = (id) => facts.giving.funds.find((f) => f.id === id)?.name ?? id;
 
 /** [label, value] rows for a stage. Values are plain text; the view escapes them. */
 export function stageRows(stageId, catalog = {}) {

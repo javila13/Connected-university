@@ -428,3 +428,11 @@ body.d360-open .d360-launcher {
 .d360-timeline__text {
   font-weight: 600;
 }
+.d360-avatar--new {
+  background: #7526e3;
+  font-size: 15px;
+}
+.d360-stage--new {
+  background: #ece1f9;
+  color: #481a88;
+}

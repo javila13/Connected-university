@@ -13,6 +13,8 @@ const OVERRIDE_KEY = 'cu_demo_overrides';
 export const CHANNEL_NAME = 'cu-demo';
 
 export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both'];
+/** How a demo form's email resolves: always to Sofia, or to whoever was typed. */
+export const IDENTITY_MATCHING = ['sofia', 'typed'];
 
 export const DEFAULTS = Object.freeze({
   simulation: true,
@@ -20,6 +22,7 @@ export const DEFAULTS = Object.freeze({
   agentPersona: 'auto',
   consentAutoAccept: false,
   simulatedBadge: true,
+  identityMatching: 'sofia',
   // Per-widget kill switches/forcers from URL params; null = follow widgetMode.
   forcePiper: null,
   forceAgentforce: null,
@@ -36,6 +39,7 @@ const PARAMS = {
   agent: (v) => ({ agentPersona: v === 'auto' || v in AGENT_PERSONAS ? v : undefined }),
   badge: (v) => ({ simulatedBadge: bool(v) }),
   autoconsent: (v) => ({ consentAutoAccept: bool(v) }),
+  match: (v) => ({ identityMatching: IDENTITY_MATCHING.includes(v) ? v : undefined }),
 };
 export const URL_PARAMS = Object.keys(PARAMS);
 
@@ -50,6 +54,7 @@ export function sanitize(input) {
     if (typeof input[key] === 'boolean' || input[key] === null) out[key] = input[key];
   }
   if (WIDGET_MODES.includes(input.widgetMode)) out.widgetMode = input.widgetMode;
+  if (IDENTITY_MATCHING.includes(input.identityMatching)) out.identityMatching = input.identityMatching;
   if (input.agentPersona === 'auto' || input.agentPersona in AGENT_PERSONAS) out.agentPersona = input.agentPersona;
   return out;
 }

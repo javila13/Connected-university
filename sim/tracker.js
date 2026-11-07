@@ -97,4 +97,7 @@ export function startTracking({ catalog }) {
 
   document.addEventListener('cu:form-start', (e) => record('FORM_START', e.detail?.form));
   document.addEventListener('cu:form-submit', (e) => record('FORM_SUBMIT', e.detail?.form));
+  // Student Portal: the sign-in is a form submit; booking an advising appointment is a click.
+  document.addEventListener('cu:portal-sign-in', () => record('FORM_SUBMIT', 'portal-sign-in'));
+  document.addEventListener('cu:portal-action', (e) => record('CLICK', e.detail?.action));
 }

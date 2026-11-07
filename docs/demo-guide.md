@@ -38,7 +38,7 @@ Click-paths for running the Connected University demo. Each step says what to cl
 | 4 | Stay on the Environmental Science page for 30 seconds while you talk about the program. | The latest page-view row changes to **+2 · engaged 30s**. | "Time on page counts too. Thirty seconds of real reading is a stronger signal than a click-through." |
 | 5 | Click the **Affinities** tab. | **Environmental Science** appears under **Academic interest**, highlighted as the top interest. Below it: **Academics** (interest) and **Prospective student** (life stage). | "Every page carries metadata: the program, the section, the audience. One page view feeds several affinities at once, and Environmental Science is now her top academic interest." |
 | 6 | Click **Request Information** in the **At a glance** box. | On the next page, a **Click** row worth **+3** (recorded on the program page) and a page view for Request Information. Environmental Science grows. | "A click on a call to action is worth more than a page view. She's not just browsing anymore." |
-| 7 | Start filling in the form (any name and email), then click **Request Information**. | **Form start** (+2) and **Form submit** (+5) rows. **Admissions** jumps to the top of Interest. | "Form activity is the strongest signal we collect. And this is the moment she tells us who she is: in the next part of the demo, this form stitches everything we just saw to her known profile." |
+| 7 | Fill in the form with **Sofia**, **Sanders** and **sofia.sanders@demo.com**, choose **First-year student**, then click **Request Information**. | **Form start** (+2) and **Form submit** (+5) rows. **Admissions** jumps to the top of Interest. The visitor is now Sofia Sanders (see Click-path 2). | "Form activity is the strongest signal we collect. And this is the moment she tells us who she is." Then continue straight into Click-path 2. |
 
 **Reset between runs:** `/demo` → **Reset visitor**. Open tabs clear automatically.
 
@@ -48,16 +48,51 @@ Click-paths for running the Connected University demo. Each step says what to cl
 
 ## Click-path 2: The anonymous history becomes Sofia's (identity stitch)
 
-**Story:** follows Click-path 1, or stands alone as the "anonymous to known" moment. **Time:** about 2 minutes. **Starts from:** a reset visitor who has browsed a few pages (do Click-path 1, or visit Environmental Science and Affordability). Two screens make this one land best.
+**Story:** follows Click-path 1, or stands alone as the "anonymous to known" moment. **Time:** about 2 minutes. **Starts from:** a reset visitor who has browsed a few pages (do Click-path 1 up to step 6, or visit Environmental Science and Affordability). Two screens make this one land best.
 
 | # | Click | What the audience sees | Say |
 |---|---|---|---|
 | 1 | Open the **Identity** tab (drawer) or look at the **Identity** panel (`/data360`). | **Party identification:** a device ID, email "Unknown", Unified Individual "Not resolved yet". The timeline has one step: **Anonymous device first seen**. | "Right now all we have is a device. Everything she's done is attached to it." |
-| 2 | In `/demo`, under **Become Sofia**, pick **Prospect: admitted, not committed** and click **Become Sofia**. | The Identity panel fills in: her email, a Unified Individual ID and **CRM contact: Sofia Sanders**. The timeline adds **Identity moment**, with how many engagement rows now belong to her. | "The moment she identifies herself, Data 360 resolves the device to a known person, and none of the anonymous history is lost. Every page she looked at is now part of her profile." |
+| 2 | Go to **Request Information** (any program page's button, or Admissions → Request Information). Fill in **Sofia**, **Sanders**, **sofia.sanders@demo.com**, choose **First-year student** and submit. | The Identity panel fills in: her email, a Unified Individual ID and **CRM contact: Sofia Sanders**. The timeline adds **Identity moment: Request Information form**, with how many engagement rows now belong to her. | "The moment she identifies herself, Data 360 resolves the device to a known person, and none of the anonymous history is lost. Every page she looked at is now part of her profile." |
 | 3 | Open **Profile**. | **Sofia Sanders**, prospect stage: admitted to Environmental Science, not committed yet, GPA 3.8, SAT 1320, two campus visits, her scholarship offer, and the May 1 deposit deadline. | "Now we see the whole picture: what she did on the site, plus what we already knew in CRM. She's admitted, she has a scholarship offer, and she hasn't committed. She's exactly who the Priority Yield campaign is for." |
 | 4 | Open **Engagement**, then click any page on the site. | New rows keep arriving, now attributed to Sofia. | "From here on, everything she does is attributed to her, not to an anonymous device." |
 
-**Coming in the next release:** submitting **Request Information** (or any form with an email, or signing in to the Student Portal) does step 2 automatically, so you won't need `/demo` mid-demo.
+**Type Sofia's email if you can.** Any name and email work, because the demo resolves every identity to Sofia, but the timeline then says "Email entered: … In this demo every identity resolves to Sofia Sanders". That's honest, but it's a distraction in front of a customer.
+
+**No form in your story?** `/demo` → **Become Sofia** does the same stitch from the control panel.
+
+---
+
+## Identity moments: which forms make her known, and as whom
+
+Submitting any of these forms (or signing in to the Student Portal) stitches the visitor to Sofia at the life stage that fits the story. If she's already known, the stage changes and the step is logged; she stays the same person.
+
+| Where | Sofia becomes | Story |
+|---|---|---|
+| Request Information, Apply, Campus Tour request | Prospect: admitted, not committed | Admissions |
+| Student Portal sign-in (any username, or **Sign in as Sofia**) | Student: junior, early alert resolved | Student Success |
+| Update Your Info, Give Now, Tickets | Alumna and first-time donor | Alumni, Advancement, Athletics |
+| CE Inquiry | Learner: certificate holder, not enrolled | Continuing Ed |
+| Event registration | Depends on the event: Open House, Admitted Students Day and the lecture → prospect; Homecoming and Giving Day → alumna; the certificate info session → learner | Any |
+
+The **recruiting questionnaire** doesn't stitch: it's for high-school athletes, not Sofia. **Give Now** and **Tickets** are also logged as conversions, and they appear under **Conversions this visit** in Profile.
+
+### Identity matching: Sofia, or whoever typed
+
+`/demo` → **Identity matching** decides whose profile a form's email opens:
+
+| Setting | What happens | Use it when |
+|---|---|---|
+| **Always Sofia** (default) | Any email resolves to Sofia, so every story beat works, even with a typo. | Story demos. Leave it here unless you have a reason not to. |
+| **Match typed email** | Sofia's email opens her profile. Any other email creates a **new contact** with only what was typed: name, email, phone, program, student type and the like. There's no CRM history, so there's no application, gift or credential; personalization and the agent work from browsing interests alone. | A net-new inquiry demo ("a brand-new prospect fills in Request Information"), or letting someone in the audience type their own name. |
+
+Rules worth knowing in **Match typed email**:
+- The **first identity wins** in a browser. A later form with a different email (even Sofia's) is logged as "Identity unchanged". To switch people, use **Reset visitor**.
+- The same email again adds the new details to the contact.
+- The **Student Portal** demo sign-in always signs in as Sofia.
+- Whatever someone types stays only in this browser until **Reset visitor**. Nothing is sent anywhere.
+
+For one tab only, add `?match=typed` to a page URL.
 
 ---
 
