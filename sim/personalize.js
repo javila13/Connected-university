@@ -22,6 +22,8 @@ export const MAX_DECISIONS = 200;
 const RULES = rulesFile.rules;
 
 const usd = (n) => `$${Number(n || 0).toLocaleString('en-US')}`;
+/** "1 point", "4 points". */
+export const pts = (n) => `${n} ${Number(n) === 1 ? 'point' : 'points'}`;
 const time = (iso) => new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
 /** What the rules can see about the visitor. */
@@ -95,12 +97,15 @@ export function tokensFor(ctx) {
     programDescription: prog.description ?? '',
     programUrl: prog.url ?? '/academics/programs/',
     programScore: String(ctx.topProgram?.score ?? 0),
+    programPoints: pts(ctx.topProgram?.score ?? 0),
     certificateId: ctx.topCertificate?.value ?? '',
     certificateTitle: cert.title ?? ctx.topCertificate?.label ?? '',
     certificateDescription: cert.description ?? '',
     certificateUrl: cert.url ?? '/continuing-ed/certificates/',
     certificateScore: String(ctx.topCertificate?.score ?? 0),
+    certificatePoints: pts(ctx.topCertificate?.score ?? 0),
     athleticsScore: String(ctx.score('interest:athletics')),
+    athleticsPoints: pts(ctx.score('interest:athletics')),
     lastGiftAmount: lastGift ? usd(lastGift.amount) : '',
     lastGiftFund: lastGift ? fundName(lastGift.fund) : '',
     giftAmount: ctx.gift ? `${usd(ctx.gift.amount)}${ctx.gift.frequency === 'monthly' ? ' monthly' : ''}` : '',
@@ -121,11 +126,11 @@ export function signalsFor(rule, ctx) {
   if (w.person) out.push(`Identity: ${ctx.known ? displayName(ctx.identity) : 'anonymous visitor'}${ctx.person === 'visitor' ? ' (new contact)' : ''}`);
   if (w.stage) out.push(`Life stage: ${STAGES[ctx.stage] ?? ctx.stage}`);
   if (w.topAffinity === 'certificate' && ctx.topCertificate) {
-    out.push(`Top certificate interest: ${ctx.topCertificate.label}, ${ctx.topCertificate.score} points`);
+    out.push(`Top certificate interest: ${ctx.topCertificate.label}, ${pts(ctx.topCertificate.score)}`);
   } else if (w.topAffinity && ctx.topProgram) {
-    out.push(`Top academic interest: ${ctx.topProgram.label}, ${ctx.topProgram.score} points`);
+    out.push(`Top academic interest: ${ctx.topProgram.label}, ${pts(ctx.topProgram.score)}`);
   }
-  if (w.affinity) out.push(`${ctx.label(w.affinity)}: ${ctx.score(w.affinity)} points`);
+  if (w.affinity) out.push(`${ctx.label(w.affinity)}: ${pts(ctx.score(w.affinity))}`);
   if (w.conversion === 'gift' && ctx.gift) out.push(`Gift this visit: ${usd(ctx.gift.amount)} to ${fundName(ctx.gift.fund)}`);
   if (w.conversion === 'tickets') out.push('Ticket order this visit');
   if (rule.pin) out.push(`Pinned first: ${ctx.catalog.programs?.[rule.pin] ?? rule.pin}`);

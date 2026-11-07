@@ -41,14 +41,14 @@
       "zone": "pz-home-hero",
       "when": { "topAffinity": "academic-interest", "minScore": 3 },
       "variant": "program",
-      "reason": "[[programTitle]] is the visitor's top academic interest, with [[programScore]] points ([[minScore]] or more needed)."
+      "reason": "[[programTitle]] is the visitor's top academic interest, with [[programPoints]] ([[minScore]] or more needed)."
     },
     {
       "id": "hero-athletics",
       "zone": "pz-home-hero",
       "when": { "affinity": "interest:athletics", "minScore": 5 },
       "variant": "athletics",
-      "reason": "Athletics interest of [[athleticsScore]] points ([[minScore]] or more needed)."
+      "reason": "Athletics interest of [[athleticsPoints]] ([[minScore]] or more needed)."
     },
     {
       "id": "programs-next-step",
@@ -63,7 +63,7 @@
       "zone": "pz-recommended-programs",
       "when": { "topAffinity": "academic-interest", "minScore": 1 },
       "variant": "rank",
-      "reason": "Programs reordered by academic interest. [[programTitle]] leads with [[programScore]] points."
+      "reason": "Programs reordered by academic interest. [[programTitle]] leads with [[programPoints]]."
     },
     {
       "id": "giving-thanks",
@@ -84,7 +84,7 @@
       "zone": "pz-giving-cta",
       "when": { "affinity": "interest:athletics", "minScore": 5 },
       "variant": "athletics",
-      "reason": "Athletics interest of [[athleticsScore]] points ([[minScore]] or more needed), so the ask is the Athletics Fund."
+      "reason": "Athletics interest of [[athleticsPoints]] ([[minScore]] or more needed), so the ask is the Athletics Fund."
     },
     {
       "id": "credential-mba",
@@ -98,7 +98,7 @@
       "zone": "pz-next-credential",
       "when": { "topAffinity": "certificate", "minScore": 3 },
       "variant": "certificate",
-      "reason": "The [[certificateTitle]] is the visitor's top certificate interest, with [[certificateScore]] points ([[minScore]] or more needed)."
+      "reason": "The [[certificateTitle]] is the visitor's top certificate interest, with [[certificatePoints]] ([[minScore]] or more needed)."
     }
   ]
 }
