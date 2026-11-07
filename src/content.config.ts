@@ -7,6 +7,7 @@
 //   teams    content/teams/*     -> /athletics/teams/<id>/
 //   news     content/news/*      -> /news/<id>/
 //   events   content/events/*    -> /events/<id>/
+//   variants content/variants/<zone>/<id>.md  personalization variants (PLAN.md §5.4)
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
@@ -202,4 +203,29 @@ const events = defineCollection({
   }),
 });
 
-export const collections = { pages, programs, faculty, certificates, teams, news, events };
+// Personalization variants (PLAN.md §5.4). Rules in
+// content/personalization-rules.json pick one per zone; every zone also has
+// its default, which is the page's own markup. [[token]] placeholders are
+// filled in the browser from the visitor's profile, so no personal data is in
+// the page; {{facts.*}} tokens are filled at build time.
+const variants = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/variants', generateId: idFromPath }),
+  schema: z.object({
+    zone: z.enum(['pz-home-hero', 'pz-giving-cta', 'pz-next-credential']),
+    eyebrow: z.string().optional(),
+    heading: z.string(),
+    body: z.string(),
+    ctas: z
+      .array(
+        z.object({
+          label: z.string(),
+          href: z.string(),
+          style: z.enum(['gold', 'navy', 'ghost']).default('gold'),
+          cta: z.string().optional(),
+        }),
+      )
+      .max(2),
+  }),
+});
+
+export const collections = { pages, programs, faculty, certificates, teams, news, events, variants };

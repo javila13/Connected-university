@@ -13,14 +13,14 @@ Click-paths for running the Connected University demo. Each step says what to cl
 1. Open the demo control panel: go to `/demo` on the site, or press **Ctrl + Alt + D** on any page.
 2. Turn on **Consent auto-accept**, so the cookie banner doesn't interrupt the story. Without it, accept cookies on the first page; nothing is recorded until you do.
 3. Click **Reset visitor**. This starts a fresh anonymous visitor with no history. Do it before every run.
-4. Check **Simulation** is on. Turn the **"Simulated" badge** on or off for your audience.
+4. Check **Simulation** is on. Turn the **"Simulated" badge** and **"Why am I seeing this?"** on or off for your audience.
 5. Go back to the site's home page. You're ready.
 
 **Shortcuts:** **Ctrl + Alt + I** opens and closes the Data 360 inspector on any page. **Ctrl + Alt + D** opens the control panel. On some keyboard layouts Ctrl + Alt acts as AltGr; if a shortcut doesn't work, click the blue **Data 360** tab on the right edge instead *(hypothesis — test on your own laptop before a live demo)*.
 
 **Single screen or two:**
 - **One screen:** use the inspector drawer. It stays open as you click between pages, and on a laptop the page narrows to make room for it.
-- **Two screens:** in `/demo`, click **Open /data360 companion window** and drag it to the second screen. It shows Profile, Affinities, Engagement and Identity all at once, and updates live as you click around the site on the main screen. You never need to touch it.
+- **Two screens:** in `/demo`, click **Open /data360 companion window** and drag it to the second screen. It shows Profile, Affinities, Engagement, Identity and Personalization decisions all at once, and updates live as you click around the site on the main screen. You never need to touch it.
 
 **Starting mid-journey:** most stories don't start with an anonymous visitor. Use a **persona preset** in `/demo` instead of Reset visitor (see "Persona presets" below).
 
@@ -110,7 +110,7 @@ In `/demo` → **Persona presets**, one click starts over as Sofia at a life sta
 
 **Say, when you load a preset:** "Let's skip ahead. Sofia has been in our system for a while now, so Data 360 already has her profile and what she's shown interest in."
 
-The full story click-paths for each stage come with personalization and the agent in the next releases.
+Click-paths 4 and 5 below start from presets. The complete story paths, with the agent, come in the next releases.
 
 ### How the scoring works (for Q&A)
 
@@ -126,11 +126,71 @@ Each page maps to up to four affinities: its program (academic interest), its se
 
 ---
 
+## Click-path 3: The home page adapts to her (personalization)
+
+**Story:** continues Click-paths 1 and 2 (Admissions), or stands alone as the Personalization demo. **Time:** about 3 minutes. **Starts from:** Click-path 1 up to step 6 (don't submit the form yet), or a reset visitor who has viewed **Environmental Science** and clicked one of its buttons. Two screens make this one land best.
+
+| # | Click | What the audience sees | Say |
+|---|---|---|---|
+| 1 | Click the **Connected University** logo to go to the home page. | The hero has changed. It now says **Recommended for you · Your future in Environmental Science starts here**, with **Explore Environmental Science** and **Request Information** buttons. **Programs to explore** lists Environmental Science first. | "Same home page, but it's not the generic one any more. She's still anonymous, and her browsing alone was enough for Personalization to pick a hero for her." |
+| 2 | Click **Why am I seeing this?** on the hero. | A panel shows the rule's reason ("Environmental Science is the visitor's top academic interest, with N points"), the signal it used, the personalization point `pz-home-hero`, the rule and the variant, and that the decision was logged. | "Every decision is explainable. Here's the rule, the signal it read from her profile, and the threshold. Marketers set the rules; Data 360 supplies the signals." |
+| 3 | Open the inspector's **Decisions** tab (or the **Personalization decisions** panel in `/data360`). | One row for the hero and one for the program list, with the rule, reason and signals, on the object `ssot__PersonalizationLog__dlm`. | "Each decision lands in the personalization log in Data 360, so you can report on what each visitor saw and why." |
+| 4 | Click **Request Information** in the hero. Fill in **Sofia**, **Sanders** and **sofia.sanders@demo.com** (Environmental Science is already selected), choose **First-year student** and submit. | The confirmation page. In the inspector, she's now **Sofia Sanders**, prospect. | "The personalized hero just generated an inquiry, with the program already filled in." |
+| 5 | Click the logo again. | The hero now says **Welcome back, Sofia · Your place in the class is waiting**, with her deposit deadline and **Submit Your Deposit**. | "Now we know who she is: admitted, not committed. The same personalization point now serves the Priority Yield message." |
+| 6 | Click **Why am I seeing this?** | "Known profile: admitted to Environmental Science and not committed yet, so she's in the Priority Yield audience (2A)." Signals: her identity and her life stage. | "Known-profile rules come first, so CRM data beats browsing when we have it." |
+
+**Live updates:** with the home page open on one screen, loading a preset or doing **Become Sofia** in `/demo` on the other changes the hero in place, without a reload.
+
+---
+
+## Click-path 4: The upgrade ask, then a thank you (Advancement)
+
+**Story:** Advancement (Sofia as a first-time donor). **Time:** about 2 minutes. **Starts from:** `/demo` → **Sofia · Alumna/Donor**.
+
+| # | Click | What the audience sees | Say |
+|---|---|---|---|
+| 1 | Go to **Alumni** in the menu and scroll to the gold band at the bottom. | **Thank you, Sofia · Your first gift made a difference. Ready to double it?** It names her $500 gift to the Tutoring & Learning Center and offers **Join with $1,000** or **$84 a Month**. | "Sofia gave once last year. She's a first-time donor nobody has asked to upgrade, so instead of a generic 'give now', the site thanks her for that gift and invites her into the Connected Circle." |
+| 2 | Click **Why am I seeing this?** on the band. | "Known profile: first-time donor ($500 to the Tutoring & Learning Center) who hasn't been asked to upgrade (6C)." | "It's the same audience the email campaign targets, so web and email tell one story." |
+| 3 | Click **Join with $1,000**. | Give Now, with $1,000 already selected. | "One click, with the right amount already filled in." |
+| 4 | Fill in **Sofia**, **Sanders** and **sofia.sanders@demo.com** and submit. | The thank-you confirmation. No payment is taken; it's a demo form. | |
+| 5 | Go to **Giving** in the menu and scroll to the band. | **Thank you, Sofia · Your gift is already at work**, naming the $1,000 gift she just made, with links to impact stories. | "Personalization reacts within the same visit. She isn't asked again two minutes after she gave." |
+
+---
+
+## Click-path 5: Her next credential (Continuing Ed)
+
+**Story:** Continuing Ed (Sofia as a certificate holder). **Time:** about 2 minutes. **Starts from:** `/demo` → **Sofia · Learner**.
+
+| # | Click | What the audience sees | Say |
+|---|---|---|---|
+| 1 | Go to the home page. | **Welcome back, Sofia · Your next credential is closer than you think**, with **Explore the MBA**. In **Programs to explore**, Business Administration comes first. | "Sofia earned our sustainability certificate, isn't enrolled, and still opens our emails. The home page points her to her next step." |
+| 2 | Go to **Continuing Ed → Certificates**. | The navy tile reads **Recommended for you, Sofia · Turn your certificate into an MBA**. | "Her certificate's graduate credits count toward the MBA, so that's the offer, not another certificate." |
+| 3 | Click **Why am I seeing this?** on the tile. | "Known profile: holds the Professional Certificate in Sustainability and isn't enrolled (8C)." | |
+
+**For an anonymous visitor:** view one certificate page three times (for example **Data Analytics**), then go back to **Certificates**. The tile features that certificate instead of the default one.
+
+---
+
+## Personalization at a glance
+
+Four personalization points; the first matching rule wins. Known-profile rules come before browsing rules. Without consent, or with the Simulation off, every zone shows its default.
+
+| Personalization point | Where | Rules, in order |
+|---|---|---|
+| `pz-home-hero` | Home page hero | Sofia prospect → **admitted** · student → **student** · alumna → **alumna** · learner → **learner** · a new contact (Identity matching: Match typed email) → **new-contact**, welcomed by name · top academic interest of 3+ points → **program** · Athletics interest of 5+ points → **athletics** |
+| `pz-recommended-programs` | Home "Programs to explore"; program pages "You might also like" | Sofia learner → Business Administration first, then by interest · any academic interest → reordered by interest score. Ties keep the default order. A program page never recommends itself. |
+| `pz-giving-cta` | Gold band on Alumni and Giving pages | Gave this visit → **thanks** · Sofia alumna → **upgrade** · Athletics interest of 5+ points → **athletics** (Condor Club) |
+| `pz-next-credential` | Continuing Ed → Certificates | Sofia learner → **mba** · top certificate interest of 3+ points → **certificate** |
+
+**"Why am I seeing this?"** is on by default. Turn it off in `/demo` for a cleaner look, or add `?why=0` to a URL for one tab. Personalized content stays either way, and decisions are still logged.
+
+**Athletics in one minute:** from a reset visitor, view five Athletics pages (the hub, the schedule, two teams and Boosters). The home hero changes to **Catch a game this season**, and the Giving band asks for the Condor Club.
+
+---
+
 ## Coming in later releases
 
 | Release | Adds to the guide |
 |---|---|
-| Identity stitch | Forms and the portal sign-in turn the anonymous visitor into Sofia automatically, at the right life stage |
-| Personalization | The home page, program pages, giving bands and the certificate tile changing based on what she's done, with "Why am I seeing this?" |
 | Agentforce mock | The right agent answering on the right pages, grounded in the site and in Sofia's profile |
 | Wrap-up | The six complete story paths: Admissions, Student Success, Alumni, Advancement, Continuing Ed and Athletics |

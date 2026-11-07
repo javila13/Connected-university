@@ -23,6 +23,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     <section class="d360-card" aria-labelledby="c-affinities"><h2 id="c-affinities">Affinities</h2><div data-view="affinities"></div></section>
     <section class="d360-card" aria-labelledby="c-engagement"><h2 id="c-engagement">Engagement</h2><div data-view="engagement"></div></section>
     <section class="d360-card" aria-labelledby="c-identity"><h2 id="c-identity">Identity</h2><div data-view="identity"></div></section>
+    <section class="d360-card d360-card--wide" aria-labelledby="c-decisions"><h2 id="c-decisions">Personalization decisions</h2><div data-view="decisions"></div></section>
   </main>
   <script type="application/json" id="cu-sim-catalog" set:html={simCatalog} />
 </ToolLayout>
@@ -50,6 +51,10 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     font-size: 15px;
     margin: 0 0 0.6rem;
   }
+  .d360-card--wide {
+    grid-column: 1 / -1;
+    max-height: 420px;
+  }
   @media (max-width: 900px) {
     .d360-companion {
       grid-template-columns: minmax(0, 1fr);
@@ -62,7 +67,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
 
 <script>
   import * as store from '../../sim/store.js';
-  import { profileView, engagementView, affinitiesView, identityView } from '../../sim/views.js';
+  import { profileView, engagementView, affinitiesView, identityView, decisionsView } from '../../sim/views.js';
   import { displayName, STAGES } from '../../sim/identity.js';
   import { getSettings, onSettingsChange } from '../scripts/settings.js';
 
@@ -71,7 +76,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     catalog = JSON.parse(document.getElementById('cu-sim-catalog')?.textContent || '{}');
   } catch {}
 
-  const views = { profile: profileView, engagement: engagementView, affinities: affinitiesView, identity: identityView };
+  const views = { profile: profileView, engagement: engagementView, affinities: affinitiesView, identity: identityView, decisions: decisionsView };
   const firstSeen = new Map(store.getState().events.map((e) => [e.id, 0]));
   const who = document.getElementById('who')!;
   const sync = document.getElementById('sync')!;

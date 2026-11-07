@@ -8,14 +8,15 @@
 //     affinities: { [key]: { type, value, label, score, updated, seeded? } },
 //     identity:   { known: false } | { known: true, personId, unifiedId, email, stage, stitchedAt, via },
 //     timeline:   [{ ts, kind, text, detail? }],   identity steps for the Identity tab
-//     conversions:[{ ts, type: 'gift' | 'tickets', ... }] }
+//     conversions:[{ ts, type: 'gift' | 'tickets', ... }],
+//     decisions:  [{ id, ts, zone, ruleId, variant, reason, signals, shown?, page, person }] }   personalization log
 import { STATE_KEY, CHANNEL, MAX_EVENTS } from './config.js';
 
 const VERSION = 1;
 const randomId = (prefix) => prefix + Math.random().toString(36).slice(2, 10).padEnd(8, '0');
 
 function fresh() {
-  return { version: VERSION, deviceId: randomId('dev_'), firstSeen: null, events: [], affinities: {}, identity: { known: false }, timeline: [], conversions: [] };
+  return { version: VERSION, deviceId: randomId('dev_'), firstSeen: null, events: [], affinities: {}, identity: { known: false }, timeline: [], conversions: [], decisions: [] };
 }
 
 // Profiles saved before the identity fields existed get them added.
@@ -23,6 +24,7 @@ function normalize(s) {
   s.identity ??= { known: false };
   s.timeline ??= [];
   s.conversions ??= [];
+  s.decisions ??= [];
   return s;
 }
 

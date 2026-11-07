@@ -223,9 +223,38 @@ export function affinitiesView(state) {
       .join('')}`;
 }
 
+/** Personalization decisions, newest first (PLAN.md §5.4, §5.6). */
+export function decisionsView(state, { catalog = {} } = {}) {
+  const list = [...(state.decisions ?? [])].reverse();
+  if (!list.length) {
+    return `${objectTag(OBJECTS.personalizationLog)}<p class="d360-empty">No personalization decisions yet. Zones on the home page, program pages, Alumni and Giving pages and Continuing Ed change as the profile builds.</p>`;
+  }
+  return `
+    ${objectTag(OBJECTS.personalizationLog)}
+    <ol class="d360-rows d360-decisions">
+      ${list
+        .map(
+          (d) => `
+          <li class="d360-row" data-decision="${esc(d.id)}">
+            <div class="d360-row__head">
+              <span class="d360-action d360-action--decision">${esc(d.variant)}</span>
+              <span class="d360-muted">${esc(time(d.ts))}</span>
+            </div>
+            <p class="d360-row__title"><code>${esc(d.zone)}</code> <span class="d360-muted">· rule <code>${esc(d.ruleId)}</code></span></p>
+            <p class="d360-decision__reason">${esc(d.reason)}</p>
+            ${d.shown?.length ? `<p class="d360-muted">Shown: ${d.shown.map((id) => esc(catalog.programs?.[id] ?? id)).join(', ')}</p>` : ''}
+            ${d.signals?.length ? `<ul class="d360-decision__signals">${d.signals.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+            <p class="d360-row__meta"><code>${esc(d.page)}</code> <span class="d360-muted">· ${esc(d.person)}</span></p>
+          </li>`,
+        )
+        .join('')}
+    </ol>`;
+}
+
 export const TABS = [
   { id: 'profile', label: 'Profile', render: profileView },
   { id: 'engagement', label: 'Engagement', render: engagementView },
   { id: 'affinities', label: 'Affinities', render: affinitiesView },
   { id: 'identity', label: 'Identity', render: identityView },
+  { id: 'decisions', label: 'Decisions', render: decisionsView },
 ];

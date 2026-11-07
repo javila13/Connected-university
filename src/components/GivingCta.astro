@@ -1,12 +1,14 @@
 ---
 // Personalization zone pz-giving-cta (PLAN.md §5.4): the donor-stage call to
-// action on Alumni and Giving pages. This is the default variant; Phase 2's
-// rules swap it by donor stage (e.g. a giving-society upgrade ask for a
-// first-time donor).
+// action on Alumni and Giving pages. This is the default variant; the
+// rule-driven variants (content/variants/pz-giving-cta/) ride along as
+// templates for the personalization engine.
 import { pickLive } from '../lib/routes.js';
+import { variantTemplates } from '../lib/variants.js';
 
 const give = await pickLive('/giving/give/', '/giving/');
 const ways = await pickLive('/giving/ways-to-give/', '/giving/');
+const templates = await variantTemplates('pz-giving-cta');
 ---
 <section
   id="pz-giving-cta"
@@ -15,7 +17,7 @@ const ways = await pickLive('/giving/ways-to-give/', '/giving/');
   data-pz-variant="default"
   aria-labelledby="giving-cta-heading"
 >
-  <div class="wrap giving-cta__inner">
+  <div class="wrap giving-cta__inner" data-pz-slot data-pz-why-host>
     <div>
       <p class="eyebrow">Pay it forward</p>
       <h2 id="giving-cta-heading">Help the next Connected U student</h2>
@@ -26,4 +28,5 @@ const ways = await pickLive('/giving/ways-to-give/', '/giving/');
       <a class="btn btn--ghost" href={ways} data-cta="ways-to-give">Ways to Give</a>
     </div>
   </div>
+  {templates.map((t) => <template data-pz-template={t.id} set:html={t.html} />)}
 </section>

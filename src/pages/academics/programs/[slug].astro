@@ -31,7 +31,12 @@ let related = await getEntries(d.related);
 if (!related.length) {
   related = (await getCollection('programs')).filter((p) => p.id !== entry.id && p.data.school === d.school);
 }
-const relatedItems = related.map((p) => ({ entry: p, credentials: p.data.credentials }));
+// Every other program follows, hidden, so personalization can re-rank them.
+const rest = (await getCollection('programs'))
+  .filter((p) => p.id !== entry.id && !related.some((r) => r.id === p.id))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+const relatedItems = [...related, ...rest].map((p) => ({ entry: p, credentials: p.data.credentials }));
+const relatedLimit = related.length;
 
 const routes = await getRouteSet();
 const certificate = d.certificate && routes.has(d.certificate.href) ? d.certificate : null;
@@ -117,17 +122,18 @@ const links = {
     </aside>
   </div>
 
-  <!-- Personalization zone (PLAN.md §5.4): this is the default variant; Phase 2 re-ranks it by affinity. -->
+  <!-- Personalization zone (PLAN.md §5.4): this is the default variant; the personalization engine re-ranks it by academic interest. -->
   <section
     id="pz-recommended-programs"
     class="band-soft"
     data-pz-zone="pz-recommended-programs"
     data-pz-variant="default"
+    data-pz-limit={relatedLimit}
     aria-labelledby="recommended-heading"
   >
-    <div class="wrap">
+    <div class="wrap" data-pz-why-host>
       <h2 id="recommended-heading">You might also like</h2>
-      <ProgramCards items={relatedItems} />
+      <ProgramCards items={relatedItems} rank limit={relatedLimit} />
     </div>
   </section>
 </BaseLayout>
