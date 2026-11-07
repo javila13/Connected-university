@@ -12,7 +12,8 @@ const STORAGE_KEY = 'cu_demo_settings';
 const OVERRIDE_KEY = 'cu_demo_overrides';
 export const CHANNEL_NAME = 'cu-demo';
 
-export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both'];
+/** `off` hides every chat widget (Jesse, 2026-11-07). */
+export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both', 'off'];
 /** How a demo form's email resolves: always to Sofia, or to whoever was typed. */
 export const IDENTITY_MATCHING = ['sofia', 'typed'];
 

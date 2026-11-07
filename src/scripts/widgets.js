@@ -25,6 +25,9 @@ export function resolveWidgets(audience, settings) {
     case 'both':
       [piper, agentforce] = [true, true];
       break;
+    case 'off':
+      [piper, agentforce] = [false, false];
+      break;
     default: // auto
       piper = route.widget === 'piper' || route.widget === 'both';
       agentforce = route.widget === 'agentforce' || route.widget === 'both';
