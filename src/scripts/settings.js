@@ -12,7 +12,8 @@ const STORAGE_KEY = 'cu_demo_settings';
 const OVERRIDE_KEY = 'cu_demo_overrides';
 export const CHANNEL_NAME = 'cu-demo';
 
-export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both'];
+/** `off` hides every chat widget (Jesse, 2026-11-07). */
+export const WIDGET_MODES = ['auto', 'piper', 'agentforce', 'both', 'off'];
 /** How a demo form's email resolves: always to Sofia, or to whoever was typed. */
 export const IDENTITY_MATCHING = ['sofia', 'typed'];
 
@@ -25,6 +26,8 @@ export const DEFAULTS = Object.freeze({
   identityMatching: 'sofia',
   // "Why am I seeing this?" buttons on personalized zones.
   showWhy: true,
+  // "Grounded in Data 360" notes under the Agentforce mock's answers.
+  showGrounding: true,
   // Per-widget kill switches/forcers from URL params; null = follow widgetMode.
   forcePiper: null,
   forceAgentforce: null,
@@ -43,6 +46,7 @@ const PARAMS = {
   autoconsent: (v) => ({ consentAutoAccept: bool(v) }),
   match: (v) => ({ identityMatching: IDENTITY_MATCHING.includes(v) ? v : undefined }),
   why: (v) => ({ showWhy: bool(v) }),
+  grounding: (v) => ({ showGrounding: bool(v) }),
 };
 export const URL_PARAMS = Object.keys(PARAMS);
 
@@ -50,7 +54,7 @@ export const URL_PARAMS = Object.keys(PARAMS);
 export function sanitize(input) {
   const out = {};
   if (!input || typeof input !== 'object') return out;
-  for (const key of ['simulation', 'consentAutoAccept', 'simulatedBadge', 'showWhy']) {
+  for (const key of ['simulation', 'consentAutoAccept', 'simulatedBadge', 'showWhy', 'showGrounding']) {
     if (typeof input[key] === 'boolean') out[key] = input[key];
   }
   for (const key of ['forcePiper', 'forceAgentforce']) {

@@ -450,3 +450,8 @@ body.d360-open .d360-launcher {
   padding-left: 1.1rem;
   color: var(--d360-weak);
 }
+
+.d360-action--agent_interaction {
+  background: #e3dafd;
+  color: #3e1c96;
+}

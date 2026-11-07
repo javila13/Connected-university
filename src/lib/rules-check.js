@@ -35,15 +35,23 @@ async function run() {
     } else if (!variants.has(`${r.zone}/${r.variant}`)) {
       fail(r.id, `no variant file content/variants/${r.zone}/${r.variant}.md`);
     }
-    const w = r.when ?? {};
-    for (const k of Object.keys(w)) if (!WHEN_KEYS.includes(k)) fail(r.id, `unknown condition "${k}"`);
-    if (w.person && !PERSONS.includes(w.person)) fail(r.id, `unknown person "${w.person}"`);
-    if (w.stage && !sofia.stages[w.stage]) fail(r.id, `unknown stage "${w.stage}"`);
-    if (w.topAffinity && !['academic-interest', 'certificate'].includes(w.topAffinity) && !programs.has(w.topAffinity)) {
-      fail(r.id, `topAffinity "${w.topAffinity}" isn't "academic-interest", "certificate" or a program`);
-    }
-    if (w.affinity && !TYPES.includes(w.affinity.split(':')[0])) fail(r.id, `affinity "${w.affinity}" needs a type prefix`);
-    if (w.conversion && !['gift', 'tickets'].includes(w.conversion)) fail(r.id, `unknown conversion "${w.conversion}"`);
+    checkWhen(r.when, (msg) => fail(r.id, msg), { programs });
   }
   return true;
+}
+
+/**
+ * Checks a `when` (personalization rules and agent responses). `extraKeys`
+ * allows more conditions, such as the agent's `has`.
+ */
+export function checkWhen(when, fail, { programs, extraKeys = [] }) {
+  const w = when ?? {};
+  for (const k of Object.keys(w)) if (!WHEN_KEYS.includes(k) && !extraKeys.includes(k)) fail(`unknown condition "${k}"`);
+  if (w.person && !PERSONS.includes(w.person)) fail(`unknown person "${w.person}"`);
+  if (w.stage && !sofia.stages[w.stage]) fail(`unknown stage "${w.stage}"`);
+  if (w.topAffinity && !['academic-interest', 'certificate'].includes(w.topAffinity) && !programs.has(w.topAffinity)) {
+    fail(`topAffinity "${w.topAffinity}" isn't "academic-interest", "certificate" or a program`);
+  }
+  if (w.affinity && !TYPES.includes(w.affinity.split(':')[0])) fail(`affinity "${w.affinity}" needs a type prefix`);
+  if (w.conversion && !['gift', 'tickets'].includes(w.conversion)) fail(`unknown conversion "${w.conversion}"`);
 }

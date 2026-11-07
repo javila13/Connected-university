@@ -1,7 +1,8 @@
 // Records engagement rows (PLAN.md §5.2), modeled on the UMA_WebsiteEngagement
 // stream: PAGE_VIEW on load, CLICK on calls to action, FORM_START and
 // FORM_SUBMIT from the demo forms, and a +1 dwell bonus after 30 seconds on
-// a page. Runs only with consent `all` and the simulation switched on.
+// a page, plus AGENT_INTERACTION rows from the Agentforce mock. Runs only
+// with consent `all` and the simulation switched on.
 import { getSettings } from '../src/scripts/settings.js';
 import { WEIGHTS, DWELL_MS, UNTRACKED_SECTIONS } from './config.js';
 import { categoriesFor, applyPoints } from './affinity.js';
@@ -17,6 +18,16 @@ export function readMeta() {
 const pageTitle = () => document.title.replace(/\s*\|\s*Connected University$/, '').replace(/^Connected University \| /, '');
 
 let started = false;
+let record = () => null;
+
+/**
+ * Records a row for this page from outside the tracker (the Agentforce mock).
+ * `extra` adds categories beyond the page's own, such as a program the visitor
+ * named in chat. Does nothing before consent or with the simulation off.
+ */
+export function recordEvent(action, detail, extra = []) {
+  return record(action, detail, extra);
+}
 
 export function startTracking({ catalog }) {
   if (started) return;
@@ -25,12 +36,17 @@ export function startTracking({ catalog }) {
   started = true;
   const categories = categoriesFor(meta, catalog);
 
-  const record = (action, detail) => {
+  record = (action, detail, extra = []) => {
     if (!getSettings().simulation) return null;
     const id = newEventId();
     const ts = new Date().toISOString();
+    const cats = [...categories];
+    for (const c of extra) {
+      const key = `${c.type}:${c.value}`;
+      if (!cats.some((x) => x.key === key)) cats.push({ key, type: c.type, value: c.value, label: c.label ?? c.value });
+    }
     update((s) => {
-      const points = applyPoints(s, categories, WEIGHTS[action], ts);
+      const points = applyPoints(s, cats, WEIGHTS[action], ts);
       s.events.push({
         id,
         ts,

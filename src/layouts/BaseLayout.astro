@@ -14,6 +14,7 @@ import { assertPageMeta } from '../lib/taxonomy.js';
 import { getSimCatalog } from '../lib/sim-catalog.js';
 import { checkSofia } from '../lib/sofia-check.js';
 import { checkRules } from '../lib/rules-check.js';
+import { checkAgentScripts } from '../lib/agent-check.js';
 import facts from '../../content/facts.json';
 
 interface Props {
@@ -31,6 +32,7 @@ assertPageMeta({ section, audience }, Astro.url.pathname);
 const fullTitle = section === 'home' ? `${facts.name} | Home` : `${title} | ${facts.name}`;
 await checkSofia();
 await checkRules();
+await checkAgentScripts();
 const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
 ---
 <!doctype html>
