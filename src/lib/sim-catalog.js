@@ -26,7 +26,10 @@ export async function getSimCatalog() {
     ]),
   );
   const certificateInfo = Object.fromEntries(
-    certs.map((c) => [c.id, { title: c.data.title, description: c.data.description, url: certificateUrl(c.id) }]),
+    certs.map((c) => [
+      c.id,
+      { title: c.data.title, shortTitle: c.data.shortTitle, description: c.data.description, url: certificateUrl(c.id) },
+    ]),
   );
   cached = { programs, topics, faculty, certificates, programInfo, certificateInfo };
   return cached;

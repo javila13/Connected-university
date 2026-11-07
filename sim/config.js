@@ -15,6 +15,8 @@ export const WEIGHTS = {
   FORM_START: 2,
   FORM_SUBMIT: 5,
   DWELL: 1,
+  // A question to the Agentforce mock: as strong as a call-to-action click (PLAN.md §5.8).
+  AGENT_INTERACTION: 3,
 };
 
 /** A page view earns the dwell bonus after this long in a visible tab. */

@@ -46,7 +46,8 @@ export function contextFor(state, catalog = {}) {
   };
 }
 
-function matches(when = {}, ctx) {
+/** True when a rule's `when` fits the visitor. Also used by the agent (sim/agent.js). */
+export function matches(when = {}, ctx) {
   if (when.person) {
     if (when.person === 'known' ? !ctx.known : when.person !== ctx.person) return false;
   }

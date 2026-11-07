@@ -1,0 +1,244 @@
+/* Agentforce mock chat window (PLAN.md §5.8). Lightning-styled, not
+   pixel-identical (CLAUDE.md). Sits inside the widget slot from
+   src/styles/global.css (.cu-widget). */
+.cu-widget--agent .cu-widget__panel {
+  width: min(370px, calc(100vw - 40px));
+  display: flex;
+  flex-direction: column;
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.cu-widget--agent .cu-widget__body {
+  padding: 0;
+}
+.cu-agent {
+  display: flex;
+  flex-direction: column;
+  background: #f3f3f3;
+}
+.cu-agent__log {
+  list-style: none;
+  margin: 0;
+  padding: 0.85rem 0.85rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  height: min(380px, calc(100vh - 260px));
+  overflow-y: auto;
+}
+.cu-agent__msg {
+  max-width: 88%;
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  color: #181818;
+  overflow-wrap: anywhere;
+}
+.cu-agent__msg p {
+  margin: 0;
+}
+.cu-agent__msg--agent {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid #dddbda;
+  border-bottom-left-radius: 4px;
+}
+.cu-agent__msg--user {
+  align-self: flex-end;
+  background: #0176d3;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.cu-agent__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem !important;
+}
+.cu-agent__link {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0176d3;
+  border: 1px solid #0176d3;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  text-decoration: none;
+  background: #fff;
+}
+.cu-agent__link:hover {
+  background: #eef4ff;
+}
+.cu-agent__card {
+  margin-top: 0.5rem;
+  border: 1px solid #dddbda;
+  border-top: 3px solid #0176d3;
+  border-radius: 4px;
+  padding: 0.5rem 0.65rem;
+  background: #fafaf9;
+}
+.cu-agent__card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5c5c5c;
+}
+.cu-agent__card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #014486;
+  margin: 0.15rem 0 0.25rem !important;
+}
+.cu-agent__card-note {
+  font-size: 12.5px;
+  color: #3e3e3c;
+}
+.cu-agent__sources {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.cu-agent__sources li {
+  display: grid;
+  gap: 0.1rem;
+  border-left: 3px solid #0176d3;
+  padding-left: 0.55rem;
+}
+.cu-agent__sources a {
+  font-weight: 600;
+  color: #0176d3;
+}
+.cu-agent__sources span {
+  font-size: 12.5px;
+  color: #5c5c5c;
+}
+.cu-agent__grounding {
+  margin-top: 0.45rem !important;
+  font-size: 11.5px;
+  color: #5c5c5c;
+  border-top: 1px dashed #dddbda;
+  padding-top: 0.35rem;
+}
+.cu-agent__typing {
+  display: flex;
+  gap: 4px;
+  padding: 0.7rem 0.8rem;
+}
+.cu-agent__typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8c8c8c;
+  animation: cu-agent-dot 1s infinite ease-in-out;
+}
+.cu-agent__typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.cu-agent__typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes cu-agent-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.cu-agent__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 0.85rem;
+}
+.cu-agent__chips:not(:empty) {
+  padding-bottom: 0.6rem;
+}
+.cu-agent__chip {
+  font: inherit;
+  font-size: 13px;
+  color: #014486;
+  background: #fff;
+  border: 1px solid #0176d3;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+}
+.cu-agent__chip:hover {
+  background: #eef4ff;
+}
+.cu-agent__input {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.7rem;
+  background: #fff;
+  border-top: 1px solid #dddbda;
+}
+.cu-agent__input input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
+.cu-agent__input button,
+.cu-agent__primary {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #0176d3;
+  border: 1px solid #0176d3;
+  border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+.cu-agent__input input:disabled,
+.cu-agent__input button:disabled {
+  opacity: 0.6;
+}
+.cu-agent__identify {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.cu-agent__identify label {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #3e3e3c;
+}
+.cu-agent__identify input {
+  font: inherit;
+  font-weight: 400;
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+}
+.cu-agent__identify-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.cu-agent__skip {
+  font: inherit;
+  font-size: 13px;
+  color: #0176d3;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.cu-agent__error {
+  color: #ba0517;
+  font-size: 12.5px;
+}
+/* An open chat sits above the Data 360 tab, which would otherwise cover
+   the Send button on a phone. */
+.cu-widget--agent:has(.cu-widget__panel:not([hidden])) {
+  z-index: 9999;
+}

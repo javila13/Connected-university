@@ -2,8 +2,9 @@
 //
 // - Piper (Qualified) is the only live embed. With no token in
 //   public/demo-config.js a stub bubble stands in for it.
-// - The Agentforce widget is a client-side mock. Phase 0 mounts a stub
-//   bubble; Phase 2 replaces its panel with the scripted agent from sim/.
+// - The Agentforce widget is a client-side mock: the bubble is mounted here
+//   and sim/agent-ui.js fills the panel with the scripted agent, loaded on
+//   demand so pages without the agent don't download it.
 import { AUDIENCE_ROUTING, AGENT_PERSONAS } from '../lib/taxonomy.js';
 
 /**
@@ -79,7 +80,7 @@ function el(html) {
   return t.content.firstElementChild;
 }
 
-function mountBubble({ id, corner, variant, label, badge, title, body }) {
+function mountBubble({ id, corner, variant, label, badge, title, body = '' }) {
   const root = el(`
     <div class="cu-widget cu-widget--${corner} cu-widget--${variant}" id="${id}" data-widget="${variant}">
       <div class="cu-widget__panel" role="dialog" aria-label="${title}" hidden>
@@ -137,14 +138,16 @@ export function applyWidgets(audience, settings) {
 
   if (plan.agentforce) {
     const name = AGENT_PERSONAS[plan.agentPersona];
-    mountBubble({
+    const root = mountBubble({
       id: 'cu-agentforce-mock',
       corner: plan.agentCorner,
       variant: 'agentforce',
       label: `Chat with the ${name}`,
       badge: true,
       title: name,
-      body: `<p>Hi! I'm the ${name}. Scripted conversations arrive in Phase 2.</p>`,
+    });
+    import('../../sim/agent-ui.js').then(({ mountAgent }) => {
+      if (root.isConnected) mountAgent(root, { agentId: plan.agentPersona, name });
     });
   }
   return plan;

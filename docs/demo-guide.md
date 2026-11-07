@@ -74,6 +74,7 @@ Submitting any of these forms (or signing in to the Student Portal) stitches the
 | Update Your Info, Give Now, Tickets | Alumna and first-time donor | Alumni, Advancement, Athletics |
 | CE Inquiry | Learner: certificate holder, not enrolled | Continuing Ed |
 | Event registration | Depends on the event: Open House, Admitted Students Day and the lecture → prospect; Homecoming and Giving Day → alumna; the certificate info session → learner | Any |
+| Agentforce chat: the sign-in form, or an email typed in a message | Depends on the page: prospect pages and Continuing Ed → prospect or learner; Student Success → student; Alumni, Giving and Athletics → alumna | Any (see Click-path 6) |
 
 The **recruiting questionnaire** doesn't stitch: it's for high-school athletes, not Sofia. **Give Now** and **Tickets** are also logged as conversions, and they appear under **Conversions this visit** in Profile.
 
@@ -121,6 +122,7 @@ Click-paths 4 and 5 below start from presets. The complete story paths, with the
 | Form start | 2 |
 | Form submit | 5 |
 | 30 seconds engaged on a page | +1 |
+| A question to the Agentforce agent | 3 |
 
 Each page maps to up to four affinities: its program (academic interest), its section (interest, such as Admissions or Giving), its topic (such as a certificate or a team) and its audience (life stage). There's no decay; demos are short. The weights will be adjustable in `/demo` later in Phase 2.
 
@@ -188,9 +190,49 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 
 ---
 
+## Click-path 6: Chat that knows her (Agentforce)
+
+**Story:** Continuing Ed, or any story where you want to show "Agentforce grounded in Data 360". **Time:** about 3 minutes. **Starts from:** a reset visitor on **Continuing Ed** (the agent is on Continuing Ed pages by default). Two screens help.
+
+| # | Click | What the audience sees | Say |
+|---|---|---|---|
+| 1 | Click the blue chat bubble at the bottom left. | The **Student Recruitment Agent** opens and asks for a name and email first, with a **Skip** link. | "This is Agentforce on the website. Before the conversation starts, it asks who she is, the same way a pre-chat form does." |
+| 2 | Click **Skip**, then type **Tell me about the data analytics certificate**. | A short description of the certificate, with **Explore the certificate** and **Request information** buttons. | "Even for an anonymous visitor, the agent answers from the site's own content and links to the source." |
+| 3 | Click **Talk to a person**, or type something the agent isn't scripted for, like **is there parking on campus**. | For an unscripted question it answers "Here's what I found on our site" with up to three linked pages. | "When there's no scripted answer, it grounds itself in our pages instead of making something up." |
+| 4 | Type **When is my deposit due?** | It gives the general deadline, says it can look up her own, and shows a sign-in form in the chat. | "Questions about her own record need to know who she is." |
+| 5 | Fill in **Sofia**, **Sanders** and **sofia.sanders@demo.com** and click **Share**. | "Thanks, Sofia! I found your record." Then: "Welcome back, Sofia! You earned the Professional Certificate in Sustainability 18 months ago." On the other screen, Identity shows **Identity moment: Agentforce chat**. | "Chat is an identity moment too. Her anonymous browsing and this conversation now belong to her Unified Individual, and the agent can see her record." |
+| 6 | Click **What's my next step?** | Her recommended next step, the online MBA with a Sustainable Business focus, with **Explore the MBA**. Under it: **Grounded in Data 360: Identity: Sofia Sanders · Life stage: Learner…** | "The answer comes from her profile, not a script that guesses. And every question she asks is an engagement event." |
+| 7 | Open the inspector's **Engagement** tab. | **Agent chat** rows, one per question, worth 3 points each. Asking about a program adds to that program's academic interest. | "The conversation feeds the same profile that drives personalization." |
+
+**Where each agent appears** (`/demo` → Chat widgets, **auto**):
+- **Student Success Agent:** Student Success pages and the Student Portal.
+- **Alumni & Giving Agent:** Alumni, Giving and Athletics pages.
+- **Student Recruitment Agent:** Continuing Ed pages.
+
+Admissions and other prospect pages show Piper. To show the Student Recruitment Agent there, set Chat widgets to **both** or **agentforce**, or add `?agentforce=1` to the URL.
+
+**Who the agent knows:**
+- **Anonymous** (skipped the sign-in): general answers, plus suggestions from browsing ("It looks like you've been exploring Nursing").
+- **A new contact** (Identity matching: Match typed email): greeted by name, and honest about personal questions: "I don't see an application for you yet. Want to start one?"
+- **Sofia:** answers from her record at her life stage.
+
+**Good questions to ask Sofia** (load the preset first):
+
+| Preset · page | Agent | Ask | She hears |
+|---|---|---|---|
+| Prospect · Admitted Students (`?agentforce=1`) | Student Recruitment | When is my deposit due? · What does it cost? · My scholarships | Her $400 deposit and May 1 deadline; that her scholarships cover $20,000 a year; the Dean's and Sustainability Leaders scholarships |
+| Student · Student Portal | Student Success | (greeting) · Am I on track? · My courses · Find tutoring | Her advisor appointment with Dr. Olga Martinez; good standing, 3.05 GPA, 74 credits, early alert resolved; her four courses |
+| Alumna/Donor · Alumni | Alumni & Giving | (greeting) · Join the Connected Circle · Update my info | Thanks for her $500 gift; the $1,000 or $84-a-month ask; her job and city from her record |
+| Learner · Continuing Ed | Student Recruitment | What's my next step? · Alumni discount | The MBA pathway; her 15% alumni discount |
+
+Transfer students: ask the Student Recruitment Agent about **transfer credit**, then pick a credit count, for a quick estimate card.
+
+The conversation follows the presenter from page to page, and **Reset visitor** or a persona preset starts it over. With **"Why am I seeing this?"** off in `/demo`, the "Grounded in Data 360" notes are hidden too.
+
+---
+
 ## Coming in later releases
 
 | Release | Adds to the guide |
 |---|---|
-| Agentforce mock | The right agent answering on the right pages, grounded in the site and in Sofia's profile |
 | Wrap-up | The six complete story paths: Admissions, Student Success, Alumni, Advancement, Continuing Ed and Athletics |
