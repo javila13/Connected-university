@@ -61,8 +61,14 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
 
         <label class="switch">
           <input type="checkbox" data-setting="showWhy" />
-          <span><strong>"Why am I seeing this?"</strong> · a button on each personalized zone that explains the rule behind it, and the Agentforce mock's "Grounded in Data 360" notes</span>
+          <span><strong>"Why am I seeing this?"</strong> · a button on each personalized zone that explains the rule behind it</span>
           <span class="pill pill--warn" data-override-for="showWhy" hidden>URL override</span>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" data-setting="showGrounding" />
+          <span><strong>"Grounded in Data 360" notes</strong> · under the Agentforce mock's answers, listing the profile signals each answer used</span>
+          <span class="pill pill--warn" data-override-for="showGrounding" hidden>URL override</span>
         </label>
       </div>
       <p><button type="button" class="slds-btn" data-action="reset-settings">Restore defaults</button></p>
@@ -142,7 +148,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
       <h3 class="sub">URL overrides in this tab</h3>
       <p class="help">
         Add <code>?piper=0</code>, <code>?agentforce=1</code>, <code>?mode=both</code>, <code>?agent=student-success</code>,
-        <code>?sim=0</code>, <code>?badge=0</code>, <code>?autoconsent=1</code>, <code>?match=typed</code> or <code>?why=0</code> to any page URL. Overrides last for that
+        <code>?sim=0</code>, <code>?badge=0</code>, <code>?autoconsent=1</code>, <code>?match=typed</code>, <code>?why=0</code> or <code>?grounding=0</code> to any page URL. Overrides last for that
         browser tab and beat the saved settings above.
       </p>
       <pre id="overrides">none</pre>

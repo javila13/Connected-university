@@ -46,8 +46,9 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | Consent auto-accept | Skip the cookie banner |
 | "Simulated" badge | Show or hide the badge on simulated UI |
 | "Why am I seeing this?" | Show or hide the button on each personalized zone |
+| "Grounded in Data 360" notes | Show or hide the notes under the Agentforce mock's answers |
 
-URL params override the saved settings for one browser tab: `?mode=both`, `?piper=0`, `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`.
+URL params override the saved settings for one browser tab: `?mode=both`, `?piper=0`, `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`, `?grounding=0`.
 
 ## Simulation (`sim/`)
 

@@ -119,7 +119,7 @@ export function mountAgent(root, { agentId, name }) {
 
   function messageHtml(m, i, last) {
     if (m.from === 'user') return `<li class="cu-agent__msg cu-agent__msg--user"><p>${esc(m.text)}</p></li>`;
-    const showWhy = getSettings().showWhy;
+    const showGrounding = getSettings().showGrounding;
     const links = m.links?.length
       ? `<p class="cu-agent__links">${m.links.map((l) => `<a class="cu-agent__link" href="${esc(l.href)}">${esc(l.label)}</a>`).join('')}</p>`
       : '';
@@ -130,7 +130,7 @@ export function mountAgent(root, { agentId, name }) {
       ? `<ul class="cu-agent__sources">${m.sources.map((s) => `<li><a href="${esc(s.url)}">${esc(s.title)}</a><span>${esc(s.snippet)}</span></li>`).join('')}</ul>`
       : '';
     const grounding =
-      showWhy && m.grounding?.length
+      showGrounding && m.grounding?.length
         ? `<p class="cu-agent__grounding">Grounded in Data 360: ${m.grounding.map(esc).join(' · ')}</p>`
         : '';
     const identify = m.identify && last && !known() ? identifyForm(m.prechat) : '';

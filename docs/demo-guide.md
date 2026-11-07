@@ -13,7 +13,7 @@ Click-paths for running the Connected University demo. Each step says what to cl
 1. Open the demo control panel: go to `/demo` on the site, or press **Ctrl + Alt + D** on any page.
 2. Turn on **Consent auto-accept**, so the cookie banner doesn't interrupt the story. Without it, accept cookies on the first page; nothing is recorded until you do.
 3. Click **Reset visitor**. This starts a fresh anonymous visitor with no history. Do it before every run.
-4. Check **Simulation** is on. Turn the **"Simulated" badge** and **"Why am I seeing this?"** on or off for your audience.
+4. Check **Simulation** is on. Turn the **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** on or off for your audience. The last two are separate, so you can keep one and hide the other.
 5. Go back to the site's home page. You're ready.
 
 **Shortcuts:** **Ctrl + Alt + I** opens and closes the Data 360 inspector on any page. **Ctrl + Alt + D** opens the control panel. On some keyboard layouts Ctrl + Alt acts as AltGr; if a shortcut doesn't work, click the blue **Data 360** tab on the right edge instead *(hypothesis — test on your own laptop before a live demo)*.
@@ -227,7 +227,7 @@ Admissions and other prospect pages show Piper. To show the Student Recruitment 
 
 Transfer students: ask the Student Recruitment Agent about **transfer credit**, then pick a credit count, for a quick estimate card.
 
-The conversation follows the presenter from page to page, and **Reset visitor** or a persona preset starts it over. With **"Why am I seeing this?"** off in `/demo`, the "Grounded in Data 360" notes are hidden too.
+The conversation follows the presenter from page to page, and **Reset visitor** or a persona preset starts it over. To hide the "Grounded in Data 360" notes, turn off **"Grounded in Data 360" notes** in `/demo`, or add `?grounding=0` to a URL for one tab. It's separate from **"Why am I seeing this?"**. The notes appear only on answers chosen from the profile; general answers, answers from site pages and the fallback never have one.
 
 ---
 
