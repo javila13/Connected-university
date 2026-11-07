@@ -1,6 +1,6 @@
 // Demo forms (components/DemoForm.astro, components/GiftForm.astro). Nothing is
 // sent or stored: a valid submit swaps the form for its confirmation and fires
-// an event. Phase 2's simulation listens for these events to log FORM_START /
+// an event. The simulation listens for these events to log FORM_START /
 // FORM_SUBMIT rows, run the identity stitch and record gifts as conversions
 // (PLAN.md §5.2, §5.5).
 //

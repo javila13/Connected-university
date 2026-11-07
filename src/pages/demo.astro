@@ -5,10 +5,42 @@ import ToolLayout from '../layouts/ToolLayout.astro';
 import { AUDIENCES, AGENT_PERSONAS } from '../lib/taxonomy.js';
 import { getSimCatalog } from '../lib/sim-catalog.js';
 import sofia from '../../content/sofia.json';
+import { WEIGHTS } from '../../sim/config.js';
+import { TUNABLE_RULES } from '../scripts/settings.js';
 
 const stages = Object.entries(sofia.stages).map(([id, s]) => ({ id, label: s.label }));
 const presetLabels: Record<string, string> = { prospect: 'Sofia · Prospect', student: 'Sofia · Student', alumna: 'Sofia · Alumna/Donor', learner: 'Sofia · Learner' };
 const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c');
+
+// Affinity tuner rows (PLAN.md §5.3, §7).
+const WEIGHT_LABELS: Record<string, string> = {
+  PAGE_VIEW: 'Page view',
+  CLICK: 'Click on a call to action',
+  FORM_START: 'Form start',
+  FORM_SUBMIT: 'Form submit',
+  DWELL: '30 seconds engaged on a page',
+  AGENT_INTERACTION: 'Question to the agent',
+};
+const weightRows = Object.entries(WEIGHTS).map(([key, dflt]) => ({ key, dflt, label: WEIGHT_LABELS[key] ?? key }));
+const ZONE_LABELS: Record<string, string> = {
+  'pz-home-hero': 'Home hero',
+  'pz-recommended-programs': 'Program lists',
+  'pz-giving-cta': 'Giving band',
+  'pz-next-credential': 'Certificates tile',
+};
+const signalLabel = (w: any) =>
+  w.topAffinity === 'certificate'
+    ? 'top certificate interest'
+    : w.topAffinity
+      ? 'top academic interest'
+      : `${w.affinity.split(':')[1].replace(/-/g, ' ')} interest`;
+const thresholdRows = TUNABLE_RULES.map((r: any) => ({
+  id: r.id,
+  dflt: r.when.minScore,
+  zone: ZONE_LABELS[r.zone] ?? r.zone,
+  variant: r.variant,
+  signal: signalLabel(r.when),
+}));
 ---
 <ToolLayout title="Demo control panel">
   <header class="tool-header">
@@ -128,8 +160,47 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
         <a class="slds-btn" href="/data360/" target="cu-data360" data-open-companion>Open /data360 companion window</a>
       </div>
       <p class="help">The inspector drawer is on every site page: click the blue <b>Data 360</b> tab on the right edge, or press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>I</kbd>. It stays open as you move between pages.</p>
-      <h3 class="sub">Affinity tuner <span class="pill">Phase 2</span></h3>
-      <p class="help">Action weights and thresholds arrive with the affinity engine.</p>
+      <h3 class="sub">Affinity tuner</h3>
+      <p class="help">
+        How many points each action adds to every matching affinity, and how many points each personalization rule needs.
+        Saved in this browser and applied live to open site tabs. New weights apply to new activity; points already earned stay.
+      </p>
+      <div class="tuner">
+        <div class="table-scroll">
+          <table>
+            <caption>Points per action</caption>
+            <thead><tr><th scope="col">Action</th><th scope="col">Points</th><th scope="col">Default</th></tr></thead>
+            <tbody>
+              {weightRows.map((w) => (
+                <tr data-tuner-row>
+                  <th scope="row"><label for={`tune-w-${w.key}`}>{w.label}</label></th>
+                  <td><input id={`tune-w-${w.key}`} type="number" inputmode="numeric" min="0" max="50" step="1" data-weight={w.key} data-default={w.dflt} /></td>
+                  <td>{w.dflt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <caption>Points a rule needs</caption>
+            <thead><tr><th scope="col">Rule</th><th scope="col">Needs</th><th scope="col">Default</th></tr></thead>
+            <tbody>
+              {thresholdRows.map((r) => (
+                <tr data-tuner-row>
+                  <th scope="row">
+                    <label for={`tune-t-${r.id}`}>{r.zone}: <b>{r.variant}</b></label>
+                    <span class="tuner__signal">{r.signal} · <code>{r.id}</code></span>
+                  </th>
+                  <td><input id={`tune-t-${r.id}`} type="number" inputmode="numeric" min="1" max="50" step="1" data-threshold={r.id} data-default={r.dflt} /></td>
+                  <td>{r.dflt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p><button type="button" class="slds-btn" data-action="reset-tuner">Restore tuner defaults</button></p>
     </section>
 
     <section class="card">
@@ -223,6 +294,36 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     font-size: 0.9rem;
     margin: 1.1rem 0 0.5rem;
   }
+  .tuner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    align-items: start;
+  }
+  .tuner caption {
+    text-align: left;
+    font-weight: 700;
+    padding-bottom: 0.35rem;
+  }
+  .tuner th[scope='row'] {
+    font-weight: 400;
+  }
+  .tuner input {
+    width: 4.5rem;
+    font: inherit;
+    padding: 0.2rem 0.35rem;
+    border: 1px solid var(--slds-border);
+    border-radius: 4px;
+  }
+  .tuner tr.is-changed input {
+    border-color: #dd7a01;
+    background: #fef1e4;
+  }
+  .tuner__signal {
+    display: block;
+    font-size: 0.8rem;
+    color: #5c5c5c;
+  }
   kbd {
     border: 1px solid var(--slds-border);
     border-bottom-width: 2px;
@@ -238,6 +339,7 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     captureUrlOverrides,
     getSettings,
     getOverrides,
+    getSaved,
     saveSettings,
     resetSettings,
     clearOverrides,
@@ -310,6 +412,15 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     });
     visitorEl.className = `pill ${sim.identity?.known ? 'pill--ok' : ''}`;
 
+    // Affinity tuner: effective values; a changed value is highlighted. Leave the field being typed in alone.
+    document.querySelectorAll<HTMLInputElement>('input[data-weight], input[data-threshold]').forEach((input) => {
+      const table = input.dataset.weight ? s.weights : s.thresholds;
+      const key = (input.dataset.weight ?? input.dataset.threshold)!;
+      const value = table?.[key] ?? Number(input.dataset.default);
+      if (document.activeElement !== input) input.value = String(value);
+      input.closest('tr')!.classList.toggle('is-changed', key in (table ?? {}));
+    });
+
     $('#overrides').textContent = Object.keys(overrides).length ? JSON.stringify(overrides, null, 2) : 'none';
     $('#effective').textContent = JSON.stringify(s, null, 2);
   }
@@ -318,6 +429,19 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     const t = e.target as HTMLInputElement | HTMLSelectElement;
     if (t instanceof HTMLInputElement && t.type === 'checkbox' && t.dataset.setting) {
       saveSettings({ [t.dataset.setting]: t.checked });
+    } else if (t instanceof HTMLInputElement && (t.dataset.weight || t.dataset.threshold)) {
+      const isWeight = Boolean(t.dataset.weight);
+      const key = (t.dataset.weight ?? t.dataset.threshold)!;
+      const min = isWeight ? 0 : 1;
+      const dflt = Number(t.dataset.default);
+      const n = Math.round(Number(t.value));
+      const value = Number.isFinite(n) && t.value.trim() !== '' ? Math.min(50, Math.max(min, n)) : dflt;
+      const field = isWeight ? 'weights' : 'thresholds';
+      const next = { ...(getSaved()[field] ?? {}) };
+      if (value === dflt) delete next[key];
+      else next[key] = value;
+      t.value = String(value);
+      saveSettings({ [field]: next });
     } else if (t instanceof HTMLInputElement && t.name === 'identityMatching') {
       saveSettings({ identityMatching: t.value });
     } else if (t instanceof HTMLSelectElement && t.dataset.setting === 'agentPersona') {
@@ -331,6 +455,9 @@ const simCatalog = JSON.stringify(await getSimCatalog()).replace(/</g, '\\u003c'
     if (action === 'reset-settings') {
       resetSettings();
       say('Settings restored to defaults.');
+    } else if (action === 'reset-tuner') {
+      saveSettings({ weights: {}, thresholds: {} });
+      say('Tuner restored to the defaults.');
     } else if (action === 'clear-overrides') {
       clearOverrides();
       history.replaceState(null, '', location.pathname);

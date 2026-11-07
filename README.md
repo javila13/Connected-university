@@ -2,7 +2,7 @@
 
 A fictitious university website for Salesforce Higher Ed demos. Data 360 web tracking, Personalization and Agentforce are simulated in the browser. The site loads no live chat widget: presenters add Qualified (Piper) with a Chrome extension. See `PLAN.md` for the plan, `CLAUDE.md` for the working rules and `docs/decisions.md` for what was decided during the build.
 
-**Status:** live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phases 0 (scaffold) and 1 (content, 106 pages) are complete. Phase 2 (simulation) is in progress: the event store, affinity engine, Data 360 inspector drawer, `/data360` companion window, persona presets, Become Sofia, the automatic identity stitch, personalization (four zones, "Why am I seeing this?", the decisions log) and the Agentforce mock are in. **Demo click-paths for the team are in [`docs/demo-guide.md`](docs/demo-guide.md).**
+**Status:** live at https://connected-university-website-64975a496d17.herokuapp.com, auto-deployed from `main`. Phases 0 (scaffold) and 1 (content, 106 pages) are complete. Phase 2 (simulation) is complete: the event store, affinity engine, Data 360 inspector drawer, `/data360` companion window, persona presets, Become Sofia, the automatic identity stitch, personalization (four zones, "Why am I seeing this?", the decisions log), the Agentforce mock and the affinity tuner. Phase 3 (Piper) needs no site code: presenters add Piper with a Chrome extension. **The six demo story paths for the team are in [`docs/demo-guide.md`](docs/demo-guide.md)**, also published as a shareable page: https://claude.ai/artifact/Bj1HvirUBs9TyY1Yr2fVGg (private until shared from its Share menu). After editing the guide, rebuild the page with `node scripts/guide-page.mjs <out.html>` and republish it.
 
 ## Run it locally
 
@@ -47,6 +47,7 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | "Simulated" badge | Show or hide the badge on simulated UI |
 | "Why am I seeing this?" | Show or hide the button on each personalized zone |
 | "Grounded in Data 360" notes | Show or hide the notes under the Agentforce mock's answers |
+| Affinity tuner | Points per action and the score each personalization rule needs; saved in the browser, applied live |
 
 URL params override the saved settings for one browser tab: `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`, `?grounding=0`.
 
@@ -59,7 +60,7 @@ Data 360 tracking is simulated in the browser (PLAN.md §5). With cookie consent
 - **Sofia:** any demo form with an email (except the recruiting questionnaire) or the Student Portal sign-in stitches the visitor to her known profile at the life stage that fits (see `docs/demo-guide.md`). `/demo` → **Identity matching** can instead make any other email a new contact with only what was typed. `/demo` → **Become Sofia** does the stitch from the control panel; **Persona presets** start over as Sofia at a life stage (prospect, student, alumna/donor, learner). Her attributes live in `content/sofia.json`, checked at build time.
 - **Agentforce mock:** three scripted agents (Student Recruitment, Student Success, Alumni & Giving), routed by page audience. Conversations live in `content/agent-scripts.json`. Each answer is the first response whose condition fits the visitor, so the agent works for Sofia, a new contact or an anonymous visitor. Unscripted questions are answered from the site's pages (`search-index.json`). The chat's sign-in form, or an email typed in chat, is an identity moment. Each question is an `AGENT_INTERACTION` engagement row. `npm run build` fails on an unknown token, fact, condition or link in the scripts.
 - **Reset:** `/demo` → **Reset visitor** (also clears agent conversations).
-- **Weights:** `sim/config.js` (page view 1, click 3, form start 2, form submit 5, 30 seconds on a page +1, agent question 3).
+- **Weights:** defaults in `sim/config.js` (page view 1, click 3, form start 2, form submit 5, 30 seconds on a page +1, agent question 3). `/demo` → **Affinity tuner** overrides them, and the personalization thresholds, per browser.
 
 ## Site search
 

@@ -1,5 +1,5 @@
 {
-  "_about": "Personalization rules (PLAN.md §5.4). For each zone on a page, the first rule whose `when` matches picks the variant; with no match the zone keeps its default. Variants are content files in content/variants/<zone>/<variant>.md, except pz-recommended-programs, whose `rank` variant reorders the program cards by academic interest. `when` keys: person (sofia | visitor | known | anonymous), stage (a sofia.json stage), topAffinity (\"academic-interest\" = any program, \"certificate\" = any certificate topic, or a specific program id) with minScore, affinity (a category key such as \"interest:athletics\") with minScore, and conversion (gift | tickets). [[token]] placeholders in a reason are filled from the visitor's profile. The build fails on an unknown zone, variant, stage or key.",
+  "_about": "Personalization rules (PLAN.md §5.4). For each zone on a page, the first rule whose `when` matches picks the variant; with no match the zone keeps its default. Variants are content files in content/variants/<zone>/<variant>.md, except pz-recommended-programs, whose `rank` variant reorders the program cards by academic interest. `when` keys: person (sofia | visitor | known | anonymous), stage (a sofia.json stage), topAffinity (\"academic-interest\" = any program, \"certificate\" = any certificate topic, or a specific program id) with minScore, affinity (a category key such as \"interest:athletics\") with minScore, and conversion (gift | tickets). [[token]] placeholders in a reason are filled from the visitor's profile; [[minScore]] is the rule's threshold, which the /demo affinity tuner can change. The build fails on an unknown zone, variant, stage or key.",
   "rules": [
     {
       "id": "hero-admitted",
@@ -41,14 +41,14 @@
       "zone": "pz-home-hero",
       "when": { "topAffinity": "academic-interest", "minScore": 3 },
       "variant": "program",
-      "reason": "[[programTitle]] is the visitor's top academic interest, with [[programScore]] points (3 or more needed)."
+      "reason": "[[programTitle]] is the visitor's top academic interest, with [[programScore]] points ([[minScore]] or more needed)."
     },
     {
       "id": "hero-athletics",
       "zone": "pz-home-hero",
       "when": { "affinity": "interest:athletics", "minScore": 5 },
       "variant": "athletics",
-      "reason": "Athletics interest of [[athleticsScore]] points (5 or more needed)."
+      "reason": "Athletics interest of [[athleticsScore]] points ([[minScore]] or more needed)."
     },
     {
       "id": "programs-next-step",
@@ -84,7 +84,7 @@
       "zone": "pz-giving-cta",
       "when": { "affinity": "interest:athletics", "minScore": 5 },
       "variant": "athletics",
-      "reason": "Athletics interest of [[athleticsScore]] points (5 or more needed), so the ask is the Athletics Fund."
+      "reason": "Athletics interest of [[athleticsScore]] points ([[minScore]] or more needed), so the ask is the Athletics Fund."
     },
     {
       "id": "credential-mba",
@@ -98,7 +98,7 @@
       "zone": "pz-next-credential",
       "when": { "topAffinity": "certificate", "minScore": 3 },
       "variant": "certificate",
-      "reason": "The [[certificateTitle]] is the visitor's top certificate interest, with [[certificateScore]] points (3 or more needed)."
+      "reason": "The [[certificateTitle]] is the visitor's top certificate interest, with [[certificateScore]] points ([[minScore]] or more needed)."
     }
   ]
 }
