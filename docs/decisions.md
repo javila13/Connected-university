@@ -450,7 +450,7 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-09: **Sustainability Studies photo (Jesse, last batch).**
   - `hero/program-sustainability-studies.jpg`: students harvesting a rooftop garden in front of solar panels, with a city skyline soft in the distance. 330 KB.
   - The navy jersey on the bench carried a large gold script, so it was retouched to plain navy; the gold side stripe stays.
-  - The skyline looks like downtown Los Angeles, which is plausible from a campus in Santa Fe Springs. On a laptop the headline card covers most of it. Whether it counts as a "real landmark" is Jesse's call *(uncertain — flag for review)*.
+  - The skyline looks like downtown Los Angeles, which is plausible from a campus in Santa Fe Springs. On a laptop the headline card covers most of it. **Jesse: keep the skyline** (2026-11-09).
 - 2026-11-09: **Athletics photo, third version (Jesse). All 16 hero photos are now present.**
   - The second arena photo wasn't used: the player is in the center, where the headline card covers him on a laptop, and a gold logo on the shorts resembles West Virginia University's "Flying WV" *(hypothesis — needs validation)*. It also had brand swooshes on the jersey, shoes and socks.
   - The third version puts the shooter on the right, clear of the card on a laptop *(verified — Playwright screenshot at 1366 × 768, 2026-11-09)*.
