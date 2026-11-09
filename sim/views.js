@@ -244,6 +244,7 @@ export function decisionsView(state, { catalog = {} } = {}) {
             <p class="d360-row__title"><code>${esc(d.zone)}</code> <span class="d360-muted">· rule <code>${esc(d.ruleId)}</code></span></p>
             <p class="d360-decision__reason">${esc(d.reason)}</p>
             ${d.shown?.length ? `<p class="d360-muted">Shown: ${d.shown.map((id) => esc(catalog.programs?.[id] ?? id)).join(', ')}</p>` : ''}
+            ${d.image ? `<p class="d360-muted">Photo: <code>${esc(d.image)}</code></p>` : ''}
             ${d.signals?.length ? `<ul class="d360-decision__signals">${d.signals.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
             <p class="d360-row__meta"><code>${esc(d.page)}</code> <span class="d360-muted">· ${esc(d.person)}</span></p>
           </li>`,

@@ -1,5 +1,6 @@
 ---
 zone: pz-home-hero
+image: hero/learner
 eyebrow: Welcome back, [[firstName]]
 heading: Your next credential is closer than you think
 body: "Your certificate's graduate credits count toward the online MBA with a Sustainable Business focus. Alumni also save {{facts.alumni.ceDiscountPercent}}% on every professional certificate."

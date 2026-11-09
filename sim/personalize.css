@@ -107,6 +107,7 @@
 
 /* Anti-flicker (BaseLayout): zones wait for their variant. */
 .pz-pending [data-pz-slot],
-.pz-pending [data-pz-rank] {
+.pz-pending [data-pz-rank],
+.pz-pending [data-pz-images] {
   visibility: hidden;
 }

@@ -140,6 +140,17 @@ for (const path of ['/demo/', '/data360/']) {
     const { res: a } = await get(asset);
     check('built assets are cached immutably', /immutable/.test(a.headers.get('cache-control') || ''));
   }
+  // Hero photos: the list the personalization engine swaps from (src/lib/hero-images.js).
+  const raw = home.match(/data-pz-images="([^"]*)"/)?.[1];
+  let photos = null;
+  try {
+    photos = JSON.parse(raw.replace(/&quot;/g, '"').replace(/&amp;/g, '&'));
+  } catch {}
+  check('home hero lists its photos', photos && typeof photos === 'object');
+  for (const [key, url] of Object.entries(photos ?? {})) {
+    const { res: img } = await get(url);
+    check(`hero photo ${key} is served`, img.status === 200 && /^image\//.test(img.headers.get('content-type') || ''), `${url}: ${img.status}`);
+  }
 }
 
 console.log(`${passed} checks passed against ${BASE} (${locs.length} pages in the sitemap, ${internalLinks.size} internal links)`);

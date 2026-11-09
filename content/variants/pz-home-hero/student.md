@@ -1,5 +1,6 @@
 ---
 zone: pz-home-hero
+image: hero/student
 eyebrow: Welcome back, [[firstName]]
 heading: Here's what's coming up
 body: "Spring registration opens {{facts.registrar.springRegistration}}. Your advisor, your courses and your deadlines are waiting in the Student Portal."

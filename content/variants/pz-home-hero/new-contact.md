@@ -1,5 +1,6 @@
 ---
 zone: pz-home-hero
+image: hero/new-contact
 eyebrow: Welcome, [[firstName]]
 heading: Let's find your path
 body: "Thanks for getting in touch. Explore our programs, see what Connected U really costs, and come see campus for yourself."
