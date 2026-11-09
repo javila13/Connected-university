@@ -16,10 +16,11 @@ One photo per home-hero variant, so the photo changes along with the headline wh
 ## Specs for every image
 
 - **Shape:** 16:9 landscape, at least 1920 × 1080 (2400 × 1350 is better). Export JPG or WebP, under about 350 KB.
-- **Composition:** on a laptop, the white headline card covers roughly the left 60% of the hero. Put the main subject in the **right third**, and keep the left side calm: sky, soft-focus background, open space. On a phone the card covers most of the image, so the photo is mostly atmosphere there.
+- **Composition:** on a laptop, the white headline card covers roughly the left 60% of the hero. Put the main subject in the **right third**, and keep the left side calm: sky, soft-focus background, open space. The hero is taller than 16:9 on a laptop, so up to about 15% of the photo is cropped from each side (about 300 of 2,000 px at 1366 px wide when the headline wraps to four lines). Keep faces between about 60% and 85% of the width, not at the right edge. On a phone the card covers most of the image, so the photo is mostly atmosphere there.
 - **One campus, one look:** the same fictional Southern California campus and the same late-afternoon light in every shot, so the set reads as one school. The school colors, navy and gold, show up only as small accents.
 - **Avoid:**
-  - readable text, signs, logos or wordmarks (no real universities or brands);
+  - readable text, signs, logos or wordmarks (no real universities or brands), including chest scripts on jackets and water bottles, the swoosh-style marks on shoes and socks, laptop logos, and seals or crests on bags;
+  - split screens or collages: two photos joined into one frame;
   - real landmarks;
   - anyone who looks like a real person;
   - staged stock-photo poses.
@@ -43,7 +44,7 @@ For indoor shots (student, learner, the arena and most program labs), drop the "
 | `hero/alumna.jpg` | Sofia, alumna: "Once connected, always connected" | Alumni in their late twenties reconnecting at a homecoming weekend on the campus lawn, hugging and laughing, string lights and navy-and-gold bunting behind them, early evening. |
 | `hero/learner.jpg` | Sofia, certificate holder: "Your next credential is closer than you think" | A working professional in their thirties taking an online class at home in the evening, laptop showing a video lecture (screen not legible), notebook and a cup of tea, warm lamp light, calm and motivated. |
 | `hero/new-contact.jpg` | A new contact: "Let's find your path" | A prospective student and a parent on a guided campus tour, a student tour guide gesturing toward a building, welcoming and curious. |
-| `hero/athletics.jpg` | Athletics fan: "Catch a game this season" | Game night in a packed college basketball arena, players in navy and gold uniforms with no logos or readable lettering driving to the basket, crowd cheering, dramatic arena lighting. |
+| `hero/athletics.jpg` | Athletics fan: "Catch a game this season" | Game night in a packed college basketball arena, players in navy and gold uniforms with no logos or readable lettering driving to the basket, crowd cheering, dramatic arena lighting. One continuous photograph, not a split screen or collage. Plain shoes and socks with no brand marks, and a scoreboard with no letters or symbols. |
 | `hero/program.jpg` | Top program: "Your future in [program] starts here" (used when a program has no image of its own) | Students working together on a hands-on project in a bright, modern teaching lab, curious and engaged. |
 
 ## Optional: one image per program (8 more)

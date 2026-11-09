@@ -425,3 +425,35 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
 - 2026-11-09: **New defaults (Jesse):** Simulation on (unchanged), Consent auto-accept **on**, "Simulated" badge **off**, "Why am I seeing this?" **off**, "Grounded in Data 360" notes **off**. The Agentforce mock stays off. Browsers with saved settings keep what they saved; **Restore defaults** applies the new ones.
 - 2026-11-09: With auto-accept on by default, every visitor to the public site, not only presenters, skips the cookie banner and gets the simulation from the first page. Everything it records stays in that visitor's browser *(verified — no network requests from the simulation, Playwright 2026-11-07)*, and the site loads no third-party chat or tracking. The privacy page still describes the banner, which reappears for anyone who turns auto-accept off.
 - 2026-11-09: The guides now tell presenters to turn on "Why am I seeing this?" for stories with a Why step, and the notes switch if they want the audience to see them. Troubleshooting has a "No Why button" entry.
+
+### More hero photos (2026-11-09)
+- 2026-11-09: **Four more hero photos (Jesse, second batch of five).** `hero/alumna.jpg` (a homecoming reunion on the lawn), `hero/learner.jpg` (an adult learner studying at home in the evening), `hero/new-contact.jpg` (a prospect and a parent on a campus tour) and `hero/program-engineering.jpg` (students building a robot). Each is re-encoded to 2000 × 1116 JPEG, 243–322 KB. Nine of 16 photos are now present; on a laptop every subject sits to the right of the headline card *(verified — Playwright screenshots at 1366 × 768, 2026-11-09)*.
+- 2026-11-09: The homecoming photo had a gold "Cal"-style script on a navy jacket, the same mark as the water bottle in the first batch, so it was retouched to plain navy before committing. The tour guide's polo crest and the hoodie lettering in the engineering photo are garbled, not a real mark.
+- 2026-11-09: **The arena photo is held back.** It is two photos joined at a hard vertical seam about two-thirds of the way across, where the subjects sit, and several players' shoes and socks carry a real sportswear brand's swoosh. Athletics fans keep the default photo until a single-frame version without brand marks arrives. The athletics prompt in `docs/hero-image-prompts.md` now asks for one continuous photograph, plain shoes and socks, and a scoreboard without letters or symbols, and the Avoid list names chest scripts, shoe marks and split screens.
+- 2026-11-09: **Five more hero photos (Jesse, third batch).**
+  - `hero/program-business-administration.jpg`: a team at a whiteboard in a glass seminar room.
+  - `hero/program-computer-science.jpg`: pair programming.
+  - `hero/program-psychology.jpg`: a research session at a table.
+  - `hero/program-education.jpg`: a student teacher with an elementary class.
+  - `hero/program.jpg`: a makerspace robot build. This is the fallback for any program without its own photo; today that's only Sustainability Studies.
+
+  Each is 244–308 KB. 14 of 16 photos are now present; the athletics redo and Sustainability Studies are still to come.
+- 2026-11-09: Retouched before committing:
+  - a laptop maker's logo on closed laptops in the Business Administration and Psychology photos;
+  - a seal on a child's backpack in the Education photo. Its text is garbled, but in navy and gold it reads as a university seal.
+
+  Other lettering (hoodies, a lanyard, the robot chassis, the code on screens, the children's artwork) is garbled or out of focus.
+- 2026-11-09: **The hero photo stays centered.**
+  - A longer program name wraps the headline to four lines and makes the hero taller, so the photo is scaled up and cropped at the sides. At 1366 px wide, Business Administration loses 298 of 2,000 photo pixels on each side; at 1920 px, 70 *(verified — measured in Playwright, 2026-11-09)*.
+  - Anchoring the photo to the right edge was tried and rejected: it hid people behind the headline card in the Admitted, Learner, Computer Science and Psychology photos *(verified — screenshots of all 14 states at 1366 × 768, 2026-11-09)*.
+  - Instead, the prompts doc now asks for faces between about 60% and 85% of the width. At laptop widths the Business Administration photo cuts the student at the whiteboard at the right edge; the other three students show.
+- 2026-11-09: **Sustainability Studies photo (Jesse, last batch).**
+  - `hero/program-sustainability-studies.jpg`: students harvesting a rooftop garden in front of solar panels, with a city skyline soft in the distance. 330 KB.
+  - The navy jersey on the bench carried a large gold script, so it was retouched to plain navy; the gold side stripe stays.
+  - The skyline looks like downtown Los Angeles, which is plausible from a campus in Santa Fe Springs. On a laptop the headline card covers most of it. **Jesse: keep the skyline** (2026-11-09).
+- 2026-11-09: **Athletics photo, third version (Jesse). All 16 hero photos are now present.**
+  - The second arena photo wasn't used: the player is in the center, where the headline card covers him on a laptop, and a gold logo on the shorts resembles West Virginia University's "Flying WV" *(hypothesis — needs validation)*. It also had brand swooshes on the jersey, shoes and socks.
+  - The third version puts the shooter on the right, clear of the card on a laptop *(verified — Playwright screenshot at 1366 × 768, 2026-11-09)*.
+  - It had the same "WV"-style logo on the shorts, so that was painted out to plain navy. Also removed: a waistband logo, and eight swooshes on the jersey, shorts, socks and the defenders' red shoes.
+  - The jersey lettering, the defenders' lettering and crests, the jumbotron and the sponsor panels are garbled or motion-blurred, so they stay. The blurred blue-and-red sponsor panel sits under the headline card *(uncertain — flag for review)*.
+  - The file is 364 KB at JPEG quality 70, a little over the ~350 KB target, because the crowd is so detailed.
