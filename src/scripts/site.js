@@ -9,7 +9,7 @@ captureUrlOverrides();
 const body = document.body;
 const audience = body.dataset.audience;
 
-// --- Settings reflected on <body> (the simulation reads these in Phase 2) ---
+// --- Settings reflected on <body> (the simulation and CSS read these) ---
 function reflectSettings(settings) {
   body.dataset.sim = settings.simulation ? 'on' : 'off';
   body.dataset.simBadge = settings.simulatedBadge ? 'on' : 'off';

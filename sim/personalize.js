@@ -14,7 +14,7 @@ import { displayName, STAGES } from './identity.js';
 import { fundName } from './profile.js';
 import { OBJECTS } from './config.js';
 import { esc } from './views.js';
-import { getSettings, onSettingsChange } from '../src/scripts/settings.js';
+import { getSettings, onSettingsChange, effectiveMin } from '../src/scripts/settings.js';
 import { isGranted } from '../src/scripts/consent.js';
 
 /** Oldest decisions are dropped beyond this. */
@@ -22,6 +22,8 @@ export const MAX_DECISIONS = 200;
 const RULES = rulesFile.rules;
 
 const usd = (n) => `$${Number(n || 0).toLocaleString('en-US')}`;
+/** "1 point", "4 points". */
+export const pts = (n) => `${n} ${Number(n) === 1 ? 'point' : 'points'}`;
 const time = (iso) => new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
 /** What the rules can see about the visitor. */
@@ -69,9 +71,13 @@ export function matches(when = {}, ctx) {
   return true;
 }
 
+/** A rule's `when` with the /demo tuner's threshold, if any. */
+const tuned = (rule, settings) =>
+  typeof rule.when?.minScore === 'number' ? { ...rule.when, minScore: effectiveMin(rule, settings) } : rule.when;
+
 /** The first matching rule for a zone, or null for the default. */
-export function decide(zone, ctx) {
-  return RULES.find((r) => r.zone === zone && matches(r.when, ctx)) ?? null;
+export function decide(zone, ctx, settings = getSettings()) {
+  return RULES.find((r) => r.zone === zone && matches(tuned(r, settings), ctx)) ?? null;
 }
 
 /** Values for [[token]] placeholders in variants and reasons. */
@@ -91,12 +97,15 @@ export function tokensFor(ctx) {
     programDescription: prog.description ?? '',
     programUrl: prog.url ?? '/academics/programs/',
     programScore: String(ctx.topProgram?.score ?? 0),
+    programPoints: pts(ctx.topProgram?.score ?? 0),
     certificateId: ctx.topCertificate?.value ?? '',
     certificateTitle: cert.title ?? ctx.topCertificate?.label ?? '',
     certificateDescription: cert.description ?? '',
     certificateUrl: cert.url ?? '/continuing-ed/certificates/',
     certificateScore: String(ctx.topCertificate?.score ?? 0),
+    certificatePoints: pts(ctx.topCertificate?.score ?? 0),
     athleticsScore: String(ctx.score('interest:athletics')),
+    athleticsPoints: pts(ctx.score('interest:athletics')),
     lastGiftAmount: lastGift ? usd(lastGift.amount) : '',
     lastGiftFund: lastGift ? fundName(lastGift.fund) : '',
     giftAmount: ctx.gift ? `${usd(ctx.gift.amount)}${ctx.gift.frequency === 'monthly' ? ' monthly' : ''}` : '',
@@ -117,11 +126,11 @@ export function signalsFor(rule, ctx) {
   if (w.person) out.push(`Identity: ${ctx.known ? displayName(ctx.identity) : 'anonymous visitor'}${ctx.person === 'visitor' ? ' (new contact)' : ''}`);
   if (w.stage) out.push(`Life stage: ${STAGES[ctx.stage] ?? ctx.stage}`);
   if (w.topAffinity === 'certificate' && ctx.topCertificate) {
-    out.push(`Top certificate interest: ${ctx.topCertificate.label}, ${ctx.topCertificate.score} points`);
+    out.push(`Top certificate interest: ${ctx.topCertificate.label}, ${pts(ctx.topCertificate.score)}`);
   } else if (w.topAffinity && ctx.topProgram) {
-    out.push(`Top academic interest: ${ctx.topProgram.label}, ${ctx.topProgram.score} points`);
+    out.push(`Top academic interest: ${ctx.topProgram.label}, ${pts(ctx.topProgram.score)}`);
   }
-  if (w.affinity) out.push(`${ctx.label(w.affinity)}: ${ctx.score(w.affinity)} points`);
+  if (w.affinity) out.push(`${ctx.label(w.affinity)}: ${pts(ctx.score(w.affinity))}`);
   if (w.conversion === 'gift' && ctx.gift) out.push(`Gift this visit: ${usd(ctx.gift.amount)} to ${fundName(ctx.gift.fund)}`);
   if (w.conversion === 'tickets') out.push('Ticket order this visit');
   if (rule.pin) out.push(`Pinned first: ${ctx.catalog.programs?.[rule.pin] ?? rule.pin}`);
@@ -163,7 +172,7 @@ function setOrder(zone, items) {
 }
 
 /** Applies a decision to a zone. Returns what's now shown, or null if nothing changed. */
-function apply(zone, rule, ctx, tokens) {
+function apply(zone, rule, ctx, tokens, salt = '') {
   if (!rule) {
     if (zone.applied.key === 'default') return null;
     if (zone.list) setOrder(zone, zone.defaultOrder.map((li) => ({ li })));
@@ -175,7 +184,7 @@ function apply(zone, rule, ctx, tokens) {
   if (zone.list) {
     const items = rankOrder(zone, rule, ctx);
     const shown = items.slice(0, zone.limit || items.length).map((x) => x.id);
-    const key = `${rule.id}|${items.map((x) => x.id).join(',')}`;
+    const key = `${rule.id}|${salt}|${items.map((x) => x.id).join(',')}`;
     if (zone.applied.key === key) return null;
     setOrder(zone, items);
     zone.el.dataset.pzVariant = rule.variant;
@@ -188,7 +197,7 @@ function apply(zone, rule, ctx, tokens) {
     return null;
   }
   const html = fillHtml(tpl.innerHTML, tokens);
-  const key = `${rule.id}|${html}`;
+  const key = `${rule.id}|${salt}|${html}`;
   if (zone.applied.key === key) return null;
   zone.slot.innerHTML = html;
   zone.el.dataset.pzVariant = rule.variant;
@@ -268,8 +277,9 @@ export function startPersonalization({ catalog = {} } = {}) {
     const tokens = tokensFor(ctx);
     const logged = [];
     for (const zone of zones) {
-      const rule = active ? decide(zone.id, ctx) : null;
-      const changed = apply(zone, rule, ctx, tokens);
+      const rule = active ? decide(zone.id, ctx, settings) : null;
+      // The threshold is part of the key, so tuning it re-logs the decision with the new reason.
+      const changed = apply(zone, rule, ctx, tokens, rule ? String(effectiveMin(rule, settings) ?? '') : '');
       if (changed && rule) {
         const decision = {
           id: `pzd_${Math.random().toString(36).slice(2, 10)}`,
@@ -277,7 +287,7 @@ export function startPersonalization({ catalog = {} } = {}) {
           zone: zone.id,
           ruleId: rule.id,
           variant: rule.variant,
-          reason: fillText(rule.reason, tokens),
+          reason: fillText(rule.reason, { ...tokens, minScore: String(effectiveMin(rule, settings) ?? '') }),
           signals: signalsFor(rule, ctx),
           shown: changed.shown,
           page: location.pathname,

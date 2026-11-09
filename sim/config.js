@@ -1,5 +1,5 @@
-// Simulation settings (PLAN.md §5.2, §5.3). Weights are tunable here; the
-// /demo affinity tuner arrives later in Phase 2.
+// Simulation settings (PLAN.md §5.2, §5.3). These are the defaults; the /demo
+// affinity tuner can override the weights per browser (src/scripts/settings.js).
 
 /** localStorage key for the simulated profile. /demo "Reset visitor" clears every key starting with `cu_sim`. */
 export const STATE_KEY = 'cu_sim_state';

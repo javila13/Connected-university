@@ -7,6 +7,12 @@
 // open a link like /?agentforce=1 and keep that override while clicking around in
 // the same tab, without permanently changing the saved settings.
 import { AGENT_PERSONAS } from '../lib/taxonomy.js';
+import { WEIGHTS } from '../../sim/config.js';
+import rulesFile from '../../content/personalization-rules.json';
+
+/** Personalization rules with a score threshold the /demo tuner can change. */
+export const TUNABLE_RULES = rulesFile.rules.filter((r) => typeof r.when?.minScore === 'number');
+const TUNER_MAX = 50;
 
 const STORAGE_KEY = 'cu_demo_settings';
 const OVERRIDE_KEY = 'cu_demo_overrides';
@@ -28,7 +34,18 @@ export const DEFAULTS = Object.freeze({
   showWhy: true,
   // "Grounded in Data 360" notes under the Agentforce mock's answers.
   showGrounding: true,
+  // Affinity tuner overrides: { ACTION: points } and { ruleId: minScore }.
+  // Empty = the defaults in sim/config.js and content/personalization-rules.json.
+  weights: {},
+  thresholds: {},
 });
+
+const wholeNumber = (v, min) => Number.isInteger(v) && v >= min && v <= TUNER_MAX;
+
+/** Points per action, with the tuner's overrides. */
+export const effectiveWeights = (settings = getSettings()) => ({ ...WEIGHTS, ...settings.weights });
+/** A rule's score threshold, with the tuner's override. */
+export const effectiveMin = (rule, settings = getSettings()) => settings.thresholds?.[rule.id] ?? rule.when?.minScore;
 
 const bool = (v) => (v === '1' || v === 'true' || v === 'on' ? true : v === '0' || v === 'false' || v === 'off' ? false : undefined);
 
@@ -53,6 +70,14 @@ export function sanitize(input) {
     if (typeof input[key] === 'boolean') out[key] = input[key];
   }
   if (IDENTITY_MATCHING.includes(input.identityMatching)) out.identityMatching = input.identityMatching;
+  if (input.weights && typeof input.weights === 'object') {
+    out.weights = Object.fromEntries(Object.entries(input.weights).filter(([k, v]) => k in WEIGHTS && wholeNumber(v, 0)));
+  }
+  if (input.thresholds && typeof input.thresholds === 'object') {
+    out.thresholds = Object.fromEntries(
+      Object.entries(input.thresholds).filter(([k, v]) => TUNABLE_RULES.some((r) => r.id === k) && wholeNumber(v, 1)),
+    );
+  }
   if (input.agentPersona === 'auto' || input.agentPersona in AGENT_PERSONAS) out.agentPersona = input.agentPersona;
   return out;
 }

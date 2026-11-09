@@ -3,7 +3,7 @@
 // Sofia's record comes from content/sofia.json, bundled here rather than
 // written into the page, so crawlers never see it. Nothing leaves the browser.
 //
-// Events on document, for the Phase 2 simulation (identity moment, §5.5):
+// Events on document, for the simulation (identity moment, §5.5):
 //   cu:portal-sign-in   detail { persona: 'sofia', stage: 'student' }
 //   cu:portal-sign-out
 //   cu:portal-action    detail { action: 'book-advising' }

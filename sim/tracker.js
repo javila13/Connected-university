@@ -3,8 +3,8 @@
 // FORM_SUBMIT from the demo forms, and a +1 dwell bonus after 30 seconds on
 // a page, plus AGENT_INTERACTION rows from the Agentforce mock. Runs only
 // with consent `all` and the simulation switched on.
-import { getSettings } from '../src/scripts/settings.js';
-import { WEIGHTS, DWELL_MS, UNTRACKED_SECTIONS } from './config.js';
+import { getSettings, effectiveWeights } from '../src/scripts/settings.js';
+import { DWELL_MS, UNTRACKED_SECTIONS } from './config.js';
 import { categoriesFor, applyPoints } from './affinity.js';
 import { update, newEventId } from './store.js';
 
@@ -46,7 +46,7 @@ export function startTracking({ catalog }) {
       if (!cats.some((x) => x.key === key)) cats.push({ key, type: c.type, value: c.value, label: c.label ?? c.value });
     }
     update((s) => {
-      const points = applyPoints(s, cats, WEIGHTS[action], ts);
+      const points = applyPoints(s, cats, effectiveWeights()[action], ts);
       s.events.push({
         id,
         ts,
@@ -80,7 +80,7 @@ export function startTracking({ catalog }) {
     update((s) => {
       const row = s.events.find((e) => e.id === viewId);
       if (!row || row.engaged) return;
-      const extra = applyPoints(s, categories, WEIGHTS.DWELL, ts);
+      const extra = applyPoints(s, categories, effectiveWeights().DWELL, ts);
       row.engaged = true;
       for (const [k, v] of Object.entries(extra)) row.points[k] = (row.points[k] ?? 0) + v;
     });
