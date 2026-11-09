@@ -451,7 +451,9 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
   - `hero/program-sustainability-studies.jpg`: students harvesting a rooftop garden in front of solar panels, with a city skyline soft in the distance. 330 KB.
   - The navy jersey on the bench carried a large gold script, so it was retouched to plain navy; the gold side stripe stays.
   - The skyline looks like downtown Los Angeles, which is plausible from a campus in Santa Fe Springs. On a laptop the headline card covers most of it. Whether it counts as a "real landmark" is Jesse's call *(uncertain — flag for review)*.
-  - 15 of 16 photos are present.
-- 2026-11-09: **The athletics photo is still pending.**
-  - The second arena photo wasn't used: the player is in the center, where the headline card covers him on a laptop, and a gold logo on the shorts resembles West Virginia University's "Flying WV" *(hypothesis — needs validation)*. It also has brand swooshes on the jersey, shoes and socks, and a ball-maker's script.
-  - Jesse sent a third version with the shooter on the right. It arrived as an image in the chat, not as a file, so it has to be attached again before it can be checked at full size and retouched. Athletics keeps the default photo until then.
+- 2026-11-09: **Athletics photo, third version (Jesse). All 16 hero photos are now present.**
+  - The second arena photo wasn't used: the player is in the center, where the headline card covers him on a laptop, and a gold logo on the shorts resembles West Virginia University's "Flying WV" *(hypothesis — needs validation)*. It also had brand swooshes on the jersey, shoes and socks.
+  - The third version puts the shooter on the right, clear of the card on a laptop *(verified — Playwright screenshot at 1366 × 768, 2026-11-09)*.
+  - It had the same "WV"-style logo on the shorts, so that was painted out to plain navy. Also removed: a waistband logo, and eight swooshes on the jersey, shorts, socks and the defenders' red shoes.
+  - The jersey lettering, the defenders' lettering and crests, the jumbotron and the sponsor panels are garbled or motion-blurred, so they stay. The blurred blue-and-red sponsor panel sits under the headline card *(uncertain — flag for review)*.
+  - The file is 364 KB at JPEG quality 70, a little over the ~350 KB target, because the crowd is so detailed.
