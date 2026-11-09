@@ -9,9 +9,9 @@ Connected University is not a real school. This is a demo site for Salesforce de
 
 ## What this site stores
 
-- **Your cookie choice.** A cookie named `cu_consent` remembers whether you accepted all cookies or only necessary ones.
-- **Personalization (simulated).** If you accept all cookies, the site keeps a simulated visitor profile in your browser's local storage to show how a real site could tailor content to your interests. That profile never leaves your browser.
-- **Chat.** If you accept all cookies, a chat assistant may load. One of our chat assistants is provided by Qualified, which may set its own cookies under its own privacy policy.
+- **Your cookie choice.** A cookie named `cu_consent` remembers whether all cookies or only necessary ones are allowed. On this demo site, all cookies are allowed by default; you can change that below.
+- **Personalization (simulated).** With all cookies allowed, the site keeps a simulated visitor profile in your browser's local storage to show how a real site could tailor content to your interests. That profile never leaves your browser.
+- **Chat.** With all cookies allowed, a chat assistant may load. One of our chat assistants is provided by Qualified, which may set its own cookies under its own privacy policy.
 
 If you choose **Necessary only**, none of the personalization or chat features run.
 

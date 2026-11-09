@@ -44,10 +44,10 @@ Open `/demo`, or press **Ctrl+Alt+D** on any page. Settings are saved in the bro
 | Simulation | Turns the simulated Data 360, Personalization and Agentforce mock on or off |
 | Agentforce mock | Off by default. On: a chat agent bottom-right on every page, matched to the page's audience (Student Recruitment on prospect and Continuing Ed pages, Student Success on student pages, Alumni & Giving on alumni, giving and athletics pages) |
 | Agent persona | Force one Agentforce persona on every page |
-| Consent auto-accept | Skip the cookie banner |
-| "Simulated" badge | Show or hide the badge on simulated UI |
-| "Why am I seeing this?" | Show or hide the button on each personalized zone |
-| "Grounded in Data 360" notes | Show or hide the notes under the Agentforce mock's answers |
+| Consent auto-accept | Skip the cookie banner. On by default |
+| "Simulated" badge | Show or hide the badge on simulated UI. Off by default |
+| "Why am I seeing this?" | Show or hide the button on each personalized zone. Off by default |
+| "Grounded in Data 360" notes | Show or hide the notes under the Agentforce mock's answers. Off by default |
 | Affinity tuner | Points per action and the score each personalization rule needs; saved in the browser, applied live |
 
 URL params override the saved settings for one browser tab: `?agentforce=1`, `?agent=student-success`, `?sim=0`, `?badge=0`, `?autoconsent=1`, `?match=typed`, `?why=0`, `?grounding=0`.

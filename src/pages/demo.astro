@@ -79,25 +79,25 @@ const thresholdRows = TUNABLE_RULES.map((r: any) => ({
 
         <label class="switch">
           <input type="checkbox" data-setting="consentAutoAccept" />
-          <span><strong>Consent auto-accept</strong> · skip the cookie banner</span>
+          <span><strong>Consent auto-accept</strong> · skip the cookie banner. On by default</span>
           <span class="pill pill--warn" data-override-for="consentAutoAccept" hidden>URL override</span>
         </label>
 
         <label class="switch">
           <input type="checkbox" data-setting="simulatedBadge" />
-          <span><strong>"Simulated" badge</strong> · on the inspector, the Agentforce mock and "Why am I seeing this?"</span>
+          <span><strong>"Simulated" badge</strong> · on the inspector, the Agentforce mock and "Why am I seeing this?". Off by default</span>
           <span class="pill pill--warn" data-override-for="simulatedBadge" hidden>URL override</span>
         </label>
 
         <label class="switch">
           <input type="checkbox" data-setting="showWhy" />
-          <span><strong>"Why am I seeing this?"</strong> · a button on each personalized zone that explains the rule behind it</span>
+          <span><strong>"Why am I seeing this?"</strong> · a button on each personalized zone that explains the rule behind it. Off by default</span>
           <span class="pill pill--warn" data-override-for="showWhy" hidden>URL override</span>
         </label>
 
         <label class="switch">
           <input type="checkbox" data-setting="showGrounding" />
-          <span><strong>"Grounded in Data 360" notes</strong> · under the Agentforce mock's answers, listing the profile signals each answer used</span>
+          <span><strong>"Grounded in Data 360" notes</strong> · under the Agentforce mock's answers, listing the profile signals each answer used. Off by default</span>
           <span class="pill pill--warn" data-override-for="showGrounding" hidden>URL override</span>
         </label>
       </div>
