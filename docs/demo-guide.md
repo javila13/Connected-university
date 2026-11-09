@@ -12,7 +12,7 @@ Six story paths for the Connected University demo, one per segment story. Each s
 
 1. Open the demo control panel: go to `/demo` on the site, or press **Ctrl + Alt + D** on any page.
 2. Turn on **Consent auto-accept**, so the cookie banner doesn't interrupt the story. Without it, accept cookies on the first page; nothing is recorded until you do.
-3. Turn on **Agentforce mock** if your story uses the agent (every story below does). Chat is off by default. For one tab only, add `?agentforce=1` to a URL instead. Turn on the Piper Chrome extension only if your story uses Piper.
+3. Turn on **Agentforce mock** if your story uses the agent. Chat is off by default. For one tab only, add `?agentforce=1` to a URL instead. Turn on the Piper Chrome extension only if your story uses Piper.
 4. Click **Reset visitor**, or the **persona preset** your story starts from. Do it before every run.
 5. Check **Simulation** is on. Turn the **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** on or off for your audience. The last two are separate, so you can keep one and hide the other.
 6. Go back to the site's home page. You're ready.
@@ -200,7 +200,7 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 | `pz-giving-cta` | Gold band on Alumni and Giving pages | Gave this visit → **thanks** · Sofia alumna → **upgrade** · Athletics interest of 5+ points → **athletics** (Condor Club) |
 | `pz-next-credential` | Continuing Ed → Certificate Catalog | Sofia learner → **mba** · top certificate interest of 3+ points → **certificate** |
 
-Each home hero variant also swaps in its own photo, and the program hero uses a photo of that program, once the photos are in `public/assets/hero/` (see `docs/hero-image-prompts.md`). Until a photo is added, that variant keeps the default photo.
+Each home hero variant also shows its own photo, and the program hero shows a photo of that program. A variant whose photo hasn't been added yet shows the default photo.
 
 The point thresholds above are defaults; the affinity tuner can change them (see below). **"Why am I seeing this?"** is on by default; turn it off in `/demo` for a cleaner look, or add `?why=0` to a URL for one tab. Personalized content stays either way, and decisions are still logged.
 
