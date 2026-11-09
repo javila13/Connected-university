@@ -27,13 +27,15 @@ export const DEFAULTS = Object.freeze({
   // (Jesse, 2026-11-07); Piper comes from a Chrome extension, not the site.
   agentforce: false,
   agentPersona: 'auto',
-  consentAutoAccept: false,
-  simulatedBadge: true,
+  // Presenter-friendly defaults (Jesse, 2026-11-09): no cookie banner, and no
+  // demo labels or explanations on screen until a presenter turns them on.
+  consentAutoAccept: true,
+  simulatedBadge: false,
   identityMatching: 'sofia',
   // "Why am I seeing this?" buttons on personalized zones.
-  showWhy: true,
+  showWhy: false,
   // "Grounded in Data 360" notes under the Agentforce mock's answers.
-  showGrounding: true,
+  showGrounding: false,
   // Affinity tuner overrides: { ACTION: points } and { ruleId: minScore }.
   // Empty = the defaults in sim/config.js and content/personalization-rules.json.
   weights: {},

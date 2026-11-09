@@ -11,10 +11,10 @@ Six story paths for the Connected University demo, one per segment story. Each s
 ## Before every demo (2 minutes)
 
 1. Open the demo control panel: go to `/demo` on the site, or press **Ctrl + Alt + D** on any page.
-2. Turn on **Consent auto-accept**, so the cookie banner doesn't interrupt the story. Without it, accept cookies on the first page; nothing is recorded until you do.
+2. **Consent auto-accept** is on by default, so the cookie banner doesn't interrupt the story. Turn it off only if you want to show the banner; nothing is recorded until cookies are accepted.
 3. Turn on **Agentforce mock** if your story uses the agent. Chat is off by default. For one tab only, add `?agentforce=1` to a URL instead. Turn on the Piper Chrome extension only if your story uses Piper.
 4. Click **Reset visitor**, or the **persona preset** your story starts from. Do it before every run.
-5. Check **Simulation** is on. Turn the **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** on or off for your audience. The last two are separate, so you can keep one and hide the other.
+5. Check **Simulation** is on. The **"Simulated" badge**, **"Why am I seeing this?"** and the agent's **"Grounded in Data 360" notes** are off by default. Turn on **"Why am I seeing this?"** for any story with a "Why am I seeing this?" step, and the notes if you want the audience to see what the agent's answers are based on. They're separate switches, so you can show one without the other.
 6. Go back to the site's home page. You're ready.
 
 **Single screen or two:**
@@ -116,7 +116,7 @@ Times are estimates for a first run with talk track.
 | 1 | Go to **Continuing Ed**, then **Certificate Catalog**. | The navy tile shows the default: **Featured certificate · Professional Certificate in Sustainability**. | "An anonymous visitor gets our featured certificate." |
 | 2 | Click the chat bubble. Fill in **Sofia**, **Sanders** and **sofia.sanders@demo.com** and click **Start chat**. | The **Student Recruitment Agent** asked for a name and email first. Then "Thanks, Sofia! I found your record." and "Welcome back, Sofia! You earned the Professional Certificate in Sustainability 18 months ago." **Identity** shows **Identity moment: Agentforce chat**. | "Chat is an identity moment too. Her browsing and this conversation now belong to her Unified Individual." |
 | 3 | Look at the tile behind the chat; don't reload. | It changed to **Recommended for you, Sofia · Turn your certificate into an MBA**. | "The page changed while we were chatting, because the same profile drives both." |
-| 4 | Click **What's my next step?** | Her recommended next step, the online MBA with a Sustainable Business focus, with **Explore the MBA**. Under it: **Grounded in Data 360: Identity: Sofia Sanders · Life stage: Learner…** | "The answer comes from her profile, and it says which signals it used." |
+| 4 | Click **What's my next step?** | Her recommended next step, the online MBA with a Sustainable Business focus, with **Explore the MBA**. With the notes switch on, under it: **Grounded in Data 360: Identity: Sofia Sanders · Life stage: Learner…** | "The answer comes from her profile, and it says which signals it used." |
 | 5 | Close the chat and click **Why am I seeing this?** on the tile. | "Known profile: holds the Professional Certificate in Sustainability and isn't enrolled (8C)." | "Her certificate's graduate credits count toward the MBA, so that's the offer, not another certificate." |
 | 6 | Click the logo. | **Your next credential is closer than you think**, with **Explore the MBA**. **Programs to explore** leads with Business Administration. | "The whole site now points her to her next step." |
 
@@ -202,7 +202,7 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 
 Each home hero variant also shows its own photo, and the program hero shows a photo of that program. A variant whose photo hasn't been added yet shows the default photo.
 
-The point thresholds above are defaults; the affinity tuner can change them (see below). **"Why am I seeing this?"** is on by default; turn it off in `/demo` for a cleaner look, or add `?why=0` to a URL for one tab. Personalized content stays either way, and decisions are still logged.
+The point thresholds above are defaults; the affinity tuner can change them (see below). **"Why am I seeing this?"** is off by default; turn it on in `/demo` when your story uses it, or add `?why=1` to a URL for one tab. Personalized content shows either way, and decisions are still logged.
 
 ### The Agentforce agents
 
@@ -229,7 +229,7 @@ The point thresholds above are defaults; the affinity tuner can change them (see
 
 **Also try:** ask the Student Recruitment Agent about **transfer credit**, then pick a credit count, for an estimate card. Ask something unscripted, like **is there parking on campus**, and it answers from the site's own pages.
 
-The conversation follows you from page to page; **Reset visitor** or a persona preset starts it over. The "Grounded in Data 360" notes appear only on answers chosen from the profile; turn them off in `/demo` or with `?grounding=0`.
+The conversation follows you from page to page; **Reset visitor** or a persona preset starts it over. The "Grounded in Data 360" notes are off by default; turn them on in `/demo` or with `?grounding=1`. They appear only on answers chosen from the profile.
 
 ### How the scoring works, and the affinity tuner
 
@@ -250,5 +250,6 @@ Each page maps to up to four affinities: its program (academic interest), its se
 
 - **Nothing in the inspector:** check that cookies were accepted (the drawer says "Waiting for cookie consent" if not) and that **Simulation** is on.
 - **No chat bubble:** turn on **Agentforce mock** in `/demo`, or add `?agentforce=1` to the URL.
+- **No "Why am I seeing this?" button:** it's off by default; turn it on in `/demo`, or add `?why=1` to the URL.
 - **A story step doesn't fire:** start again from **Reset visitor** or the story's preset. Check the affinity tuner hasn't raised a threshold.
 - **Piper and the agent overlap:** the Piper Chrome extension may put its bubble in the same corner *(hypothesis — check with the extension before a live demo)*. Turn one off for the part of the story that doesn't need it.
