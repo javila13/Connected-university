@@ -151,6 +151,10 @@ function readZones() {
       list,
       defaultOrder: list ? [...list.children] : [],
       limit: Number(el.dataset.pzLimit) || 0,
+      // Home hero: photos present at build time, keyed "hero/<name>" (src/lib/hero-images.js).
+      images: el.dataset.pzImages ? JSON.parse(el.dataset.pzImages) : null,
+      imageUrl: null,
+      imageSeq: 0,
       templates: Object.fromEntries([...el.querySelectorAll('template[data-pz-template]')].map((t) => [t.dataset.pzTemplate, t])),
       applied: { key: 'default' },
     };
@@ -203,6 +207,40 @@ function apply(zone, rule, ctx, tokens, salt = '') {
   zone.el.dataset.pzVariant = rule.variant;
   zone.applied = { key };
   return zone.applied;
+}
+
+// ---- Hero photos ---------------------------------------------------------
+
+/** The photo for a decision: the variant's image, else its fallback, else null (the default photo). */
+function heroImageFor(zone, rule, tokens) {
+  if (!zone.images || !rule) return null;
+  const tpl = zone.templates[rule.variant];
+  const keys = [tpl?.dataset.pzImage, tpl?.dataset.pzImageFallback].filter(Boolean).map((k) => fillText(k, tokens));
+  for (const k of keys) if (zone.images[k]) return zone.images[k];
+  return null;
+}
+
+/** Loads the photo first, then swaps it in, so the hero never shows a half-loaded image. The latest call wins. */
+function setHeroImage(zone, url) {
+  if (zone.imageUrl === url) return Promise.resolve();
+  zone.imageUrl = url;
+  const seq = ++zone.imageSeq;
+  if (!url) {
+    zone.el.style.removeProperty('--hero-image');
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      if (seq === zone.imageSeq) zone.el.style.setProperty('--hero-image', `url("${url}")`);
+      resolve();
+    };
+    img.onerror = () => {
+      if (seq === zone.imageSeq) zone.el.style.removeProperty('--hero-image');
+      resolve();
+    };
+    img.src = url;
+  });
 }
 
 // ---- "Why am I seeing this?" --------------------------------------------
@@ -262,11 +300,11 @@ let started = false;
 
 /** Starts personalizing this page's zones. Call once; it checks consent and the /demo switch itself. */
 export function startPersonalization({ catalog = {} } = {}) {
-  document.documentElement.classList.remove('pz-pending');
-  if (started) return;
+  const release = () => document.documentElement.classList.remove('pz-pending');
+  if (started) return release();
   started = true;
   const zones = readZones();
-  if (!zones.length) return;
+  if (!zones.length) return release();
   const current = new Map(); // zone id -> decision shown
 
   function run() {
@@ -276,8 +314,11 @@ export function startPersonalization({ catalog = {} } = {}) {
     const ctx = contextFor(state, catalog);
     const tokens = tokensFor(ctx);
     const logged = [];
+    const loading = [];
     for (const zone of zones) {
       const rule = active ? decide(zone.id, ctx, settings) : null;
+      const image = heroImageFor(zone, rule, tokens);
+      if (zone.images) loading.push(setHeroImage(zone, image));
       // The threshold is part of the key, so tuning it re-logs the decision with the new reason.
       const changed = apply(zone, rule, ctx, tokens, rule ? String(effectiveMin(rule, settings) ?? '') : '');
       if (changed && rule) {
@@ -292,6 +333,7 @@ export function startPersonalization({ catalog = {} } = {}) {
           shown: changed.shown,
           page: location.pathname,
           person: ctx.known ? displayName(ctx.identity) : 'Anonymous visitor',
+          ...(image ? { image: image.split('/').pop() } : {}),
         };
         current.set(zone.id, decision);
         logged.push(decision);
@@ -307,6 +349,7 @@ export function startPersonalization({ catalog = {} } = {}) {
         if (s.decisions.length > MAX_DECISIONS) s.decisions.splice(0, s.decisions.length - MAX_DECISIONS);
       });
     }
+    return loading;
   }
 
   document.addEventListener('click', (e) => {
@@ -323,5 +366,6 @@ export function startPersonalization({ catalog = {} } = {}) {
   subscribe(run);
   onSettingsChange(run);
   window.addEventListener('cu:consent', run);
-  run();
+  // Hold the anti-flicker until the hero's photo has loaded, at most 1.2 s.
+  Promise.race([Promise.all(run()), new Promise((r) => setTimeout(r, 1200))]).then(release);
 }

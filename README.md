@@ -30,7 +30,8 @@ npm run smoke      # in a second shell, against the running server
 - **Brand assets:** drop files into `public/assets/` and rebuild:
   - `logo.svg`: header logo, replaces the text typemark
   - `logo-reversed.svg`: footer logo on navy
-  - `home-hero.jpg` (or `.webp`/`.png`): home page hero photo
+  - `home-hero.jpg` (or `.webp`/`.png`): home page hero photo, the default for every hero variant
+  - `hero/<variant>.jpg` and `hero/program-<program id>.jpg`: the photo each personalized hero swaps in. See [`docs/hero-image-prompts.md`](docs/hero-image-prompts.md) for the 16 file names and the prompts used to make them; `npm run build` prints which are missing
 - **Facts and address:** `content/facts.json` is the only place institutional numbers live.
 - **Navigation:** `content/nav.json`. Links to pages that don't exist yet are hidden automatically.
 

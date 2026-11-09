@@ -1,5 +1,7 @@
 ---
 zone: pz-home-hero
+image: hero/program-[[programId]]
+imageFallback: hero/program
 eyebrow: Recommended for you
 heading: Your future in [[programTitle]] starts here
 body: "[[programDescription]]"

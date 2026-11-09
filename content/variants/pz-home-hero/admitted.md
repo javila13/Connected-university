@@ -1,5 +1,6 @@
 ---
 zone: pz-home-hero
+image: hero/admitted
 eyebrow: Welcome back, [[firstName]]
 heading: Your place in the class is waiting
 body: "Congratulations on your admission to [[herProgramTitle]]. Your scholarship offer is in the Student Portal, and your enrollment deposit is due {{facts.admissions.deadlines.enrollmentDeposit}}."

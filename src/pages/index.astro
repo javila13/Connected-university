@@ -1,13 +1,12 @@
 ---
 // Home. Section order and copy mirror connecteduniversity-mc.org (2026-11-06).
 // Numbers come from content/facts.json only.
-import fs from 'node:fs';
-import path from 'node:path';
 import { getCollection, getEntries } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProgramCards from '../components/ProgramCards.astro';
 import { pickLive } from '../lib/routes.js';
 import { variantTemplates } from '../lib/variants.js';
+import { heroImages } from '../lib/hero-images.js';
 import facts from '../../content/facts.json';
 
 const { programs, research, taglines } = facts;
@@ -42,10 +41,9 @@ const links = {
   programs: await pickLive('/academics/programs/', '/academics/'),
 };
 
-const heroFile = ['home-hero.jpg', 'home-hero.webp', 'home-hero.png'].find((f) =>
-  fs.existsSync(path.join(process.cwd(), 'public', 'assets', f)),
-);
-const heroStyle = heroFile ? `--hero-image: url('/assets/${heroFile}')` : undefined;
+// The default photo, plus the per-variant photos present at build time (src/lib/hero-images.js).
+const { defaultUrl: heroDefault, images: heroImageMap } = await heroImages();
+const heroStyle = heroDefault ? `--hero-default: url('${heroDefault}')` : undefined;
 
 const tiles = [
   { label: 'Undergraduate', value: programs.undergraduate, unit: 'Programs', href: links.undergraduate },
@@ -68,7 +66,14 @@ const pillars = [
 >
   <!-- Personalization zone (PLAN.md §5.4): the default variant, plus the
        rule-driven variants as templates (content/variants/pz-home-hero/). -->
-  <section id="pz-home-hero" class="hero" data-pz-zone="pz-home-hero" data-pz-variant="default" style={heroStyle}>
+  <section
+    id="pz-home-hero"
+    class="hero"
+    data-pz-zone="pz-home-hero"
+    data-pz-variant="default"
+    data-pz-images={JSON.stringify(heroImageMap)}
+    style={heroStyle}
+  >
     <div class="wrap">
       <div class="hero__card" data-pz-why-host>
         <div data-pz-slot>
@@ -84,7 +89,9 @@ const pillars = [
         </div>
       </div>
     </div>
-    {heroTemplates.map((t) => <template data-pz-template={t.id} set:html={t.html} />)}
+    {heroTemplates.map((t) => (
+      <template data-pz-template={t.id} data-pz-image={t.image} data-pz-image-fallback={t.imageFallback} set:html={t.html} />
+    ))}
   </section>
 
   <section class="band">
@@ -186,7 +193,7 @@ const pillars = [
      don't carry Astro's scoping attribute. */
   .hero {
     background:
-      var(--hero-image, linear-gradient(120deg, #dfe8f1 0%, #f6efe0 55%, #e7d3a8 100%)) center / cover no-repeat;
+      var(--hero-image, var(--hero-default, linear-gradient(120deg, #dfe8f1 0%, #f6efe0 55%, #e7d3a8 100%))) center / cover no-repeat;
     padding: clamp(3rem, 12vw, 12rem) 0;
   }
   .hero__card {

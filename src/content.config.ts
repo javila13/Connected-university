@@ -213,6 +213,10 @@ const variants = defineCollection({
   schema: z.object({
     zone: z.enum(['pz-home-hero', 'pz-giving-cta', 'pz-next-credential']),
     eyebrow: z.string().optional(),
+    // Home hero only: a photo in public/assets/hero/ ("hero/admitted"), and a fallback.
+    // The program variant names "hero/program-[[programId]]" with "hero/program" as the fallback.
+    image: z.string().regex(/^hero\/[a-z0-9-]*(?:\[\[programId\]\])?[a-z0-9-]*$/).optional(),
+    imageFallback: z.string().regex(/^hero\/[a-z0-9-]+$/).optional(),
     heading: z.string(),
     body: z.string(),
     ctas: z

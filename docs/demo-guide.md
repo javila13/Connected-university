@@ -200,6 +200,8 @@ Four personalization points; the first matching rule wins. Known-profile rules c
 | `pz-giving-cta` | Gold band on Alumni and Giving pages | Gave this visit → **thanks** · Sofia alumna → **upgrade** · Athletics interest of 5+ points → **athletics** (Condor Club) |
 | `pz-next-credential` | Continuing Ed → Certificate Catalog | Sofia learner → **mba** · top certificate interest of 3+ points → **certificate** |
 
+Each home hero variant also swaps in its own photo, and the program hero uses a photo of that program, once the photos are in `public/assets/hero/` (see `docs/hero-image-prompts.md`). Until a photo is added, that variant keeps the default photo.
+
 The point thresholds above are defaults; the affinity tuner can change them (see below). **"Why am I seeing this?"** is on by default; turn it off in `/demo` for a cleaner look, or add `?why=0` to a URL for one tab. Personalized content stays either way, and decisions are still logged.
 
 ### The Agentforce agents

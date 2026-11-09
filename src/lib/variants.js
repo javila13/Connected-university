@@ -28,7 +28,10 @@ export async function variantTemplates(zone) {
       } else {
         html = `${eyebrow}<h2 id="next-credential-heading">${prep(d.heading)}</h2><p>${prep(d.body)}</p><div class="next-credential__actions">${ctas}</div>`;
       }
-      return { id, html };
+      if ((d.image || d.imageFallback) && zone !== 'pz-home-hero') {
+        throw new Error(`[variants] ${where}: only home hero variants can name an image`);
+      }
+      return { id, html, image: d.image, imageFallback: d.imageFallback };
     })
     .sort((a, b) => a.id.localeCompare(b.id));
 }
