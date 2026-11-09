@@ -447,3 +447,11 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
   - A longer program name wraps the headline to four lines and makes the hero taller, so the photo is scaled up and cropped at the sides. At 1366 px wide, Business Administration loses 298 of 2,000 photo pixels on each side; at 1920 px, 70 *(verified — measured in Playwright, 2026-11-09)*.
   - Anchoring the photo to the right edge was tried and rejected: it hid people behind the headline card in the Admitted, Learner, Computer Science and Psychology photos *(verified — screenshots of all 14 states at 1366 × 768, 2026-11-09)*.
   - Instead, the prompts doc now asks for faces between about 60% and 85% of the width. At laptop widths the Business Administration photo cuts the student at the whiteboard at the right edge; the other three students show.
+- 2026-11-09: **Sustainability Studies photo (Jesse, last batch).**
+  - `hero/program-sustainability-studies.jpg`: students harvesting a rooftop garden in front of solar panels, with a city skyline soft in the distance. 330 KB.
+  - The navy jersey on the bench carried a large gold script, so it was retouched to plain navy; the gold side stripe stays.
+  - The skyline looks like downtown Los Angeles, which is plausible from a campus in Santa Fe Springs. On a laptop the headline card covers most of it. Whether it counts as a "real landmark" is Jesse's call *(uncertain — flag for review)*.
+  - 15 of 16 photos are present.
+- 2026-11-09: **The athletics photo is still pending.**
+  - The second arena photo wasn't used: the player is in the center, where the headline card covers him on a laptop, and a gold logo on the shorts resembles West Virginia University's "Flying WV" *(hypothesis — needs validation)*. It also has brand swooshes on the jersey, shoes and socks, and a ball-maker's script.
+  - Jesse sent a third version with the shooter on the right. It arrived as an image in the chat, not as a file, so it has to be attached again before it can be checked at full size and retouched. Athletics keeps the default photo until then.
