@@ -16,10 +16,10 @@ One photo per home-hero variant, so the photo changes along with the headline wh
 ## Specs for every image
 
 - **Shape:** 16:9 landscape, at least 1920 × 1080 (2400 × 1350 is better). Export JPG or WebP, under about 350 KB.
-- **Composition:** on a laptop, the white headline card covers roughly the left 60% of the hero. Put the main subject in the **right third**, and keep the left side calm: sky, soft-focus background, open space. On a phone the card covers most of the image, so the photo is mostly atmosphere there.
+- **Composition:** on a laptop, the white headline card covers roughly the left 60% of the hero. Put the main subject in the **right third**, and keep the left side calm: sky, soft-focus background, open space. The hero is taller than 16:9 on a laptop, so up to about 15% of the photo is cropped from each side (about 300 of 2,000 px at 1366 px wide when the headline wraps to four lines). Keep faces between about 60% and 85% of the width, not at the right edge. On a phone the card covers most of the image, so the photo is mostly atmosphere there.
 - **One campus, one look:** the same fictional Southern California campus and the same late-afternoon light in every shot, so the set reads as one school. The school colors, navy and gold, show up only as small accents.
 - **Avoid:**
-  - readable text, signs, logos or wordmarks (no real universities or brands), including chest scripts on jackets and water bottles and the swoosh-style marks on shoes and socks;
+  - readable text, signs, logos or wordmarks (no real universities or brands), including chest scripts on jackets and water bottles, the swoosh-style marks on shoes and socks, laptop logos, and seals or crests on bags;
   - split screens or collages: two photos joined into one frame;
   - real landmarks;
   - anyone who looks like a real person;
