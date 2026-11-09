@@ -407,3 +407,6 @@ One line per decision made during the build, dated. Confidence labels per CLAUDE
   - Hypotheses to validate against the org or the extension: rule thresholds and the agent weight; personalization log granularity; anti-flicker vs the real SDK; pre-chat behavior; knowledge grounding; the transfer estimate; how the Piper extension injects (pages, corner, consent). Firefox and Safari are untested.
 - **Tests at the end of the phase (local):** smoke 1,134 checks; browser suites: regression 76, forms 43, portal 37, alumni 32, giving 46, Continuing Ed 47, athletics 62, global 49, collection 40, companion 35, stitch 75, personalization 72, agent 77, tuner 23, story walk 61, team story walk 39.
 - **Next:** Phase 3 is Piper via the Chrome extension, with no site code; what's left is checking how the extension behaves on the site. Then Phase 4, demo scripts.
+
+### Process after Phase 2 PR 6
+- 2026-11-09: Merged PR #15 at Jesse's request (`6abcbc7`). The wrap-up went live about 15 seconds after the merge *(verified — smoke 1,134/1,134, tuner 23/23, Sofia story walk 61/61 and non-Sofia story walk 39/39 against the live site, 2026-11-09)*. **Phase 2 is complete.**
