@@ -4,18 +4,23 @@
 //
 //   node scripts/guide-page.mjs <out.html>          presenter edition, from docs/demo-guide.md
 //   node scripts/guide-page.mjs --team <out.html>   team edition, from docs/demo-guide-team.md
+//   node scripts/guide-page.mjs --sync              refresh the team guide's copied sections
 //
-// The team edition pulls its Sofia stories and reference sections from
-// docs/demo-guide.md ("<!-- include: ## Heading -->" lines) and drops the
-// confidence markers. An include that names a missing heading fails the build.
+// The team guide shares its Sofia stories, setup steps and reference sections
+// with docs/demo-guide.md. Each shared section sits between an
+// "<!-- include: ## Heading -->" line and an "<!-- end include -->" line, as a
+// copy of that heading's text with the confidence markers removed, so the file
+// reads complete on GitHub. --sync rewrites the copies from docs/demo-guide.md;
+// --team fails if any copy is out of date, or names a heading that doesn't exist.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { SITE, esc, slug, inline, blocks, stripMarkers, tableRows, tableHead, storyTab, storyPanel, HEAD, CSS, TAB_SCRIPT } from './guide-md.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const args = process.argv.slice(2);
+const sync = args[0] === '--sync';
 const team = args[0] === '--team';
 const out = team ? args[1] : args[0];
-if (!out) throw new Error('Usage: node scripts/guide-page.mjs [--team] <out.html>');
+if (!out && !sync) throw new Error('Usage: node scripts/guide-page.mjs [--team] <out.html> | --sync');
 
 const guide = read('docs/demo-guide.md');
 const body = (part) => part.split('\n').slice(1).join('\n');
@@ -129,12 +134,38 @@ function includeSection(heading) {
       break;
     }
   }
-  return lines.slice(start + 1, end).join('\n').trim();
+  return lines
+    .slice(start + 1, end)
+    .join('\n')
+    .trim()
+    .replace(/(\n+---)+$/, '')
+    .trim();
+}
+
+// An include line plus, once synced, its copied text up to "<!-- end include -->".
+// The copy can't contain another include line, so a new, unsynced include is never swallowed.
+const TEAM = 'docs/demo-guide-team.md';
+const INCLUDE = /^<!-- include: (.+?) -->$(?:\n(?:(?!^<!-- include: )[\s\S])*?^<!-- end include -->$)?/gm;
+const synced = (md) => md.replace(INCLUDE, (_, h) => `<!-- include: ${h} -->\n\n${stripMarkers(includeSection(h))}\n\n<!-- end include -->`);
+
+function syncTeam() {
+  const raw = read(TEAM);
+  const next = synced(raw);
+  const count = (raw.match(INCLUDE) ?? []).length;
+  if (next === raw) {
+    console.log(`${TEAM}: ${count} shared sections, already up to date`);
+    return;
+  }
+  writeFileSync(new URL(`../${TEAM}`, import.meta.url), next);
+  console.log(`${TEAM}: refreshed ${count} shared sections from docs/demo-guide.md`);
 }
 
 function teamEdition() {
-  let md = read('docs/demo-guide-team.md').replace(/^<!-- include: (.+?) -->$/gm, (_, h) => includeSection(h));
-  md = stripMarkers(md.replace(/<!--[\s\S]*?-->/g, ''));
+  const raw = read(TEAM);
+  if (synced(raw) !== raw) {
+    throw new Error(`[guide] ${TEAM} is out of date with docs/demo-guide.md. Run: node scripts/guide-page.mjs --sync`);
+  }
+  const md = stripMarkers(raw.replace(/<!--[\s\S]*?-->/g, ''));
 
   const parts = h2parts(md);
   const intro = parts.shift();
@@ -221,5 +252,6 @@ ${cardSection('Before every demo')}
   console.log(`Wrote ${out}: ${groups.map((g) => `${g.stories.length} ${g.name.toLowerCase()}`).join(', ')}, ${fyi.count} FYI sections`);
 }
 
-if (team) teamEdition();
+if (sync) syncTeam();
+else if (team) teamEdition();
 else presenter();
